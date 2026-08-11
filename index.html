@@ -57,6 +57,32 @@ canvas#game{
 .stat .label{font-size:10px; color:rgba(223,233,255,.55); letter-spacing:2px;}
 .stat .value{font-size:18px; font-weight:700; color:var(--cyan); text-shadow:0 0 8px rgba(77,238,234,.6);}
 #combo .value{color:var(--amber); text-shadow:0 0 8px rgba(255,183,3,.6);}
+#level .value,#level-wrap .value{color:var(--violet); text-shadow:0 0 8px rgba(139,92,246,.7);}
+#xp-hud{
+  position:absolute; top:74px; left:16px; width:260px; pointer-events:none;
+}
+.bar-track.xp{height:5px; background:rgba(255,255,255,.08); border:1px solid rgba(139,92,246,.3);}
+.bar-track.xp .bar-fill{background:linear-gradient(90deg, var(--violet), #c4b5fd); box-shadow:0 0 6px rgba(139,92,246,.7);}
+#spellbook{display:flex; gap:5px; margin-top:8px;}
+.spell-slot{
+  position:relative; width:28px; height:28px; border:1px solid rgba(255,183,3,.25);
+  background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:700; color:rgba(223,233,255,.3);
+  clip-path:polygon(5px 0,100% 0,100% 100%,0 100%,0 5px);
+  transition:all .15s ease;
+}
+.spell-slot.locked::after{content:'🔒'; font-size:9px; opacity:.5;}
+.spell-slot.unlocked{color:var(--ghost); border-color:rgba(255,183,3,.5);}
+.spell-slot.ready{border-color:var(--violet); box-shadow:0 0 10px rgba(139,92,246,.7); animation:spellReadyPulse 1.4s infinite ease-in-out;}
+.spell-slot.ready::after{content:''; }
+.spell-slot .rune-count{position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:8px; color:rgba(223,233,255,.6); white-space:nowrap;}
+@keyframes spellReadyPulse{0%,100%{box-shadow:0 0 6px rgba(139,92,246,.5);} 50%{box-shadow:0 0 16px rgba(139,92,246,.95);}}
+.spell-slot{cursor:pointer; pointer-events:all;}
+.spell-slot.active{
+  color:var(--void); background:var(--amber); border-color:#fff;
+  box-shadow:0 0 12px rgba(255,183,3,.9), 0 0 22px rgba(255,183,3,.5);
+  transform:translateY(-2px) scale(1.08);
+}
 #pause-btn{
   position:absolute; top:16px; right:16px; pointer-events:all;
   background:rgba(10,15,36,.75); border:1px solid rgba(77,238,234,.35); color:var(--cyan);
@@ -64,6 +90,13 @@ canvas#game{
   clip-path:polygon(0 0,100% 0,100% 100%,6px 100%,0 calc(100% - 6px));
 }
 #pause-btn:hover{background:rgba(77,238,234,.15);}
+#grimoire-btn{
+  position:absolute; top:16px; right:64px; pointer-events:all;
+  background:rgba(10,15,36,.75); border:1px solid rgba(139,92,246,.4); color:var(--violet);
+  width:40px; height:40px; font-size:16px; cursor:pointer; letter-spacing:0;
+  clip-path:polygon(0 0,100% 0,100% 100%,6px 100%,0 calc(100% - 6px));
+}
+#grimoire-btn:hover{background:rgba(139,92,246,.18);}
 #weapon-hud{
   position:absolute; right:16px; bottom:16px; width:190px;
   background:linear-gradient(180deg, rgba(10,15,36,.75), rgba(10,15,36,.35));
@@ -144,6 +177,34 @@ canvas#game{
   text-shadow:0 0 20px rgba(139,92,246,.65); opacity:0; text-align:center;
 }
 #wave-banner small{display:block; font-size:14px; letter-spacing:3px; color:var(--amber); margin-top:8px;}
+.book{
+  display:flex; flex-direction:column; align-items:center; gap:14px; max-width:640px; width:92vw;
+  background:linear-gradient(180deg, rgba(20,14,32,.55), rgba(10,15,36,.55));
+  border:1px solid rgba(139,92,246,.35); padding:24px 26px;
+  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
+  box-shadow:0 0 40px rgba(139,92,246,.18) inset;
+}
+#grimoire-list{width:100%; display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow-y:auto; pointer-events:all;}
+.grimoire-entry{
+  display:flex; align-items:center; gap:14px; padding:10px 14px;
+  border:1px solid rgba(255,183,3,.22); background:rgba(10,15,36,.5);
+  clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px);
+}
+.grimoire-entry.ready{border-color:var(--violet); box-shadow:0 0 14px rgba(139,92,246,.4);}
+.grimoire-entry.done{opacity:.65; border-color:rgba(57,255,136,.35);}
+.g-swatch{width:20px; height:20px; border-radius:50%; flex:0 0 auto;}
+.g-info{flex:1; text-align:left; display:flex; flex-direction:column; gap:4px;}
+.g-name{font-size:12px; letter-spacing:1.5px; color:var(--ghost);}
+.bar-track.g-bar{height:5px; background:rgba(255,255,255,.08);}
+.g-count{font-size:10px; letter-spacing:1px; color:rgba(223,233,255,.55);}
+.g-ritual-btn{
+  pointer-events:all; cursor:pointer; font-size:10px; letter-spacing:2px; padding:8px 14px;
+  background:transparent; color:var(--violet); border:1px solid var(--violet);
+  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  text-transform:uppercase; font-weight:700; white-space:nowrap;
+}
+.g-ritual-btn:not(:disabled):hover{background:rgba(139,92,246,.2); box-shadow:0 0 16px rgba(139,92,246,.5);}
+.g-ritual-btn:disabled{opacity:.35; cursor:not-allowed; color:rgba(223,233,255,.4); border-color:rgba(223,233,255,.25);}
 @media (max-width:640px){
   .controls-grid{grid-template-columns:1fr; font-size:11px;}
   #hud-top-left{gap:14px; padding:8px 12px;}
@@ -163,11 +224,17 @@ canvas#game{
     <div class="stat"><span class="label">PUNTEGGIO</span><span id="score" class="value">0</span></div>
     <div class="stat"><span class="label">ONDATA</span><span id="wave" class="value">1</span></div>
     <div class="stat" id="combo-wrap"><span class="label">COMBO</span><span id="combo" class="value">x1.0</span></div>
+    <div class="stat" id="level-wrap"><span class="label">MAESTRIA</span><span id="level" class="value">Lv.1</span></div>
+  </div>
+  <div id="xp-hud">
+    <div class="bar-track xp"><div id="xp-bar" class="bar-fill" style="width:0%"></div></div>
   </div>
   <button id="pause-btn" title="Pausa">❚❚</button>
+  <button id="grimoire-btn" title="Grimoire (Esc)">📖</button>
   <div id="weapon-hud">
     <div id="weapon-name">BASTONE ARCANO</div>
     <div class="bar-track"><div id="weapon-bar" class="bar-fill" style="width:100%"></div></div>
+    <div id="spellbook"></div>
   </div>
   <div id="dash-hud">
     <div id="dash-label">PASSO ARCANO</div>
@@ -187,15 +254,27 @@ canvas#game{
     <div><b>Mouse</b> — Mira</div>
     <div><b>Click / Spazio</b> — Incantesimo</div>
     <div><b>Shift</b> — Passo Arcano (invulnerabile)</div>
-    <div><b>P / Esc</b> — Pausa</div>
+    <div><b>1-6</b> — Cambia incantesimo appreso</div>
+    <div><b>Esc</b> — Apri il Grimoire (rituali) e pausa</div>
+    <div><b>P</b> — Pausa</div>
     <div><b>Touch</b> — Trascina per muoverti</div>
   </div>
+  <p class="subtitle" style="max-width:560px;font-size:12px;margin-top:2px;">Combattendo, il mago impara: accresce il suo potere, rafforza la sua Aura Arcana e raccoglie rune. Con 10 rune di uno stesso incantesimo, apri il Grimoire e compi il rituale per apprenderlo per sempre.</p>
   <button id="start-btn" class="neon-btn">Inizia</button>
 </div>
 
 <div id="pause-screen" class="overlay hidden">
   <h2 class="title" data-text="PAUSA" style="font-size:clamp(28px,6vw,52px);">PAUSA</h2>
   <button id="resume-btn" class="neon-btn">Riprendi</button>
+</div>
+
+<div id="grimoire-screen" class="overlay hidden">
+  <div class="book">
+    <h2 class="title" data-text="GRIMOIRE" style="font-size:clamp(24px,5vw,42px);">GRIMOIRE</h2>
+    <p class="subtitle" style="max-width:520px;">Raccogli 10 rune di un incantesimo dai nemici sconfitti, poi compi il rituale per apprenderlo per sempre.</p>
+    <div id="grimoire-list"></div>
+    <button id="grimoire-close-btn" class="neon-btn">Chiudi (Esc)</button>
+  </div>
 </div>
 
 <div id="gameover-screen" class="overlay hidden">
@@ -290,6 +369,7 @@ const sfx = {
     tone({freq: w==='rapid'?520:420, type:'square', dur:0.06, gain:0.09, slide:-140});
   },
   homing(){ tone({freq:340,type:'sawtooth',dur:0.08,gain:0.09,slide:-100}); },
+  zap(){ tone({freq:1100,type:'sawtooth',dur:0.04,gain:0.05,slide:-500}); },
   hit(){ tone({freq:180,type:'triangle',dur:0.07,gain:0.14, slide:-60}); },
   hurt(){ tone({freq:140,type:'sawtooth',dur:0.18,gain:0.2, slide:-90}); boom(0.15,0.25,400); },
   explode(big){ boom(big?0.5:0.28, big?0.7:0.35, big?1400:800); tone({freq:big?160:220,type:'sine',dur:.2,gain:.15,slide:-100}); },
@@ -307,7 +387,14 @@ let lastMouseMoveT = -999;
 window.addEventListener('keydown', e=>{
   keys[e.code] = true;
   if(['Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)) e.preventDefault();
-  if(e.code === 'KeyP' || e.code === 'Escape'){ togglePause(); }
+  if(e.code === 'Escape'){
+    if(state==='grimoire' || state==='playing') toggleGrimoire();
+    else if(state==='paused') togglePause();
+  } else if(e.code === 'KeyP'){
+    if(state==='playing' || state==='paused') togglePause();
+  }
+  const digitMatch = e.code.match(/^Digit([1-6])$/);
+  if(digitMatch && state==='playing'){ selectSpell(parseInt(digitMatch[1],10)-1); }
 });
 window.addEventListener('keyup', e=>{ keys[e.code] = false; });
 canvas.addEventListener('mousemove', e=>{ mouse.x = e.clientX; mouse.y = e.clientY; lastMouseMoveT = elapsed; });
@@ -506,8 +593,23 @@ const player = {
   invuln:0, fireCooldown:0,
   weapon:'blaster', weaponTimer:0,
   dashCooldownMax:1.1, dashCooldown:0, dashing:0, dashDir:{x:1,y:0},
-  alive:true
+  alive:true,
+  // --- Maestria arcana: il mago impara combattendo ---
+  level:1, xp:0, xpToNext:120,
+  powerMult:1, shieldPower:1,
+  unlockedSpells:['blaster'],
+  runes:{spread:0, rapid:0, homing:0, laser:0, chain:0},
+  spellRuneBonus:{spread:0, rapid:0, homing:0, laser:0, chain:0}
 };
+function spellDmgMult(name){
+  return 1 + (player.spellRuneBonus[name]||0) * RUNE_BONUS_PER_RUNE;
+}
+const SPELL_KEYS = ['blaster','spread','rapid','homing','laser','chain'];
+const RITUAL_SPELLS = ['spread','rapid','homing','laser','chain'];
+const RUNES_REQUIRED = {spread:5, rapid:10, homing:15, laser:20, chain:25};
+// ogni runa raccolta oltre la soglia di sblocco di un incantesimo già appreso
+// aumenta permanentemente (di una piccola percentuale) il danno di quello specifico incantesimo
+const RUNE_BONUS_PER_RUNE = 0.01; // +1% danno per runa "extra"
 
 let bullets = [];     // player + enemy bullets
 let enemies = [];
@@ -517,12 +619,13 @@ let boss = null;
 
 const WEAPONS = {
   blaster: {label:'BASTONE ARCANO', rate:0.22, dmg:12, speed:640, color:'#4deeea'},
-  spread:  {label:'VENTAGLIO DI FIAMME', rate:0.28, dmg:8, speed:600, color:'#39ff88'},
+  spread:  {label:'CONO DI FIAMME', rate:0, dmg:8, speed:0, color:'#ff8a3d'},
   rapid:   {label:'RUNA DI RAPIDITÀ', rate:0.10, dmg:7, speed:700, color:'#ffe14d'},
   homing:  {label:'SFERA ARCANA CERCANTE', rate:0.38, dmg:15, speed:460, color:'#ff2fb0'},
-  laser:   {label:'FASCIO RUNICO', rate:0, dmg:26, speed:0, color:'#ffb703'}
+  laser:   {label:'FASCIO RUNICO', rate:0, dmg:26, speed:0, color:'#ffb703'},
+  chain:   {label:'CATENA DI FULMINI', rate:0, dmg:8, speed:0, color:'#8dfcff'}
 };
-const WEAPON_DURATION = {spread:11, rapid:9, homing:11, laser:7};
+const WEAPON_DURATION = {spread:11, rapid:9, homing:11, laser:7, chain:9};
 
 /* ============================= RESET / START ============================= */
 function resetGame(){
@@ -530,12 +633,18 @@ function resetGame(){
   player.hp = player.maxHp; player.shield = 0; player.invuln = 1.2;
   player.weapon='blaster'; player.weaponTimer = 0; player.fireCooldown = 0;
   player.dashCooldown = 0; player.dashing = 0; player.alive = true;
+  player.level=1; player.xp=0; player.xpToNext=120; player.powerMult=1; player.shieldPower=1;
+  player.unlockedSpells=['blaster'];
+  player.runes={spread:0, rapid:0, homing:0, laser:0, chain:0};
+  player.spellRuneBonus={spread:0, rapid:0, homing:0, laser:0, chain:0};
   bullets = []; enemies = []; particles = []; pickups = []; boss = null;
   score = 0; waveNumber = 1; combo = 0; comboTimer = 0; comboMultiplier = 1;
   shakeMag = 0; elapsed = 0;
   spawner.reset();
   updateHUDText();
+  updateSpellHUD();
   document.getElementById('boss-hud').classList.add('hidden');
+  document.getElementById('grimoire-screen').classList.add('hidden');
 }
 
 /* ============================= PARTICLES ============================= */
@@ -558,10 +667,10 @@ function spawnExplosion(x,y,big){
 }
 
 /* ============================= PICKUPS ============================= */
-const PICKUP_TYPES = ['heal','shield','spread','rapid','homing','laser','nuke','multi'];
+const PICKUP_TYPES = ['heal','shield','spread','rapid','homing','laser','chain','nuke','multi'];
 function spawnPickup(x,y,forceType){
   const type = forceType || weightedPick([
-    ['heal',18],['shield',14],['spread',14],['rapid',14],['homing',12],['laser',10],['nuke',5],['multi',13]
+    ['heal',16],['shield',13],['spread',12],['rapid',12],['homing',11],['laser',9],['chain',9],['nuke',5],['multi',11]
   ]);
   pickups.push({x,y,type, radius:12, phase:rand(0,TAU), vy:0, spawnT:elapsed});
 }
@@ -580,9 +689,27 @@ function applyPickup(type){
       comboMultiplier = Math.min(4, comboMultiplier+0.5);
       floatText(player.x,player.y-30,'TALISMANO DEL POTERE!','#ffb703');
       break;
-    default:
-      player.weapon = type; player.weaponTimer = WEAPON_DURATION[type];
-      floatText(player.x,player.y-30, WEAPONS[type].label, WEAPONS[type].color);
+    default: { // runa di incantesimo: spread, rapid, homing, laser, chain
+      const already = player.unlockedSpells.includes(type);
+      if(already){
+        // runa "extra" oltre lo sblocco: piccolo bonus danno permanente per quell'incantesimo
+        player.spellRuneBonus[type] = (player.spellRuneBonus[type]||0) + 1;
+        player.weapon = type; player.weaponTimer = 0; player._chainBolts = [];
+        const totalPct = Math.round(player.spellRuneBonus[type]*RUNE_BONUS_PER_RUNE*1000)/10;
+        floatText(player.x,player.y-30, WEAPONS[type].label+' +DANNO ('+totalPct+'%)', WEAPONS[type].color);
+      } else {
+        player.runes[type] = (player.runes[type]||0) + 1;
+        const n = player.runes[type];
+        const req = RUNES_REQUIRED[type];
+        if(n >= req){
+          floatText(player.x,player.y-30, 'RUNA '+WEAPONS[type].label+' PRONTA PER IL RITUALE! (ESC)', WEAPONS[type].color);
+        } else {
+          floatText(player.x,player.y-30, 'RUNA '+WEAPONS[type].label+' ('+n+'/'+req+')', WEAPONS[type].color);
+        }
+        updateSpellHUD();
+      }
+      break;
+    }
   }
 }
 let floaters = [];
@@ -602,6 +729,133 @@ function updateHUDText(){
   document.getElementById('wave').textContent = waveNumber;
   const mult = comboMultiplier * (1+Math.floor(combo/6)*0.5);
   document.getElementById('combo').textContent = 'x'+mult.toFixed(1);
+  const lvlEl = document.getElementById('level');
+  if(lvlEl) lvlEl.textContent = 'Lv.'+player.level;
+}
+
+/* ============================= MAESTRIA ARCANA (XP / LEVEL UP) ============================= */
+// Il mago impara dalla lotta: ogni colpo inflitto o subito lo rende più forte,
+// accresce lo scudo e, a certi livelli, svela un nuovo incantesimo (tasti 1-5).
+function gainXP(amount){
+  if(!player.alive || amount<=0) return;
+  player.xp += amount;
+  let leveled = false;
+  while(player.xp >= player.xpToNext){
+    player.xp -= player.xpToNext;
+    levelUp();
+    leveled = true;
+  }
+  if(!leveled) updateHUDBars();
+}
+function levelUp(){
+  player.level++;
+  player.xpToNext = Math.round(110 * Math.pow(player.level, 1.32));
+  player.maxHp = Math.round(player.maxHp + 7);
+  player.hp = Math.min(player.maxHp, player.hp + player.maxHp*0.22);
+  player.maxShield = Math.round(player.maxShield + 9);
+  player.shield = Math.min(player.maxShield, player.shield + 16);
+  player.powerMult = +(player.powerMult + 0.07).toFixed(3);
+  player.shieldPower = +(player.shieldPower + 0.16).toFixed(3);
+
+  shakeMag = Math.min(30, shakeMag+8);
+  spawnParticles(player.x, player.y, 34, '#c4b5fd', {speed:280, life:0.75, radius:4});
+  spawnParticles(player.x, player.y, 16, '#ffe14d', {speed:180, life:0.5, radius:2.4});
+  sfx.pickup(); sfx.wave();
+  floatText(player.x, player.y-46, 'LIVELLO '+player.level+' — POTERE ACCRESCIUTO', '#c4b5fd');
+  updateHUDBars();
+}
+function selectSpell(idx){
+  const name = SPELL_KEYS[idx];
+  if(!name || !player.alive) return;
+  if(!player.unlockedSpells.includes(name)){
+    floatText(player.x, player.y-30, 'INCANTESIMO NON ANCORA APPRESO — APRI IL GRIMOIRE (ESC)', 'rgba(223,233,255,.6)');
+    return;
+  }
+  if(player.weapon !== name){
+    player.weapon = name;
+    player.weaponTimer = 0;
+    player._chainBolts = [];
+    spawnParticles(player.x, player.y, 10, WEAPONS[name].color, {speed:140, life:0.35, radius:2.6});
+  }
+  updateHUDBars();
+}
+function updateSpellHUD(){
+  const book = document.getElementById('spellbook');
+  if(!book) return;
+  book.innerHTML = '';
+  SPELL_KEYS.forEach((name,i)=>{
+    const unlocked = player.unlockedSpells.includes(name);
+    const active = player.weapon===name;
+    const req = RUNES_REQUIRED[name];
+    const ready = !unlocked && name!=='blaster' && (player.runes[name]||0) >= req;
+    const slot = document.createElement('div');
+    slot.className = 'spell-slot'+(unlocked?' unlocked':' locked')+(active?' active':'')+(ready?' ready':'');
+    slot.innerHTML = (i+1) + (!unlocked && name!=='blaster' ? `<span class="rune-count">${player.runes[name]||0}/${req}</span>` : '');
+    slot.title = unlocked ? WEAPONS[name].label : (ready ? 'Pronto per il rituale! Apri il Grimoire (Esc)' : WEAPONS[name].label+' — raccogli rune per sbloccarlo');
+    slot.addEventListener('click', ()=>{
+      if(unlocked) selectSpell(i); else toggleGrimoire();
+    });
+    book.appendChild(slot);
+  });
+}
+
+/* ============================= GRIMOIRE (inventario rune / rituali di sblocco) ============================= */
+function toggleGrimoire(){
+  const el = document.getElementById('grimoire-screen');
+  if(state==='playing'){
+    state='grimoire';
+    renderGrimoire();
+    el.classList.remove('hidden');
+  } else if(state==='grimoire'){
+    state='playing';
+    el.classList.add('hidden');
+  }
+}
+function renderGrimoire(){
+  const list = document.getElementById('grimoire-list');
+  if(!list) return;
+  list.innerHTML = '';
+  RITUAL_SPELLS.forEach(name=>{
+    const w = WEAPONS[name];
+    const count = player.runes[name]||0;
+    const req = RUNES_REQUIRED[name];
+    const unlocked = player.unlockedSpells.includes(name);
+    const ready = count>=req && !unlocked;
+    const bonus = player.spellRuneBonus[name]||0;
+    const bonusPct = Math.round(bonus*RUNE_BONUS_PER_RUNE*1000)/10;
+    const row = document.createElement('div');
+    row.className = 'grimoire-entry'+(unlocked?' done':'')+(ready?' ready':'');
+    row.innerHTML = `
+      <div class="g-swatch" style="background:${w.color};box-shadow:0 0 10px ${w.color}"></div>
+      <div class="g-info">
+        <div class="g-name">${w.label}</div>
+        <div class="bar-track g-bar"><div class="bar-fill" style="width:${clamp(count/req,0,1)*100}%;background:${w.color}"></div></div>
+        <div class="g-count">${unlocked ? 'APPRESO PER SEMPRE'+(bonus>0?' — +'+bonusPct+'% DANNO':'') : count+' / '+req+' RUNE RACCOLTE'}</div>
+      </div>
+      <button class="neon-btn g-ritual-btn" data-spell="${name}" ${unlocked||!ready ? 'disabled':''}>${unlocked?'✓ NOTO':'RITUALE'}</button>
+    `;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('.g-ritual-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{ performRitual(btn.dataset.spell); });
+  });
+}
+function performRitual(name){
+  if(!name || player.unlockedSpells.includes(name)) return;
+  const req = RUNES_REQUIRED[name];
+  if((player.runes[name]||0) < req) return;
+  player.runes[name] -= req;
+  player.unlockedSpells.push(name);
+  player.weapon = name;
+  player.weaponTimer = 0;
+  spawnParticles(player.x, player.y, 44, WEAPONS[name].color, {speed:280, life:0.85, radius:4.2});
+  spawnParticles(player.x, player.y, 18, '#ffffff', {speed:180, life:0.45, radius:2.2});
+  shakeMag = Math.min(30, shakeMag+8);
+  sfx.wave(); sfx.pickup();
+  floatText(player.x, player.y-50, 'RITUALE COMPIUTO: '+WEAPONS[name].label, WEAPONS[name].color);
+  updateSpellHUD();
+  updateHUDBars();
+  renderGrimoire();
 }
 
 /* ============================= ENEMY FACTORY ============================= */
@@ -617,7 +871,7 @@ function makeEnemy(type){
   const scale = 1 + (waveNumber-1)*0.09;
   const base = {
     x:p.x, y:p.y, vx:0, vy:0, type, angle:0, t:rand(0,10),
-    fireCooldown:rand(0.5,1.5), hitFlash:0
+    fireCooldown:rand(0.5,1.5), hitFlash:0, burnT:0, burnTick:0, burnDmg:0
   };
   switch(type){
     case 'chaser': // Goblin: rapido, all'arma bianca
@@ -639,6 +893,7 @@ function makeEnemy(type){
 function updateEnemy(en, dt){
   en.t += dt;
   if(en.hitFlash>0) en.hitFlash -= dt;
+  tickBurn(en, dt);
   const a = angleTo(en.x,en.y,player.x,player.y);
   en.angle = a;
   switch(en.type){
@@ -690,6 +945,8 @@ function updateEnemy(en, dt){
 function drawEnemy(en){
   ctx.save();
   ctx.translate(en.x,en.y);
+  const shadowAlpha = en.type==='orbiter' ? 0.18 : 0.38;
+  drawGroundShadow(en.radius*0.7, en.radius*1.2, en.radius*0.5, shadowAlpha);
   ctx.rotate(en.angle);
   const flash = en.hitFlash>0;
   const col = flash ? '#ffffff' : en.color;
@@ -806,6 +1063,22 @@ function drawEnemy(en){
     ctx.fillStyle='rgba(0,0,0,.5)'; ctx.fillRect(en.x-w/2,en.y-en.radius-10,w,4);
     ctx.fillStyle=en.color; ctx.fillRect(en.x-w/2,en.y-en.radius-10,w*Math.max(0,en.hp/en.maxHp),4);
   }
+  // sagoma in fiamme: piccole lingue di fuoco tremolanti finché brucia
+  if(en.burnT>0){
+    ctx.save();
+    ctx.translate(en.x,en.y);
+    ctx.globalAlpha = clamp(en.burnT/1.0,0.4,0.9);
+    ctx.shadowColor='#ff8a3d'; ctx.shadowBlur=10;
+    for(const off of [-en.radius*0.4,0,en.radius*0.4]){
+      const flick = Math.sin(elapsed*18+off)*2;
+      ctx.beginPath();
+      ctx.moveTo(off,en.radius*0.2);
+      ctx.quadraticCurveTo(off+2+flick,-en.radius*0.5,off,-en.radius*0.95-flick);
+      ctx.quadraticCurveTo(off-2-flick,-en.radius*0.5,off,en.radius*0.2);
+      ctx.fillStyle='#ff8a3d'; ctx.fill();
+    }
+    ctx.restore();
+  }
 }
 
 /* ============================= BULLETS ============================= */
@@ -892,15 +1165,9 @@ function updatePlayer(dt){
 
   if(player.invuln>0) player.invuln -= dt;
 
-  // shield regen
+  // shield regen — un'aura arcana più potente col crescere della maestria
   if(player.shieldRegenTimer>0) player.shieldRegenTimer -= dt;
-  else player.shield = Math.min(player.maxShield, player.shield + 6*dt);
-
-  // weapon timer
-  if(player.weapon !== 'blaster'){
-    player.weaponTimer -= dt;
-    if(player.weaponTimer <= 0){ player.weapon='blaster'; }
-  }
+  else player.shield = Math.min(player.maxShield, player.shield + 6*player.shieldPower*dt);
 
   // firing
   player.fireCooldown -= dt;
@@ -908,11 +1175,19 @@ function updatePlayer(dt){
     const w = WEAPONS[player.weapon];
     if(player.weapon === 'laser'){
       fireLaser(dt);
+    } else if(player.weapon === 'chain'){
+      fireChainLightning(dt);
+    } else if(player.weapon === 'spread'){
+      fireFlameCone(dt);
     } else if(player.fireCooldown <= 0){
       player.fireCooldown = w.rate;
       fireWeapon(player.weapon);
       sfx.shoot(player.weapon);
     }
+  } else if(player.weapon === 'chain'){
+    player._chainBolts = [];
+  } else if(player.weapon === 'spread'){
+    player._flameCone = null;
   }
 
   // pickups collision
@@ -927,52 +1202,164 @@ function updatePlayer(dt){
 }
 function fireWeapon(type){
   const w = WEAPONS[type];
+  const dmg = w.dmg * player.powerMult * spellDmgMult(type);
   const a = player.angle;
   if(type==='blaster' || type==='rapid'){
-    shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a, w.speed,'player',w.dmg,w.color,4);
-  } else if(type==='spread'){
-    for(const off of [-0.28,0,0.28]){
-      shootBullet(player.x+Math.cos(a+off)*20, player.y+Math.sin(a+off)*20, a+off, w.speed,'player',w.dmg,w.color,4);
-    }
+    shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a, w.speed,'player',dmg,w.color,4);
   } else if(type==='homing'){
-    shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a, w.speed,'player',w.dmg,w.color,5,true);
+    shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a, w.speed,'player',dmg,w.color,5,true);
     sfx.homing();
   }
 }
 let laserTick = 0;
+// Punta del bastone in coordinate di mondo: da qui partono fascio runico e fulmini,
+// non dal cappello del mago.
+function getStaffTip(){
+  const r = player.radius, staffLen = r*2.1, localY = r*0.1;
+  const cos = Math.cos(player.angle), sin = Math.sin(player.angle);
+  return {
+    x: player.x + staffLen*cos - localY*sin,
+    y: player.y + staffLen*sin + localY*cos
+  };
+}
 function fireLaser(dt){
   laserTick -= dt;
   const a = player.angle;
-  const range = 900;
-  // find nearest target hit by the ray within a thin cone
+  const origin = getStaffTip();
+  const range = Math.hypot(W,H); // il fascio attraversa tutta la mappa, non si ferma a metà
   let hitTarget = null, hitDist = range;
   const targets = boss ? enemies.concat([boss]) : enemies;
   for(const en of targets){
-    const ex = en.x-player.x, ey = en.y-player.y;
+    const ex = en.x-origin.x, ey = en.y-origin.y;
     const projLen = ex*Math.cos(a) + ey*Math.sin(a);
     if(projLen < 0 || projLen > range) continue;
     const perpX = ex - Math.cos(a)*projLen, perpY = ey - Math.sin(a)*projLen;
     const perpDist = Math.hypot(perpX,perpY);
     if(perpDist < en.radius+6 && projLen < hitDist){ hitDist = projLen; hitTarget = en; }
   }
-  player._laserEnd = {x:player.x+Math.cos(a)*hitDist, y:player.y+Math.sin(a)*hitDist};
+  player._laserStart = origin;
+  player._laserEnd = {x:origin.x+Math.cos(a)*hitDist, y:origin.y+Math.sin(a)*hitDist};
   if(laserTick<=0){
     laserTick = 0.05;
     if(hitTarget){
-      damageEnemy(hitTarget, WEAPONS.laser.dmg*0.32);
+      damageEnemy(hitTarget, WEAPONS.laser.dmg*0.32*player.powerMult*spellDmgMult('laser'));
       spawnParticles(hitTarget.x,hitTarget.y,2,'#ffb703',{speed:100,life:0.2,radius:2});
     }
   }
 }
 
+/* ============================= CONO DI FIAMME ============================= */
+// Non più un ventaglio di proiettili: un vero cono d'area davanti al bastone che
+// danneggia continuativamente tutti i nemici al suo interno e li lascia bruciare
+// (danno nel tempo) per un paio di secondi anche se poi escono dal cono o non
+// vengono colpiti in modo diretto ad ogni tick.
+const FLAME_CONE_RANGE = 240;
+const FLAME_CONE_HALF_ANGLE = 0.5; // rad per lato (~57° totali)
+const FLAME_TICK_INTERVAL = 0.12;
+const FLAME_BURN_DURATION = 2.2;
+const FLAME_BURN_TICK = 0.4;
+let flameTick = 0;
+function fireFlameCone(dt){
+  flameTick -= dt;
+  const a = player.angle;
+  const origin = getStaffTip();
+  player._flameCone = {x:origin.x, y:origin.y, angle:a, range:FLAME_CONE_RANGE, half:FLAME_CONE_HALF_ANGLE};
+  if(flameTick <= 0){
+    flameTick = FLAME_TICK_INTERVAL;
+    const dmg = WEAPONS.spread.dmg * player.powerMult * spellDmgMult('spread');
+    const targets = boss ? enemies.concat([boss]) : enemies;
+    let any = false;
+    for(const en of targets){
+      const d = dist(origin.x,origin.y,en.x,en.y);
+      if(d > FLAME_CONE_RANGE + en.radius) continue;
+      let da = angleTo(origin.x,origin.y,en.x,en.y) - a;
+      while(da > Math.PI) da -= TAU; while(da < -Math.PI) da += TAU;
+      if(Math.abs(da) > FLAME_CONE_HALF_ANGLE) continue;
+      any = true;
+      damageEnemy(en, dmg*0.4);
+      // il cono avvolge nella fiamma anche chi non viene colpito in pieno:
+      // tutto ciò che è dentro al cono prende fuoco e continua a bruciare
+      en.burnT = FLAME_BURN_DURATION;
+      if(en.burnTick===undefined || en.burnTick<=0) en.burnTick = FLAME_BURN_TICK;
+      en.burnDmg = dmg*0.22;
+      spawnParticles(en.x,en.y,2,'#ff8a3d',{speed:70,life:0.25,radius:2});
+    }
+    if(any) sfx.shoot('spread');
+  }
+}
+function tickBurn(en, dt){
+  if(!(en.burnT>0)) return;
+  en.burnT -= dt;
+  en.burnTick -= dt;
+  if(en.burnTick <= 0){
+    en.burnTick = FLAME_BURN_TICK;
+    damageEnemy(en, en.burnDmg||0);
+    spawnParticles(en.x,en.y,2,'#ff8a3d',{speed:50,life:0.3,radius:1.8});
+  }
+}
+
+/* ============================= CATENA DI FULMINI ============================= */
+// Colpisce continuativamente più bersagli vicini nello stesso momento, con archi
+// di fulmine che scoccano dalla punta del bastone verso ciascun nemico colpito.
+let chainTick = 0;
+function fireChainLightning(dt){
+  chainTick -= dt;
+  if(chainTick <= 0){
+    chainTick = 0.14;
+    const range = 480;
+    const maxTargets = 3 + Math.min(3, Math.floor(player.shieldPower*0.6));
+    const candidates = [];
+    for(const en of enemies){ const d = dist(player.x,player.y,en.x,en.y); if(d<range) candidates.push({en,d}); }
+    if(boss){ const d = dist(player.x,player.y,boss.x,boss.y); if(d<range) candidates.push({en:boss,d}); }
+    candidates.sort((p,q)=>p.d-q.d);
+    const targets = candidates.slice(0,maxTargets).map(c=>c.en);
+    const dmg = WEAPONS.chain.dmg * player.powerMult * spellDmgMult('chain');
+    player._chainBolts = targets.map(t=>({x:t.x,y:t.y}));
+    for(const t of targets){
+      damageEnemy(t, dmg);
+      spawnParticles(t.x,t.y,3,'#8dfcff',{speed:110,life:0.22,radius:2});
+    }
+    if(targets.length){ sfx.zap(); shakeMag = Math.min(20, shakeMag+1.2); }
+  }
+}
+function drawLightningBolt(x1,y1,x2,y2,color){
+  const segs = 6;
+  ctx.save();
+  ctx.lineJoin='round';
+  ctx.strokeStyle = color; ctx.shadowColor = color; ctx.shadowBlur = 16;
+  ctx.lineWidth = 3; ctx.globalAlpha = 0.9;
+  ctx.beginPath(); ctx.moveTo(x1,y1);
+  const dx=x2-x1, dy=y2-y1;
+  for(let i=1;i<segs;i++){
+    const t=i/segs;
+    ctx.lineTo(x1+dx*t+rand(-9,9), y1+dy*t+rand(-9,9));
+  }
+  ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.lineWidth=1.2; ctx.globalAlpha=1; ctx.strokeStyle='#ffffff';
+  ctx.stroke();
+  ctx.restore();
+}
+
 /* ============================= HUD BARS / HEX HP ============================= */
 function updateHUDBars(){
   const w = WEAPONS[player.weapon];
-  document.getElementById('weapon-name').textContent = w.label;
+  document.getElementById('weapon-name').textContent = w.label+' · Lv.'+player.level;
   const wb = document.getElementById('weapon-bar');
-  if(player.weapon==='blaster'){ wb.style.width='100%'; wb.style.background='linear-gradient(90deg,#4deeea,#2ea9a6)'; }
-  else { wb.style.width = clamp(player.weaponTimer/WEAPON_DURATION[player.weapon],0,1)*100+'%'; wb.style.background=`linear-gradient(90deg, ${w.color}, #ffffff55)`; }
+  // barra di prontezza dell'incantesimo (si ricarica dopo ogni lancio)
+  const rate = (player.weapon==='laser'||player.weapon==='chain') ? 0.001 : Math.max(w.rate,0.001);
+  const readiness = (player.weapon==='laser'||player.weapon==='chain') ? 1 : clamp(1 - (player.fireCooldown/rate), 0, 1);
+  wb.style.width = (readiness*100)+'%';
+  wb.style.background = `linear-gradient(90deg, ${w.color}, #ffffff88)`;
   document.getElementById('dash-bar').style.width = (100 - clamp(player.dashCooldown/player.dashCooldownMax,0,1)*100)+'%';
+  const xb = document.getElementById('xp-bar');
+  if(xb) xb.style.width = clamp(player.xp/player.xpToNext,0,1)*100+'%';
+  const book = document.getElementById('spellbook');
+  if(book){
+    [...book.children].forEach((slot,i)=>{
+      const active = SPELL_KEYS[i]===player.weapon;
+      slot.classList.toggle('active', active);
+    });
+  }
 }
 function drawHexHP(){
   hexCtx.clearRect(0,0,hexCanvas.width,hexCanvas.height);
@@ -1017,10 +1404,12 @@ function damagePlayer(dmg){
   sfx.hurt();
   spawnParticles(player.x,player.y,10,'#ff3b4e',{speed:200,life:0.4,radius:3});
   if(player.hp <= 0){ player.hp = 0; player.alive=false; triggerGameOver(); }
+  else gainXP(dmg*0.5); // il mago impara anche sopportando i colpi della lotta
 }
 function damageEnemy(en, dmg){
   en.hp -= dmg; en.hitFlash = 0.08;
   spawnParticles(en.x,en.y,3,'#ffffff',{speed:120,life:0.2,radius:2});
+  gainXP(dmg*0.12); // ogni colpo inflitto affina la sua maestria arcana
 }
 
 /* ============================= COLLISIONS ============================= */
@@ -1073,6 +1462,7 @@ function handleCollisions(){
 function onEnemyDeath(en){
   spawnExplosion(en.x,en.y,false);
   addScore(en.value);
+  gainXP(en.value*0.35);
   if(en.type==='splitter' && !en.dead){
     for(let i=0;i<2;i++){
       const s = makeEnemy('splitling');
@@ -1092,6 +1482,7 @@ function onEnemyDeath(en){
 function onBossDeath(){
   spawnExplosion(boss.x,boss.y,true);
   addScore(boss.value);
+  gainXP(boss.value*0.4);
   for(let i=0;i<4;i++) spawnPickup(boss.x+rand(-40,40), boss.y+rand(-40,40));
   document.getElementById('boss-hud').classList.add('hidden');
   floatText(boss.x,boss.y-60,'LICH DISTRUTTO','#ffb703');
@@ -1106,13 +1497,14 @@ function makeBoss(){
   return {
     x:W/2, y:-90, vx:0, vy:0, radius:56, hp, maxHp:hp, value:1200+waveNumber*80,
     t:0, attackTimer:2.2, phase:'enter', dmg:22, hitFlash:0, color:'#8b5cf6',
-    telegraphT:0, dashTarget:null
+    telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0
   };
 }
 function updateBoss(dt){
   if(!boss) return;
   boss.t += dt;
   if(boss.hitFlash>0) boss.hitFlash-=dt;
+  tickBurn(boss, dt);
   if(boss.phase==='enter'){
     boss.y += 60*dt;
     if(boss.y > 130){ boss.phase='idle'; sfx.bossRoar(); }
@@ -1180,6 +1572,7 @@ function drawBoss(){
   if(!boss) return;
   ctx.save();
   ctx.translate(boss.x,boss.y);
+  drawGroundShadow(boss.radius*0.8, boss.radius*1.3, boss.radius*0.55, 0.42);
   const pulse = 1+Math.sin(boss.t*3)*0.03;
 
   // pulsating dark-magic aura (rotating spiked ring) behind the lich
@@ -1342,13 +1735,15 @@ function drawParticles(){
   ctx.globalAlpha=1; ctx.textAlign='left';
 }
 function drawPickups(){
-  const colors = {heal:'#39ff88',shield:'#4deeea',spread:'#39ff88',rapid:'#ffe14d',homing:'#ff2fb0',laser:'#ffb703',nuke:'#ff3b4e',multi:'#ffb703'};
+  const colors = {heal:'#39ff88',shield:'#4deeea',spread:'#ff8a3d',rapid:'#ffe14d',homing:'#ff2fb0',laser:'#ffb703',chain:'#8dfcff',nuke:'#ff3b4e',multi:'#ffb703'};
   for(const pu of pickups){
     const bob = Math.sin(elapsed*3+pu.phase)*5;
     const pulse = 1 + Math.sin(elapsed*4.5+pu.phase)*0.12;
     const c = colors[pu.type]||'#ffffff';
     ctx.save();
-    ctx.translate(pu.x, pu.y+bob);
+    ctx.translate(pu.x, pu.y);
+    drawGroundShadow(pu.radius*0.6, pu.radius*0.9, pu.radius*0.35, 0.3);
+    ctx.translate(0, bob);
 
     // rotating rune-circle base (slow) + inner glow disc
     ctx.save();
@@ -1407,6 +1802,15 @@ function drawPickups(){
         ctx.beginPath(); ctx.moveTo(-r,0); ctx.lineTo(r,0); ctx.strokeStyle=c; ctx.lineWidth=3; ctx.stroke();
         ctx.beginPath(); ctx.arc(r*0.6,0,2.4,0,TAU); ctx.fillStyle='#fff'; ctx.fill();
         break; }
+      case 'chain': { // forked lightning: three converging bolts
+        ctx.strokeStyle=c; ctx.lineWidth=2; ctx.lineJoin='round';
+        for(const off of [-6,0,6]){
+          ctx.beginPath();
+          ctx.moveTo(off,-r); ctx.lineTo(off-3,-r*0.15); ctx.lineTo(off+2.5,-r*0.05); ctx.lineTo(off-2,r);
+          ctx.stroke();
+        }
+        ctx.beginPath(); ctx.arc(0,0,2,0,TAU); ctx.fillStyle='#fff'; ctx.fill();
+        break; }
       case 'nuke': { // meteor with trail
         ctx.beginPath(); ctx.moveTo(-r,-r); ctx.lineTo(-r*0.2,-r*0.2); ctx.strokeStyle=c; ctx.lineWidth=3; ctx.globalAlpha=0.6; ctx.stroke(); ctx.globalAlpha=1;
         ctx.beginPath(); ctx.arc(r*0.25,r*0.25,r*0.55,0,TAU); ctx.fillStyle=c; ctx.fill();
@@ -1420,16 +1824,67 @@ function drawPickups(){
   }
 }
 
+/* ============================= SHADOWS (pseudo-3D grounding) ============================= */
+// Draws a soft dark ellipse "under" whatever is about to be drawn, offset downward,
+// so sprites read as standing/floating above the ground instead of flat on it.
+function drawGroundShadow(offsetY, rx, ry, alpha){
+  ctx.save();
+  ctx.translate(0, offsetY);
+  const g = ctx.createRadialGradient(0,0,0, 0,0, rx);
+  g.addColorStop(0, `rgba(0,0,0,${alpha})`);
+  g.addColorStop(0.7, `rgba(0,0,0,${alpha*0.45})`);
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.ellipse(0,0,rx,ry,0,0,TAU); ctx.fill();
+  ctx.restore();
+}
+
 /* ============================= PLAYER DRAW ============================= */
 function drawPlayer(){
   if(!player.alive) return;
   ctx.save();
   ctx.translate(player.x,player.y);
-  // shield ring
+  // ground shadow (grounds the sprite for a 3D feel)
+  drawGroundShadow(player.radius*0.75, player.radius*1.35, player.radius*0.55, 0.4);
+  // --- Aura Arcana: lo scudo del mago, che si rafforza con la sua maestria ---
   if(player.shield>0){
-    ctx.beginPath(); ctx.arc(0,0,player.radius+8,0,TAU);
-    ctx.strokeStyle=`rgba(77,238,234,${0.25+0.5*(player.shield/player.maxShield)})`;
-    ctx.lineWidth=3; ctx.stroke();
+    const shieldPct = clamp(player.shield/player.maxShield,0,1);
+    const shieldR = player.radius + 8 + player.shieldPower*1.6;
+    const intensity = 0.3 + 0.55*shieldPct;
+    ctx.save();
+    // outer soft glow, grows with mastery
+    ctx.shadowColor = '#4deeea'; ctx.shadowBlur = 12 + player.shieldPower*6;
+    ctx.globalAlpha = 0.10*shieldPct + 0.05;
+    ctx.fillStyle = '#4deeea';
+    ctx.beginPath(); ctx.arc(0,0,shieldR,0,TAU); ctx.fill();
+    ctx.globalAlpha = 1;
+    // main ring — thicker and brighter as the mage grows stronger
+    ctx.strokeStyle = `rgba(77,238,234,${intensity})`;
+    ctx.lineWidth = 2.2 + player.shieldPower*0.9;
+    ctx.beginPath(); ctx.arc(0,0,shieldR,0,TAU); ctx.stroke();
+    // rotating rune-lattice, more facets unlocked at higher mastery
+    ctx.save();
+    ctx.rotate(-elapsed*0.6);
+    const facets = 6 + Math.min(6, Math.round(player.shieldPower));
+    ctx.strokeStyle = `rgba(196,181,253,${0.3+0.35*shieldPct})`;
+    ctx.lineWidth = 1.3;
+    ctx.beginPath();
+    for(let i=0;i<=facets;i++){
+      const a=i/facets*TAU;
+      const px=Math.cos(a)*shieldR, py=Math.sin(a)*shieldR;
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.restore();
+    // orbiting spark motes — the mightier the shield, the more it sparkles
+    const sparkCount = 3 + Math.min(6, Math.round(player.shieldPower));
+    for(let i=0;i<sparkCount;i++){
+      const sa = elapsed*1.8 + i*(TAU/sparkCount);
+      const sx = Math.cos(sa)*shieldR, sy = Math.sin(sa)*shieldR;
+      ctx.fillStyle='#dff8ff'; ctx.shadowColor='#4deeea'; ctx.shadowBlur=8;
+      ctx.beginPath(); ctx.arc(sx,sy,1.6,0,TAU); ctx.fill();
+    }
+    ctx.restore();
   }
   const blink = player.invuln>0 && Math.floor(elapsed*20)%2===0;
   ctx.rotate(player.angle);
@@ -1488,14 +1943,39 @@ function drawPlayer(){
   ctx.globalAlpha=1;
   ctx.restore();
 
-  // laser beam
-  if(player.weapon==='laser' && firing() && player._laserEnd){
+  // laser beam — parte dalla punta del bastone, non dal cappello
+  if(player.weapon==='laser' && firing() && player._laserEnd && player._laserStart){
     ctx.save();
     ctx.strokeStyle='#ffb703'; ctx.shadowColor='#ffb703'; ctx.shadowBlur=16;
     ctx.lineWidth=4; ctx.globalAlpha=0.85;
-    ctx.beginPath(); ctx.moveTo(player.x,player.y); ctx.lineTo(player._laserEnd.x,player._laserEnd.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(player._laserStart.x,player._laserStart.y); ctx.lineTo(player._laserEnd.x,player._laserEnd.y); ctx.stroke();
     ctx.lineWidth=1.4; ctx.globalAlpha=1; ctx.strokeStyle='#fff';
-    ctx.beginPath(); ctx.moveTo(player.x,player.y); ctx.lineTo(player._laserEnd.x,player._laserEnd.y); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(player._laserStart.x,player._laserStart.y); ctx.lineTo(player._laserEnd.x,player._laserEnd.y); ctx.stroke();
+    ctx.restore();
+  }
+  // catena di fulmini — archi crepitanti dalla punta del bastone a più bersagli
+  if(player.weapon==='chain' && firing() && player._chainBolts && player._chainBolts.length){
+    const origin = getStaffTip();
+    for(const b of player._chainBolts){
+      drawLightningBolt(origin.x, origin.y, b.x, b.y, '#8dfcff');
+    }
+  }
+  // cono di fiamme — area triangolare fiammeggiante davanti al bastone
+  if(player.weapon==='spread' && firing() && player._flameCone){
+    const c = player._flameCone;
+    const flick = 0.85 + Math.sin(elapsed*26)*0.08 + Math.sin(elapsed*41)*0.05;
+    ctx.save();
+    const g = ctx.createRadialGradient(c.x,c.y,0, c.x,c.y,c.range);
+    g.addColorStop(0, 'rgba(255,220,120,'+(0.75*flick)+')');
+    g.addColorStop(0.35, 'rgba(255,138,61,'+(0.55*flick)+')');
+    g.addColorStop(1, 'rgba(255,60,20,0)');
+    ctx.fillStyle = g;
+    ctx.shadowColor = '#ff8a3d'; ctx.shadowBlur = 22;
+    ctx.beginPath();
+    ctx.moveTo(c.x,c.y);
+    ctx.arc(c.x,c.y, c.range, c.angle-c.half, c.angle+c.half);
+    ctx.closePath();
+    ctx.fill();
     ctx.restore();
   }
 }
@@ -1614,10 +2094,13 @@ document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', startGame);
 document.getElementById('resume-btn').addEventListener('click', togglePause);
 document.getElementById('pause-btn').addEventListener('click', ()=>{ if(state==='playing'||state==='paused') togglePause(); });
+document.getElementById('grimoire-btn').addEventListener('click', ()=>{ if(state==='playing'||state==='grimoire') toggleGrimoire(); });
+document.getElementById('grimoire-close-btn').addEventListener('click', toggleGrimoire);
 
 /* ============================= INIT ============================= */
 resize();
 player.x=W/2; player.y=H/2;
+updateSpellHUD();
 requestAnimationFrame(loop);
 
 })();
