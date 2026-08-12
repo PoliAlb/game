@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>L'ARCIMAGO</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cinzel+Decorative:wght@700;900&display=swap');
 :root{
   --void:#050608;
   --deep:#0a0f24;
@@ -16,12 +17,17 @@
   --ghost:#dfe9ff;
   --green:#39ff88;
   --red:#ff3b4e;
+  --parchment:#e8d9b5;
+  --parchment-dark:#b89a63;
+  --leather:#3b2416;
+  --leather-dark:#241408;
+  --gold:#d4af37;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
 html,body{
   width:100%; height:100%; overflow:hidden;
   background:var(--void);
-  font-family:"Consolas","SF Mono","Segoe UI Mono",monospace;
+  font-family:"Cinzel","Times New Roman",serif;
   color:var(--ghost);
   user-select:none;
   cursor:crosshair;
@@ -129,7 +135,8 @@ canvas#game{
 }
 .overlay.hidden{display:none;}
 .title{
-  font-size:clamp(38px,9vw,84px); font-weight:900; letter-spacing:8px;
+  font-family:"Cinzel Decorative","Cinzel",serif;
+  font-size:clamp(34px,8vw,76px); font-weight:900; letter-spacing:6px;
   color:var(--ghost); position:relative; text-transform:uppercase;
   text-shadow:0 0 18px rgba(255,183,3,.5), 0 0 42px rgba(139,92,246,.35);
 }
@@ -179,32 +186,55 @@ canvas#game{
 #wave-banner small{display:block; font-size:14px; letter-spacing:3px; color:var(--amber); margin-top:8px;}
 .book{
   display:flex; flex-direction:column; align-items:center; gap:14px; max-width:640px; width:92vw;
-  background:linear-gradient(180deg, rgba(20,14,32,.55), rgba(10,15,36,.55));
-  border:1px solid rgba(139,92,246,.35); padding:24px 26px;
-  clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);
-  box-shadow:0 0 40px rgba(139,92,246,.18) inset;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(180deg, var(--parchment), var(--parchment-dark));
+  border:10px solid var(--leather);
+  outline:1px solid var(--gold);
+  outline-offset:-6px;
+  padding:26px 28px;
+  border-radius:6px 18px 6px 18px;
+  box-shadow:0 0 0 2px var(--leather-dark), 0 20px 60px rgba(0,0,0,.65), inset 0 0 50px rgba(90,60,20,.35);
+  color:var(--leather-dark);
 }
+.book .title{ color:var(--leather-dark); text-shadow:0 1px 0 rgba(255,255,255,.35), 0 0 18px rgba(212,175,55,.5); }
+.book .subtitle{ color:rgba(59,36,22,.85); }
 #grimoire-list{width:100%; display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow-y:auto; pointer-events:all;}
 .grimoire-entry{
   display:flex; align-items:center; gap:14px; padding:10px 14px;
-  border:1px solid rgba(255,183,3,.22); background:rgba(10,15,36,.5);
-  clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px);
+  border:1px solid rgba(90,60,20,.35); background:rgba(255,248,225,.35);
+  border-radius:4px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
 }
-.grimoire-entry.ready{border-color:var(--violet); box-shadow:0 0 14px rgba(139,92,246,.4);}
-.grimoire-entry.done{opacity:.65; border-color:rgba(57,255,136,.35);}
-.g-swatch{width:20px; height:20px; border-radius:50%; flex:0 0 auto;}
+.grimoire-entry.ready{border-color:var(--gold); box-shadow:0 0 14px rgba(212,175,55,.45), inset 0 1px 0 rgba(255,255,255,.4);}
+.grimoire-entry.done{opacity:.7; border-color:rgba(57,140,80,.45);}
+.g-swatch{
+  width:26px; height:26px; flex:0 0 auto; position:relative;
+  clip-path:polygon(50% 0%,90% 20%,100% 60%,75% 100%,25% 100%,0% 60%,10% 20%);
+  box-shadow:inset -3px -4px 6px rgba(0,0,0,.45), inset 2px 3px 5px rgba(255,255,255,.55), 0 0 8px rgba(0,0,0,.35);
+}
+.g-swatch::after{
+  content:''; position:absolute; top:14%; left:20%; width:32%; height:22%;
+  background:rgba(255,255,255,.65); filter:blur(1.5px);
+  clip-path:polygon(50% 0%,90% 20%,100% 60%,75% 100%,25% 100%,0% 60%,10% 20%);
+}
 .g-info{flex:1; text-align:left; display:flex; flex-direction:column; gap:4px;}
-.g-name{font-size:12px; letter-spacing:1.5px; color:var(--ghost);}
-.bar-track.g-bar{height:5px; background:rgba(255,255,255,.08);}
-.g-count{font-size:10px; letter-spacing:1px; color:rgba(223,233,255,.55);}
+.g-name{font-size:12px; letter-spacing:1.5px; color:var(--leather-dark); font-weight:600;}
+.bar-track.g-bar{height:5px; background:rgba(90,60,20,.18);}
+.g-count{font-size:10px; letter-spacing:1px; color:rgba(59,36,22,.75);}
 .g-ritual-btn{
-  pointer-events:all; cursor:pointer; font-size:10px; letter-spacing:2px; padding:8px 14px;
-  background:transparent; color:var(--violet); border:1px solid var(--violet);
-  clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  pointer-events:all; cursor:pointer; font-family:"Cinzel",serif; font-size:10px; letter-spacing:2px; padding:8px 14px;
+  background:var(--leather); color:var(--gold); border:1px solid var(--gold);
+  border-radius:3px;
   text-transform:uppercase; font-weight:700; white-space:nowrap;
 }
-.g-ritual-btn:not(:disabled):hover{background:rgba(139,92,246,.2); box-shadow:0 0 16px rgba(139,92,246,.5);}
-.g-ritual-btn:disabled{opacity:.35; cursor:not-allowed; color:rgba(223,233,255,.4); border-color:rgba(223,233,255,.25);}
+.g-ritual-btn:not(:disabled):hover{background:#4a2e1c; box-shadow:0 0 16px rgba(212,175,55,.5);}
+.g-ritual-btn:disabled{opacity:.4; cursor:not-allowed; color:rgba(59,36,22,.5); border-color:rgba(59,36,22,.35); background:rgba(90,60,20,.15);}
+.book .neon-btn{
+  color:var(--gold); border-color:var(--gold); background:var(--leather);
+  box-shadow:0 0 14px rgba(212,175,55,.2) inset;
+}
+.book .neon-btn:hover{background:#4a2e1c; box-shadow:0 0 20px rgba(212,175,55,.5);}
 @media (max-width:640px){
   .controls-grid{grid-template-columns:1fr; font-size:11px;}
   #hud-top-left{gap:14px; padding:8px 12px;}
@@ -668,10 +698,31 @@ function spawnExplosion(x,y,big){
 
 /* ============================= PICKUPS ============================= */
 const PICKUP_TYPES = ['heal','shield','spread','rapid','homing','laser','chain','nuke','multi'];
+// Pesi base per gli oggetti non-rituali (invariati durante la partita)
+const PICKUP_BASE_WEIGHTS = {heal:16, shield:13, nuke:5, multi:11};
+// Le rune ancora da scoprire pesano in proporzione inversa alle rune richieste per il rituale:
+// così l'incantesimo più economico (meno rune) tende a saturarsi ed essere appreso per primo.
+const RUNE_LOCKED_SCALE = 300;
+function pickupWeights(){
+  const entries = Object.entries(PICKUP_BASE_WEIGHTS).map(([k,w])=>[k,w]);
+  let baseSum = Object.values(PICKUP_BASE_WEIGHTS).reduce((s,w)=>s+w,0);
+  const locked = [], lockedW = {};
+  const unlocked = [];
+  for(const name of RITUAL_SPELLS){
+    if(player.unlockedSpells.includes(name)){ unlocked.push(name); }
+    else { const w = RUNE_LOCKED_SCALE/RUNES_REQUIRED[name]; locked.push(name); lockedW[name]=w; baseSum += w; }
+  }
+  // una volta appresa, la runa continua a comparire ma la sua frequenza si assesta al 10% dei drop totali
+  const SETTLE_SHARE = 0.10;
+  const k = unlocked.length;
+  const total = k>0 ? baseSum/(1-k*SETTLE_SHARE) : baseSum;
+  const unlockedWeight = k>0 ? total*SETTLE_SHARE : 0;
+  for(const name of locked) entries.push([name, lockedW[name]]);
+  for(const name of unlocked) entries.push([name, unlockedWeight]);
+  return entries;
+}
 function spawnPickup(x,y,forceType){
-  const type = forceType || weightedPick([
-    ['heal',16],['shield',13],['spread',12],['rapid',12],['homing',11],['laser',9],['chain',9],['nuke',5],['multi',11]
-  ]);
+  const type = forceType || weightedPick(pickupWeights());
   pickups.push({x,y,type, radius:12, phase:rand(0,TAU), vy:0, spawnT:elapsed});
 }
 function applyPickup(type){
@@ -1253,8 +1304,9 @@ function fireLaser(dt){
 // danneggia continuativamente tutti i nemici al suo interno e li lascia bruciare
 // (danno nel tempo) per un paio di secondi anche se poi escono dal cono o non
 // vengono colpiti in modo diretto ad ogni tick.
-const FLAME_CONE_RANGE = 240;
-const FLAME_CONE_HALF_ANGLE = 0.5; // rad per lato (~57° totali)
+const FLAME_CONE_RANGE = 268;
+const FLAME_CONE_HALF_ANGLE = 0.32; // rad per lato (~37° totali) — cono più stretto e un po' più lungo
+
 const FLAME_TICK_INTERVAL = 0.12;
 const FLAME_BURN_DURATION = 2.2;
 const FLAME_BURN_TICK = 0.4;
@@ -1299,27 +1351,41 @@ function tickBurn(en, dt){
 }
 
 /* ============================= CATENA DI FULMINI ============================= */
-// Colpisce continuativamente più bersagli vicini nello stesso momento, con archi
-// di fulmine che scoccano dalla punta del bastone verso ciascun nemico colpito.
+// Vera catena: il fulmine parte dalla punta del bastone, colpisce il nemico più
+// vicino, poi salta da lì al nemico successivo più vicino (entro un raggio di
+// salto più corto), e così via — non un unico raggio fisso su un solo bersaglio.
 let chainTick = 0;
 function fireChainLightning(dt){
   chainTick -= dt;
   if(chainTick <= 0){
-    chainTick = 0.14;
-    const range = 480;
+    chainTick = 0.16;
+    const FIRST_RANGE = 480; // portata per agganciare il primo bersaglio
+    const JUMP_RANGE = 260;  // raggio di salto tra un bersaglio e il successivo
     const maxTargets = 3 + Math.min(3, Math.floor(player.shieldPower*0.6));
-    const candidates = [];
-    for(const en of enemies){ const d = dist(player.x,player.y,en.x,en.y); if(d<range) candidates.push({en,d}); }
-    if(boss){ const d = dist(player.x,player.y,boss.x,boss.y); if(d<range) candidates.push({en:boss,d}); }
-    candidates.sort((p,q)=>p.d-q.d);
-    const targets = candidates.slice(0,maxTargets).map(c=>c.en);
+    const pool = enemies.slice();
+    if(boss) pool.push(boss);
+    const hit = [];
+    let fromX = player.x, fromY = player.y, searchRange = FIRST_RANGE;
+    while(hit.length < maxTargets){
+      let best = null, bestD = Infinity;
+      for(const en of pool){
+        if(hit.includes(en)) continue;
+        const d = dist(fromX,fromY,en.x,en.y);
+        if(d < searchRange && d < bestD){ bestD = d; best = en; }
+      }
+      if(!best) break;
+      hit.push(best);
+      fromX = best.x; fromY = best.y; searchRange = JUMP_RANGE;
+    }
     const dmg = WEAPONS.chain.dmg * player.powerMult * spellDmgMult('chain');
-    player._chainBolts = targets.map(t=>({x:t.x,y:t.y}));
-    for(const t of targets){
+    const origin = getStaffTip();
+    // catena di punti: bastone -> primo bersaglio -> secondo -> terzo ... (usata per disegnare i segmenti collegati)
+    player._chainBolts = [{x:origin.x,y:origin.y}, ...hit.map(t=>({x:t.x,y:t.y}))];
+    for(const t of hit){
       damageEnemy(t, dmg);
       spawnParticles(t.x,t.y,3,'#8dfcff',{speed:110,life:0.22,radius:2});
     }
-    if(targets.length){ sfx.zap(); shakeMag = Math.min(20, shakeMag+1.2); }
+    if(hit.length){ sfx.zap(); shakeMag = Math.min(20, shakeMag+1.2); }
   }
 }
 function drawLightningBolt(x1,y1,x2,y2,color){
@@ -1381,7 +1447,7 @@ function drawHexHP(){
     hexCtx.globalAlpha=1;
     hexCtx.strokeStyle='rgba(223,233,255,.35)'; hexCtx.lineWidth=1.5; hexCtx.stroke();
   }
-  hexCtx.fillStyle='rgba(223,233,255,.6)'; hexCtx.font='10px Consolas'; hexCtx.fillText('ENERGIA VITALE', 18, 58);
+  hexCtx.fillStyle='rgba(223,233,255,.6)'; hexCtx.font='11px Cinzel, serif'; hexCtx.fillText('ENERGIA VITALE', 18, 58);
   // shield bar
   const sw = 6*34-10;
   hexCtx.fillStyle='rgba(255,255,255,.08)'; hexCtx.fillRect(18,66,sw,8);
@@ -1444,7 +1510,7 @@ function handleCollisions(){
     }
   }
   if(boss && boss.phase!=='enter' && dist(boss.x,boss.y,player.x,player.y) < player.radius+boss.radius){
-    damagePlayer(boss.phase==='dash' ? 26 : 14);
+    damagePlayer(boss.phase==='dash' ? 34 : 20);
   }
   // dead enemies
   const survivors = [];
@@ -1492,12 +1558,12 @@ function onBossDeath(){
 
 /* ============================= BOSS ============================= */
 function makeBoss(){
-  // IL LICH: stregone non morto, signore degli spettri
-  const hp = 420 + waveNumber*90;
+  // IL LICH: stregone non morto, signore degli spettri — versione più mostruosa e letale
+  const hp = 620 + waveNumber*130;
   return {
-    x:W/2, y:-90, vx:0, vy:0, radius:56, hp, maxHp:hp, value:1200+waveNumber*80,
-    t:0, attackTimer:2.2, phase:'enter', dmg:22, hitFlash:0, color:'#8b5cf6',
-    telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0
+    x:W/2, y:-90, vx:0, vy:0, radius:74, hp, maxHp:hp, value:1500+waveNumber*100,
+    t:0, attackTimer:2.0, phase:'enter', dmg:30, hitFlash:0, color:'#8b5cf6',
+    telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0, enraged:false
   };
 }
 function updateBoss(dt){
@@ -1505,6 +1571,10 @@ function updateBoss(dt){
   boss.t += dt;
   if(boss.hitFlash>0) boss.hitFlash-=dt;
   tickBurn(boss, dt);
+  // furia: sotto il 40% di HP il Lich diventa più rapido e aggressivo
+  boss.enraged = boss.hp < boss.maxHp*0.4;
+  const cdMul = boss.enraged ? 0.7 : 1;
+  const moveMul = boss.enraged ? 1.55 : 1;
   if(boss.phase==='enter'){
     boss.y += 60*dt;
     if(boss.y > 130){ boss.phase='idle'; sfx.bossRoar(); }
@@ -1514,57 +1584,81 @@ function updateBoss(dt){
   const desiredX = clamp(player.x + Math.sin(boss.t*0.5)*260, boss.radius, W-boss.radius);
   const desiredY = clamp(140 + Math.sin(boss.t*0.7)*40, boss.radius, H*0.5);
   if(boss.phase==='idle' || boss.phase==='attack'){
-    boss.x += (desiredX-boss.x)*dt*1.2;
-    boss.y += (desiredY-boss.y)*dt*1.2;
+    boss.x += (desiredX-boss.x)*dt*1.2*moveMul;
+    boss.y += (desiredY-boss.y)*dt*1.2*moveMul;
   }
 
   if(boss.phase==='charge'){
     boss.telegraphT -= dt;
     if(boss.telegraphT<=0){
-      boss.phase='dash'; boss._dashDx = (player.x-boss.x); boss._dashDy=(player.y-boss.y);
-      const l = Math.hypot(boss._dashDx,boss._dashDy)||1; boss._dashDx/=l; boss._dashDy/=l;
-      boss._dashT = 0.5;
+      boss.phase='dash';
+      const dx = (player.x-boss.x), dy = (player.y-boss.y);
+      const l = Math.hypot(dx,dy)||1;
+      boss._dashDx = dx/l; boss._dashDy = dy/l;
+      boss._dashSpeed = boss.enraged ? 980 : 820;
+      // la distanza di carica dipende da quanto è lontano il mago in quel momento:
+      // basta a raggiungerlo ovunque sia (anche a bordo mappa), con un piccolo margine
+      // di rincorsa, ma senza sfondare fino in fondo alla mappa se il mago è vicino.
+      const OVERSHOOT = 70, MIN_DASH = 220, MAX_DASH = 620;
+      boss._dashDist = clamp(l+OVERSHOOT, MIN_DASH, MAX_DASH);
+      boss._dashTraveled = 0;
     }
     return;
   }
   if(boss.phase==='dash'){
-    boss._dashT -= dt;
-    boss.x += boss._dashDx*820*dt; boss.y += boss._dashDy*820*dt;
+    const step = boss._dashSpeed*dt;
+    boss.x += boss._dashDx*step; boss.y += boss._dashDy*step;
+    boss._dashTraveled += step;
     boss.x = clamp(boss.x, boss.radius, W-boss.radius);
     boss.y = clamp(boss.y, boss.radius, H-boss.radius);
-    if(boss._dashT<=0){ boss.phase='idle'; boss.attackTimer=2.6; }
+    if(boss._dashTraveled >= boss._dashDist){ boss.phase='idle'; boss.attackTimer=2.6*cdMul; }
     return;
   }
 
   boss.attackTimer -= dt;
   if(boss.attackTimer <= 0){
-    const atk = pick(['ring','aimed','summon','charge']);
+    const atk = pick(['ring','aimed','summon','charge','barrage']);
     boss.phase = 'attack';
     if(atk==='ring'){
-      const n=16;
-      for(let i=0;i<n;i++){ const a=i/n*TAU; shootBullet(boss.x,boss.y,a,240,'enemy',14,'#8b5cf6',6); }
-      boss.attackTimer = 2.4;
+      const n = boss.enraged ? 22 : 16;
+      const spd = boss.enraged ? 270 : 240;
+      for(let i=0;i<n;i++){ const a=i/n*TAU; shootBullet(boss.x,boss.y,a,spd,'enemy',14,'#8b5cf6',6); }
+      boss.attackTimer = 2.4*cdMul;
       boss.phase='idle';
     } else if(atk==='aimed'){
       let burst=0;
+      const bursts = boss.enraged ? 4 : 3;
       const burstInt = setInterval(()=>{
         if(!boss || state!=='playing'){ clearInterval(burstInt); return; }
         const a = angleTo(boss.x,boss.y,player.x,player.y);
         for(const off of [-0.18,0,0.18]) shootBullet(boss.x,boss.y,a+off,340,'enemy',12,'#7cff6b',5);
-        burst++; if(burst>=3) clearInterval(burstInt);
+        burst++; if(burst>=bursts) clearInterval(burstInt);
       }, 160);
-      boss.attackTimer = 2.8;
+      boss.attackTimer = 2.8*cdMul;
       boss.phase='idle';
     } else if(atk==='summon'){
-      for(let i=0;i<3;i++){
+      const n = boss.enraged ? 4 : 3;
+      for(let i=0;i<n;i++){
         const e = makeEnemy(Math.random()<0.5?'chaser':'splitling');
         e.x = boss.x+rand(-60,60); e.y = boss.y+rand(20,60);
         enemies.push(e);
       }
-      boss.attackTimer = 3.2;
+      boss.attackTimer = 3.2*cdMul;
+      boss.phase='idle';
+    } else if(atk==='barrage'){
+      // raffica di schegge spettrali in ventaglio verso il mago
+      let shots=0;
+      const totalShots = boss.enraged ? 11 : 7;
+      const barrageInt = setInterval(()=>{
+        if(!boss || state!=='playing'){ clearInterval(barrageInt); return; }
+        const a = angleTo(boss.x,boss.y,player.x,player.y) + rand(-0.4,0.4);
+        shootBullet(boss.x,boss.y,a,310,'enemy',10,'#39ff88',5);
+        shots++; if(shots>=totalShots) clearInterval(barrageInt);
+      }, 100);
+      boss.attackTimer = 2.6*cdMul;
       boss.phase='idle';
     } else if(atk==='charge'){
-      boss.phase='charge'; boss.telegraphT=0.7;
+      boss.phase='charge'; boss.telegraphT = boss.enraged ? 0.55 : 0.7;
     }
   }
 }
@@ -1572,79 +1666,150 @@ function drawBoss(){
   if(!boss) return;
   ctx.save();
   ctx.translate(boss.x,boss.y);
-  drawGroundShadow(boss.radius*0.8, boss.radius*1.3, boss.radius*0.55, 0.42);
-  const pulse = 1+Math.sin(boss.t*3)*0.03;
+  drawGroundShadow(boss.radius*0.95, boss.radius*1.5, boss.radius*0.6, 0.46);
+  const rageFlicker = boss.enraged ? 0.75+Math.sin(elapsed*14)*0.25 : 0;
+  const pulse = 1+Math.sin(boss.t*(boss.enraged?6:3))*(boss.enraged?0.06:0.03);
+  const flash = boss.hitFlash>0;
 
-  // pulsating dark-magic aura (rotating spiked ring) behind the lich
+  // doppia aura di magia nera rotante: anello esterno viola, anello interno verde malato
   ctx.save();
-  ctx.rotate(boss.t*0.15);
-  ctx.shadowColor = boss.hitFlash>0 ? '#ffffff' : '#8b5cf6';
-  ctx.shadowBlur = 30;
-  ctx.fillStyle = boss.hitFlash>0 ? 'rgba(255,255,255,.5)' : 'rgba(139,92,246,.28)';
+  ctx.rotate(boss.t*(boss.enraged?0.4:0.15));
+  ctx.shadowColor = flash ? '#ffffff' : '#8b5cf6';
+  ctx.shadowBlur = 34;
+  ctx.fillStyle = flash ? 'rgba(255,255,255,.5)' : `rgba(139,92,246,${0.26+rageFlicker*0.14})`;
   ctx.beginPath();
-  const spikes=10;
+  const spikes=14;
   for(let i=0;i<spikes*2;i++){
     const a = i/(spikes*2)*TAU;
-    const rr = (i%2===0 ? boss.radius : boss.radius*0.62) * pulse;
+    const rr = (i%2===0 ? boss.radius*1.08 : boss.radius*0.66) * pulse;
     const px=Math.cos(a)*rr, py=Math.sin(a)*rr;
     if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
   }
   ctx.closePath(); ctx.fill();
-  ctx.lineWidth=2.5; ctx.strokeStyle='rgba(139,92,246,.6)'; ctx.stroke();
+  ctx.lineWidth=2.5; ctx.strokeStyle='rgba(139,92,246,.65)'; ctx.stroke();
+  ctx.restore();
+  ctx.save();
+  ctx.rotate(-boss.t*(boss.enraged?0.6:0.24));
+  ctx.shadowColor = '#39ff88'; ctx.shadowBlur = 20;
+  ctx.strokeStyle = `rgba(57,255,136,${0.35+rageFlicker*0.3})`; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  const spikes2=9;
+  for(let i=0;i<spikes2*2;i++){
+    const a = i/(spikes2*2)*TAU;
+    const rr = (i%2===0 ? boss.radius*0.86 : boss.radius*0.5) * pulse;
+    const px=Math.cos(a)*rr, py=Math.sin(a)*rr;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath(); ctx.stroke();
   ctx.restore();
 
-  // tattered robe body
-  const bodyR = boss.radius*0.72;
-  ctx.shadowBlur=18; ctx.shadowColor='#1a0a2e';
-  ctx.fillStyle = boss.hitFlash>0 ? '#ffffff' : '#241238';
+  // schegge d'osso in orbita lenta attorno al corpo
+  const boneCount = 6;
+  for(let i=0;i<boneCount;i++){
+    const a = boss.t*0.5 + i/boneCount*TAU;
+    const br = boss.radius*1.18;
+    const bx = Math.cos(a)*br, by = Math.sin(a)*br*0.9;
+    ctx.save();
+    ctx.translate(bx,by); ctx.rotate(a+Math.PI/2);
+    ctx.fillStyle='#d9d2c4'; ctx.shadowColor='#000'; ctx.shadowBlur=4; ctx.globalAlpha=0.85;
+    ctx.beginPath(); ctx.ellipse(0,0,3.2,9,0,0,TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0,-8,3.6,3.2,0,0,TAU); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0,8,3.6,3.2,0,0,TAU); ctx.fill();
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+
+  // tunica lacera e asimmetrica, molto più grande e sfrangiata
+  const bodyR = boss.radius*0.78;
+  ctx.shadowBlur=22; ctx.shadowColor='#1a0a2e';
+  ctx.fillStyle = flash ? '#ffffff' : (boss.enraged ? '#3a1030' : '#241238');
   ctx.beginPath();
-  ctx.moveTo(-bodyR*0.9,-bodyR*0.6);
-  ctx.quadraticCurveTo(0,-bodyR*1.25,bodyR*0.9,-bodyR*0.6);
-  ctx.lineTo(bodyR*1.05,bodyR*1.05);
-  const hem=7;
-  for(let i=0;i<=hem;i++){
-    const px = bodyR*1.05 - i*(bodyR*2.1/hem);
-    const py = bodyR*0.85 + (i%2===0? bodyR*0.35 : 0);
+  ctx.moveTo(-bodyR*1.02,-bodyR*0.55);
+  ctx.quadraticCurveTo(0,-bodyR*1.35,bodyR*1.0,-bodyR*0.55);
+  ctx.lineTo(bodyR*1.18,bodyR*0.5);
+  // orlo stracciato e irregolare, con code spettrali sventolanti
+  const tatters=9;
+  for(let i=0;i<=tatters;i++){
+    const tt = i/tatters;
+    const px = bodyR*1.18 - tt*bodyR*2.36;
+    const sway = Math.sin(boss.t*2.2 + i*1.3)*bodyR*0.14;
+    const py = bodyR*0.85 + (i%2===0? bodyR*0.55+sway : bodyR*0.15+sway*0.5);
     ctx.lineTo(px,py);
   }
-  ctx.lineTo(-bodyR*1.05,-bodyR*0.6);
+  ctx.lineTo(-bodyR*1.18,bodyR*0.5);
   ctx.closePath(); ctx.fill();
-  ctx.strokeStyle='rgba(139,92,246,.55)'; ctx.lineWidth=2; ctx.stroke();
+  ctx.strokeStyle=boss.enraged?'rgba(255,80,80,.6)':'rgba(139,92,246,.55)'; ctx.lineWidth=2.2; ctx.stroke();
 
-  // hood shadow + skull
-  ctx.fillStyle='#0c0614';
-  ctx.beginPath(); ctx.ellipse(0,-bodyR*0.2,bodyR*0.55,bodyR*0.5,0,0,TAU); ctx.fill();
-  ctx.fillStyle='#e9e2d8';
-  ctx.beginPath(); ctx.ellipse(0,-bodyR*0.22,bodyR*0.36,bodyR*0.4,0,0,TAU); ctx.fill();
-  // glowing eye sockets (pulse)
-  const eyeGlow = 0.6+0.4*Math.sin(boss.t*6);
-  ctx.fillStyle=`rgba(255,45,45,${eyeGlow})`; ctx.shadowColor='#ff2d2d'; ctx.shadowBlur=12;
-  ctx.beginPath(); ctx.ellipse(-bodyR*0.14,-bodyR*0.24,bodyR*0.09,bodyR*0.12,0,0,TAU); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(bodyR*0.14,-bodyR*0.24,bodyR*0.09,bodyR*0.12,0,0,TAU); ctx.fill();
-  // jaw line
-  ctx.shadowBlur=0; ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=1.5;
-  ctx.beginPath(); ctx.moveTo(-bodyR*0.18,-bodyR*0.02); ctx.lineTo(bodyR*0.18,-bodyR*0.02); ctx.stroke();
-  // floating crown
-  ctx.fillStyle='#ffd75e'; ctx.shadowColor='#ffd75e'; ctx.shadowBlur=8;
-  const crownY = -bodyR*0.62 + Math.sin(boss.t*2)*2;
+  // nucleo/filatterio pulsante visibile tra gli squarci della tunica
+  const coreGlow = 0.55+0.45*Math.sin(boss.t*5);
+  ctx.shadowColor = boss.enraged?'#ff3b4e':'#39ff88'; ctx.shadowBlur=16;
+  ctx.fillStyle = boss.enraged ? `rgba(255,59,78,${coreGlow})` : `rgba(57,255,136,${coreGlow})`;
+  ctx.beginPath(); ctx.arc(0,bodyR*0.12,bodyR*0.13*pulse,0,TAU); ctx.fill();
+  ctx.shadowBlur=0;
+
+  // artigli scheletrici: due braccia protese, dita ricurve affilate
+  ctx.strokeStyle = flash?'#fff':'#cfc6b8'; ctx.lineWidth=4; ctx.lineCap='round';
+  for(const side of [-1,1]){
+    const shoulderX = side*bodyR*0.85, shoulderY = -bodyR*0.15;
+    const elbowX = side*bodyR*1.35, elbowY = bodyR*0.25;
+    const handX = side*bodyR*1.65, handY = -bodyR*0.05 + Math.sin(boss.t*3+side)*bodyR*0.08;
+    ctx.beginPath(); ctx.moveTo(shoulderX,shoulderY); ctx.quadraticCurveTo(elbowX,elbowY,handX,handY); ctx.stroke();
+    ctx.lineWidth=2.6;
+    for(const fa of [-0.5,-0.15,0.2,0.55]){
+      const fx = handX + Math.cos(fa+ (side>0?0:Math.PI))*bodyR*0.32*side;
+      const fy = handY + Math.sin(fa)*bodyR*0.32 - bodyR*0.05;
+      ctx.beginPath(); ctx.moveTo(handX,handY); ctx.quadraticCurveTo(handX+side*bodyR*0.14,fy-bodyR*0.06,fx,fy); ctx.stroke();
+    }
+    ctx.lineWidth=4;
+  }
+
+  // cappuccio ombroso + teschio allungato e crepato
+  ctx.fillStyle='#0a0512';
+  ctx.beginPath(); ctx.ellipse(0,-bodyR*0.24,bodyR*0.62,bodyR*0.58,0,0,TAU); ctx.fill();
+  ctx.fillStyle= boss.enraged ? '#f0d8d8' : '#e9e2d8';
+  ctx.beginPath(); ctx.ellipse(0,-bodyR*0.22,bodyR*0.42,bodyR*0.48,0,0,TAU); ctx.fill();
+  // crepe sul teschio
+  ctx.strokeStyle='rgba(0,0,0,.4)'; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(-bodyR*0.06,-bodyR*0.62); ctx.lineTo(bodyR*0.02,-bodyR*0.4); ctx.lineTo(-bodyR*0.05,-bodyR*0.2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(bodyR*0.28,-bodyR*0.42); ctx.lineTo(bodyR*0.2,-bodyR*0.22); ctx.stroke();
+  // occhi incandescenti, più grandi e feroci
+  const eyeGlow = (boss.enraged?0.75:0.6)+0.4*Math.sin(boss.t*(boss.enraged?9:6));
+  ctx.fillStyle=`rgba(255,${boss.enraged?30:45},${boss.enraged?20:45},${eyeGlow})`; ctx.shadowColor=boss.enraged?'#ff3b1a':'#ff2d2d'; ctx.shadowBlur=16;
+  ctx.beginPath(); ctx.ellipse(-bodyR*0.16,-bodyR*0.26,bodyR*0.12,bodyR*0.16,-0.15,0,TAU); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(bodyR*0.16,-bodyR*0.26,bodyR*0.12,bodyR*0.16,0.15,0,TAU); ctx.fill();
+  ctx.shadowBlur=0;
+  // mascella spalancata con denti aguzzi
+  ctx.fillStyle='#0a0512';
+  ctx.beginPath(); ctx.ellipse(0,bodyR*0.02,bodyR*0.24,bodyR*0.14,0,0,TAU); ctx.fill();
+  ctx.fillStyle='#f4efe4';
+  const teeth=6;
+  for(let i=0;i<teeth;i++){
+    const tx = -bodyR*0.2 + i*(bodyR*0.4/(teeth-1));
+    ctx.beginPath(); ctx.moveTo(tx,bodyR*-0.06); ctx.lineTo(tx+bodyR*0.03,bodyR*0.04); ctx.lineTo(tx-bodyR*0.03,bodyR*0.04); ctx.closePath(); ctx.fill();
+  }
+  // corona d'ossa e corna asimmetriche (non più un'elegante corona d'oro)
+  ctx.fillStyle= boss.enraged ? '#ffb0a0' : '#cfc6b8';
+  ctx.shadowColor = boss.enraged ? '#ff3b4e' : '#8b5cf6'; ctx.shadowBlur=10;
+  const crownY = -bodyR*0.68 + Math.sin(boss.t*2)*2;
   ctx.beginPath();
-  ctx.moveTo(-bodyR*0.32,crownY); ctx.lineTo(-bodyR*0.18,crownY-bodyR*0.22); ctx.lineTo(-bodyR*0.05,crownY);
-  ctx.lineTo(0,crownY-bodyR*0.3); ctx.lineTo(bodyR*0.05,crownY); ctx.lineTo(bodyR*0.18,crownY-bodyR*0.22);
-  ctx.lineTo(bodyR*0.32,crownY); ctx.closePath(); ctx.fill();
+  ctx.moveTo(-bodyR*0.4,crownY); ctx.lineTo(-bodyR*0.42,crownY-bodyR*0.5); ctx.lineTo(-bodyR*0.18,crownY-bodyR*0.1);
+  ctx.lineTo(-bodyR*0.06,crownY-bodyR*0.62); ctx.lineTo(bodyR*0.08,crownY-bodyR*0.15);
+  ctx.lineTo(bodyR*0.3,crownY-bodyR*0.7); ctx.lineTo(bodyR*0.24,crownY-bodyR*0.05);
+  ctx.lineTo(bodyR*0.42,crownY); ctx.closePath(); ctx.fill();
   ctx.shadowBlur=0;
 
   ctx.restore();
 
   if(boss.phase==='charge'){
     ctx.save();
-    ctx.strokeStyle='rgba(255,80,80,.7)'; ctx.lineWidth=3;
+    ctx.strokeStyle='rgba(255,80,80,.8)'; ctx.lineWidth= boss.enraged?4.5:3;
     ctx.beginPath(); ctx.moveTo(boss.x,boss.y); ctx.lineTo(player.x,player.y); ctx.stroke();
     ctx.restore();
   }
 
   document.getElementById('boss-hud').classList.remove('hidden');
   document.getElementById('boss-bar').style.width = clamp(boss.hp/boss.maxHp,0,1)*100+'%';
-  document.getElementById('boss-name').textContent = 'IL LICH · ONDATA '+waveNumber;
+  document.getElementById('boss-name').textContent = (boss.enraged ? 'IL LICH INFURIATO' : 'IL LICH') + ' · ONDATA '+waveNumber;
 }
 
 /* ============================= SPAWNER / WAVES ============================= */
@@ -1729,7 +1894,7 @@ function drawParticles(){
   ctx.globalAlpha=1;
   for(const f of floaters){
     ctx.globalAlpha = clamp(f.life/f.maxLife,0,1);
-    ctx.fillStyle = f.color; ctx.font='bold 14px Consolas'; ctx.textAlign='center';
+    ctx.fillStyle = f.color; ctx.font='bold 15px Cinzel, serif'; ctx.textAlign='center';
     ctx.fillText(f.text, f.x, f.y);
   }
   ctx.globalAlpha=1; ctx.textAlign='left';
@@ -1953,11 +2118,11 @@ function drawPlayer(){
     ctx.beginPath(); ctx.moveTo(player._laserStart.x,player._laserStart.y); ctx.lineTo(player._laserEnd.x,player._laserEnd.y); ctx.stroke();
     ctx.restore();
   }
-  // catena di fulmini — archi crepitanti dalla punta del bastone a più bersagli
-  if(player.weapon==='chain' && firing() && player._chainBolts && player._chainBolts.length){
-    const origin = getStaffTip();
-    for(const b of player._chainBolts){
-      drawLightningBolt(origin.x, origin.y, b.x, b.y, '#8dfcff');
+  // catena di fulmini — salta da un bersaglio all'altro: bastone -> nemico 1 -> nemico 2 -> ...
+  if(player.weapon==='chain' && firing() && player._chainBolts && player._chainBolts.length>1){
+    const pts = player._chainBolts;
+    for(let i=0;i<pts.length-1;i++){
+      drawLightningBolt(pts[i].x, pts[i].y, pts[i+1].x, pts[i+1].y, '#8dfcff');
     }
   }
   // cono di fiamme — area triangolare fiammeggiante davanti al bastone
