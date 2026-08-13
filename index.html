@@ -185,21 +185,63 @@ canvas#game{
 }
 #wave-banner small{display:block; font-size:14px; letter-spacing:3px; color:var(--amber); margin-top:8px;}
 .book{
-  display:flex; flex-direction:column; align-items:center; gap:14px; max-width:640px; width:92vw;
-  background:
-    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.10), transparent 45%),
-    linear-gradient(180deg, var(--parchment), var(--parchment-dark));
+  display:flex; flex-direction:column; align-items:center; gap:12px; max-width:920px; width:94vw;
+  background:linear-gradient(180deg, var(--leather), var(--leather-dark));
   border:10px solid var(--leather);
   outline:1px solid var(--gold);
   outline-offset:-6px;
-  padding:26px 28px;
+  padding:18px 20px;
   border-radius:6px 18px 6px 18px;
   box-shadow:0 0 0 2px var(--leather-dark), 0 20px 60px rgba(0,0,0,.65), inset 0 0 50px rgba(90,60,20,.35);
   color:var(--leather-dark);
+  max-height:90vh;
 }
 .book .title{ color:var(--leather-dark); text-shadow:0 1px 0 rgba(255,255,255,.35), 0 0 18px rgba(212,175,55,.5); }
 .book .subtitle{ color:rgba(59,36,22,.85); }
-#grimoire-list{width:100%; display:flex; flex-direction:column; gap:10px; max-height:52vh; overflow-y:auto; pointer-events:all;}
+.book-pages{
+  display:flex; width:100%; position:relative; align-items:stretch;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.10), transparent 45%),
+    linear-gradient(180deg, var(--parchment), var(--parchment-dark));
+  border-radius:4px 14px 4px 14px;
+  box-shadow:inset 0 0 40px rgba(90,60,20,.3);
+  overflow:hidden;
+}
+.book-page{
+  flex:1 1 50%; min-width:0; padding:20px 22px 16px; display:flex; flex-direction:column; gap:10px; align-items:center;
+  max-height:78vh; overflow-y:auto;
+}
+.book-page-left{ align-items:stretch; }
+.book-spine{
+  width:14px; flex:0 0 auto;
+  background:linear-gradient(90deg, rgba(0,0,0,.28), rgba(0,0,0,.05) 30%, rgba(0,0,0,.05) 70%, rgba(0,0,0,.28));
+  box-shadow:inset 0 0 12px rgba(0,0,0,.45);
+}
+.page-heading{
+  font-family:"Cinzel Decorative","Cinzel",serif; font-size:15px; letter-spacing:3px; text-transform:uppercase;
+  color:var(--leather-dark); text-shadow:0 1px 0 rgba(255,255,255,.35);
+  border-bottom:1px solid rgba(90,60,20,.35); padding-bottom:6px; width:100%; text-align:center;
+}
+#mage-portrait{
+  background:radial-gradient(ellipse at 50% 30%, rgba(255,255,255,.18), transparent 60%);
+  border:1px solid rgba(90,60,20,.35); border-radius:8px;
+  box-shadow:inset 0 0 20px rgba(90,60,20,.2);
+}
+.mage-stats{ width:100%; display:flex; flex-direction:column; gap:9px; }
+.mage-stat-row{ display:flex; flex-direction:column; gap:3px; }
+.mage-stat-label{ display:flex; justify-content:space-between; font-size:10px; letter-spacing:1.5px; color:rgba(59,36,22,.85); }
+.mage-stat-label b{ color:var(--leather-dark); font-weight:700; }
+.bar-track.hp-bar{height:8px; background:rgba(90,60,20,.18);}
+.bar-track.hp-bar .bar-fill{background:linear-gradient(90deg, var(--red), #ff8a8a);}
+.bar-track.shield-bar{height:8px; background:rgba(90,60,20,.18);}
+.bar-track.shield-bar .bar-fill{background:linear-gradient(90deg, var(--cyan), #a8f4ff);}
+.mage-stat-note{ font-size:9.5px; letter-spacing:1px; color:rgba(59,36,22,.7); text-align:center; margin-top:2px; line-height:1.5; }
+@media (max-width:720px){
+  .book-pages{ flex-direction:column; }
+  .book-spine{ width:auto; height:10px; background:linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.05) 30%, rgba(0,0,0,.05) 70%, rgba(0,0,0,.28)); }
+  .book-page{ max-height:none; }
+}
+#grimoire-list{width:100%; display:flex; flex-direction:column; gap:10px; pointer-events:all;}
 .grimoire-entry{
   display:flex; align-items:center; gap:14px; padding:10px 14px;
   border:1px solid rgba(90,60,20,.35); background:rgba(255,248,225,.35);
@@ -212,6 +254,7 @@ canvas#game{
   width:26px; height:26px; flex:0 0 auto; position:relative;
   clip-path:polygon(50% 0%,90% 20%,100% 60%,75% 100%,25% 100%,0% 60%,10% 20%);
   box-shadow:inset -3px -4px 6px rgba(0,0,0,.45), inset 2px 3px 5px rgba(255,255,255,.55), 0 0 8px rgba(0,0,0,.35);
+  display:flex; align-items:center; justify-content:center;
 }
 .g-swatch::after{
   content:''; position:absolute; top:14%; left:20%; width:32%; height:22%;
@@ -289,7 +332,7 @@ canvas#game{
     <div><b>P</b> — Pausa</div>
     <div><b>Touch</b> — Trascina per muoverti</div>
   </div>
-  <p class="subtitle" style="max-width:560px;font-size:12px;margin-top:2px;">Combattendo, il mago impara: accresce il suo potere, rafforza la sua Aura Arcana e raccoglie rune. Con 10 rune di uno stesso incantesimo, apri il Grimoire e compi il rituale per apprenderlo per sempre.</p>
+  <p class="subtitle" style="max-width:560px;font-size:12px;margin-top:2px;">Combattendo, il mago impara: accresce il suo potere, rafforza la sua Aura Arcana e raccoglie rune. Ogni incantesimo richiede un numero diverso di rune: raggiunta la soglia, apri il Grimoire e compi il rituale per sbloccarlo — poi continua a raccogliere le stesse rune e ripeti il rituale per potenziarlo ancora, senza limiti.</p>
   <button id="start-btn" class="neon-btn">Inizia</button>
 </div>
 
@@ -300,9 +343,19 @@ canvas#game{
 
 <div id="grimoire-screen" class="overlay hidden">
   <div class="book">
-    <h2 class="title" data-text="GRIMOIRE" style="font-size:clamp(24px,5vw,42px);">GRIMOIRE</h2>
-    <p class="subtitle" style="max-width:520px;">Raccogli 10 rune di un incantesimo dai nemici sconfitti, poi compi il rituale per apprenderlo per sempre.</p>
-    <div id="grimoire-list"></div>
+    <div class="book-pages">
+      <div class="book-page book-page-left">
+        <h3 class="page-heading">Rituali Arcani</h3>
+        <p class="subtitle" style="max-width:none;font-size:11px;">Ogni incantesimo ha una sua soglia di rune: raggiungila e compi il rituale per sbloccarlo. Una volta appreso, continua a raccogliere le stesse rune fino a riempire di nuovo la barra e ripeti il rituale per potenziarlo: più danno, ogni volta, senza limite.</p>
+        <div id="grimoire-list"></div>
+      </div>
+      <div class="book-spine"></div>
+      <div class="book-page book-page-right">
+        <h3 class="page-heading">L'Arcimago</h3>
+        <canvas id="mage-portrait" width="220" height="240"></canvas>
+        <div id="mage-stats" class="mage-stats"></div>
+      </div>
+    </div>
     <button id="grimoire-close-btn" class="neon-btn">Chiudi (Esc)</button>
   </div>
 </div>
@@ -430,6 +483,15 @@ window.addEventListener('keyup', e=>{ keys[e.code] = false; });
 canvas.addEventListener('mousemove', e=>{ mouse.x = e.clientX; mouse.y = e.clientY; lastMouseMoveT = elapsed; });
 canvas.addEventListener('mousedown', e=>{ mouse.down = true; ensureAudio(); });
 window.addEventListener('mouseup', e=>{ mouse.down = false; });
+canvas.addEventListener('wheel', e=>{
+  if(state!=='playing') return;
+  e.preventDefault();
+  cycleSpell(e.deltaY > 0 ? 1 : -1);
+}, {passive:false});
+// Puntatore reale in coordinate di viewport, sempre aggiornato — usato dal ritratto
+// del mago nel Grimoire, che resta visibile anche quando il canvas di gioco è coperto.
+const windowMouse = {x:innerWidth/2, y:innerHeight/2};
+window.addEventListener('mousemove', e=>{ windowMouse.x = e.clientX; windowMouse.y = e.clientY; });
 let touchActive = false;
 canvas.addEventListener('touchstart', e=>{
   ensureAudio(); touchActive = true; mouse.down = true;
@@ -641,6 +703,29 @@ const RUNES_REQUIRED = {spread:5, rapid:10, homing:15, laser:20, chain:25};
 // aumenta permanentemente (di una piccola percentuale) il danno di quello specifico incantesimo
 const RUNE_BONUS_PER_RUNE = 0.01; // +1% danno per runa "extra"
 
+// --- Potenziamenti speciali per-incantesimo dati dalle rune raccolte DOPO lo sblocco ---
+const FLAME_RANGE_PER_RUNE = 5;      // il cono di fiamme si allunga un po' ad ogni runa
+const RAPID_SPEED_PER_RUNE = 6;      // la runa di rapidità accresce anche la velocità del mago...
+const RAPID_SPEED_CAP = 170;         // ...ma non oltre questo limite, per restare controllabile
+const HOMING_RUNES_PER_EXTRA_SPHERE = 5;  // ogni 5 rune, una sfera arcana in più per lancio
+const LASER_WIDTH_PER_RUNE = 0.35;   // il fascio runico si allarga gradualmente
+const CHAIN_RUNES_PER_EXTRA_TARGET = 6;   // ogni 6 rune, un nemico in più colpito dalla catena
+const CHAIN_BASE_TARGETS = 1;        // la catena di fulmini parte colpendo un solo nemico alla volta
+
+function getFlameConeRange(){ return FLAME_CONE_RANGE + (player.spellRuneBonus.spread||0)*FLAME_RANGE_PER_RUNE; }
+function getRapidSpeedBonus(){ return Math.min(RAPID_SPEED_CAP, (player.spellRuneBonus.rapid||0)*RAPID_SPEED_PER_RUNE); }
+function getHomingExtraShots(){ return Math.floor((player.spellRuneBonus.homing||0)/HOMING_RUNES_PER_EXTRA_SPHERE); }
+function getLaserHalfWidth(){ return 6 + (player.spellRuneBonus.laser||0)*LASER_WIDTH_PER_RUNE; }
+function getChainMaxTargets(){ return CHAIN_BASE_TARGETS + Math.floor((player.spellRuneBonus.chain||0)/CHAIN_RUNES_PER_EXTRA_TARGET); }
+
+// --- Aura magnetica: attrae le rune verso il mago, si rafforza ogni 20 livelli (parte da zero) ---
+const MAGNET_LEVEL_STEP = 20;
+const MAGNET_RADIUS_PER_TIER = 110;
+const MAGNET_PULL_PER_TIER = 260;
+function getMagnetTier(){ return Math.floor(player.level / MAGNET_LEVEL_STEP); }
+function getMagnetRadius(){ const t=getMagnetTier(); return t>0 ? t*MAGNET_RADIUS_PER_TIER : 0; }
+function getMagnetPull(){ const t=getMagnetTier(); return t>0 ? t*MAGNET_PULL_PER_TIER : 0; }
+
 let bullets = [];     // player + enemy bullets
 let enemies = [];
 let particles = [];
@@ -656,6 +741,22 @@ const WEAPONS = {
   chain:   {label:'CATENA DI FULMINI', rate:0, dmg:8, speed:0, color:'#8dfcff'}
 };
 const WEAPON_DURATION = {spread:11, rapid:9, homing:11, laser:7, chain:9};
+// Icone distintive per ciascun incantesimo (usate nella barra incantesimi e nel Grimoire)
+function spellIconSVG(name){
+  switch(name){
+    case 'spread': // cono di fiamme -> fiamma
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="#ff7a2e" d="M12.5 1.8c1.1 3.1-1.9 4.4-2.3 7.2-.3 2 .8 3.3 2.1 3.3 1.6 0 2.4-1.5 2.1-3-.1-.6-.5-1.1-.4-1.6 1.8 1.1 3.2 3.6 3.2 6a5.7 5.7 0 1 1-11.4 0c0-4.9 4.4-7.2 6.7-11.9z"/><path fill="#ffd24d" d="M12.1 10.3c.4 1.1-.7 1.7-.7 2.8a1.6 1.6 0 0 0 3.2 0c0-1.6-1.3-2.1-2.5-2.8z"/></svg>';
+    case 'rapid': // runa di rapidità -> fulmine giallo
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><polygon fill="#ffe14d" points="13,2 4,14 11,14 9,22 20,9 12,9"/></svg>';
+    case 'homing': // sfera arcana cercante -> sfera viola con occhio
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="9.2" fill="#8b5cf6"/><ellipse cx="12" cy="12" rx="5.4" ry="3.2" fill="#f5f0ff"/><circle cx="12" cy="12" r="2" fill="#231041"/></svg>';
+    case 'laser': // fascio runico -> riga diagonale coi colori del fascio
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><line x1="4" y1="20" x2="20" y2="4" stroke="#ffb703" stroke-width="3.4" stroke-linecap="round"/><line x1="4" y1="20" x2="20" y2="4" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>';
+    case 'chain': // catena di fulmini -> fulmine azzurro
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><polygon fill="#4deeea" points="13,2 4,14 11,14 9,22 20,9 12,9"/></svg>';
+    default: return '';
+  }
+}
 
 /* ============================= RESET / START ============================= */
 function resetGame(){
@@ -742,23 +843,25 @@ function applyPickup(type){
       break;
     default: { // runa di incantesimo: spread, rapid, homing, laser, chain
       const already = player.unlockedSpells.includes(type);
+      const req = RUNES_REQUIRED[type];
+      // sia prima che dopo lo sblocco, le rune riempiono la stessa barra:
+      // prima serve per il rituale di sblocco, dopo per il rituale di potenziamento
+      player.runes[type] = Math.min(req, (player.runes[type]||0) + 1);
+      const n = player.runes[type];
       if(already){
-        // runa "extra" oltre lo sblocco: piccolo bonus danno permanente per quell'incantesimo
-        player.spellRuneBonus[type] = (player.spellRuneBonus[type]||0) + 1;
-        player.weapon = type; player.weaponTimer = 0; player._chainBolts = [];
-        const totalPct = Math.round(player.spellRuneBonus[type]*RUNE_BONUS_PER_RUNE*1000)/10;
-        floatText(player.x,player.y-30, WEAPONS[type].label+' +DANNO ('+totalPct+'%)', WEAPONS[type].color);
+        if(n >= req){
+          floatText(player.x,player.y-30, WEAPONS[type].label+' PRONTO PER IL POTENZIAMENTO! (ESC)', WEAPONS[type].color);
+        } else {
+          floatText(player.x,player.y-30, WEAPONS[type].label+' ('+n+'/'+req+')', WEAPONS[type].color);
+        }
       } else {
-        player.runes[type] = (player.runes[type]||0) + 1;
-        const n = player.runes[type];
-        const req = RUNES_REQUIRED[type];
         if(n >= req){
           floatText(player.x,player.y-30, 'RUNA '+WEAPONS[type].label+' PRONTA PER IL RITUALE! (ESC)', WEAPONS[type].color);
         } else {
           floatText(player.x,player.y-30, 'RUNA '+WEAPONS[type].label+' ('+n+'/'+req+')', WEAPONS[type].color);
         }
-        updateSpellHUD();
       }
+      updateSpellHUD();
       break;
     }
   }
@@ -801,12 +904,14 @@ function gainXP(amount){
 function levelUp(){
   player.level++;
   player.xpToNext = Math.round(110 * Math.pow(player.level, 1.32));
-  player.maxHp = Math.round(player.maxHp + 7);
+  // incrementi bassi e decrescenti nel tempo: la partita è potenzialmente infinita,
+  // quindi la crescita del mago deve restare contenuta e non esplodere col passare dei livelli
+  player.maxHp = Math.round(player.maxHp + Math.max(3, 7 - player.level*0.04));
   player.hp = Math.min(player.maxHp, player.hp + player.maxHp*0.22);
-  player.maxShield = Math.round(player.maxShield + 9);
-  player.shield = Math.min(player.maxShield, player.shield + 16);
-  player.powerMult = +(player.powerMult + 0.07).toFixed(3);
-  player.shieldPower = +(player.shieldPower + 0.16).toFixed(3);
+  player.maxShield = Math.round(player.maxShield + Math.max(4, 9 - player.level*0.05));
+  player.shield = Math.min(player.maxShield, player.shield + 14);
+  player.powerMult = +(player.powerMult + Math.max(0.03, 0.07 - player.level*0.0003)).toFixed(3);
+  player.shieldPower = +(player.shieldPower + Math.max(0.06, 0.16 - player.level*0.0006)).toFixed(3);
 
   shakeMag = Math.min(30, shakeMag+8);
   spawnParticles(player.x, player.y, 34, '#c4b5fd', {speed:280, life:0.75, radius:4});
@@ -830,6 +935,14 @@ function selectSpell(idx){
   }
   updateHUDBars();
 }
+function cycleSpell(dir){
+  if(!player.alive) return;
+  const unlockedIdx = SPELL_KEYS.map((name,i)=>i).filter(i=>player.unlockedSpells.includes(SPELL_KEYS[i]));
+  if(unlockedIdx.length<=1) return;
+  const curPos = unlockedIdx.indexOf(SPELL_KEYS.indexOf(player.weapon));
+  const nextPos = (curPos + dir + unlockedIdx.length) % unlockedIdx.length;
+  selectSpell(unlockedIdx[nextPos]);
+}
 function updateSpellHUD(){
   const book = document.getElementById('spellbook');
   if(!book) return;
@@ -838,11 +951,13 @@ function updateSpellHUD(){
     const unlocked = player.unlockedSpells.includes(name);
     const active = player.weapon===name;
     const req = RUNES_REQUIRED[name];
-    const ready = !unlocked && name!=='blaster' && (player.runes[name]||0) >= req;
+    const ready = name!=='blaster' && (player.runes[name]||0) >= req;
     const slot = document.createElement('div');
     slot.className = 'spell-slot'+(unlocked?' unlocked':' locked')+(active?' active':'')+(ready?' ready':'');
-    slot.innerHTML = (i+1) + (!unlocked && name!=='blaster' ? `<span class="rune-count">${player.runes[name]||0}/${req}</span>` : '');
-    slot.title = unlocked ? WEAPONS[name].label : (ready ? 'Pronto per il rituale! Apri il Grimoire (Esc)' : WEAPONS[name].label+' — raccogli rune per sbloccarlo');
+    slot.innerHTML = (spellIconSVG(name) || (i+1)) + (name!=='blaster' ? `<span class="rune-count">${player.runes[name]||0}/${req}</span>` : '');
+    slot.title = unlocked
+      ? (ready ? WEAPONS[name].label+' — pronto per il potenziamento! Apri il Grimoire (Esc)' : WEAPONS[name].label)
+      : (ready ? 'Pronto per il rituale! Apri il Grimoire (Esc)' : WEAPONS[name].label+' — raccogli rune per sbloccarlo');
     slot.addEventListener('click', ()=>{
       if(unlocked) selectSpell(i); else toggleGrimoire();
     });
@@ -856,11 +971,164 @@ function toggleGrimoire(){
   if(state==='playing'){
     state='grimoire';
     renderGrimoire();
+    renderMageStats();
     el.classList.remove('hidden');
   } else if(state==='grimoire'){
     state='playing';
     el.classList.add('hidden');
   }
+}
+function renderMageStats(){
+  const el = document.getElementById('mage-stats');
+  if(!el) return;
+  const hpPct = clamp(player.hp/player.maxHp,0,1)*100;
+  const shPct = player.maxShield>0 ? clamp(player.shield/player.maxShield,0,1)*100 : 0;
+  el.innerHTML = `
+    <div class="mage-stat-row">
+      <div class="mage-stat-label"><span>LIVELLO</span><b>${player.level}</b></div>
+    </div>
+    <div class="mage-stat-row">
+      <div class="mage-stat-label"><span>VITA</span><b>${Math.round(player.hp)} / ${player.maxHp}</b></div>
+      <div class="bar-track hp-bar"><div class="bar-fill" style="width:${hpPct}%"></div></div>
+    </div>
+    <div class="mage-stat-row">
+      <div class="mage-stat-label"><span>AURA ARCANA (SCUDO)</span><b>${Math.round(player.shield)} / ${player.maxShield}</b></div>
+      <div class="bar-track shield-bar"><div class="bar-fill" style="width:${shPct}%"></div></div>
+    </div>
+    <div class="mage-stat-note">Vita e Aura Arcana crescono leggermente ad ogni livello — incrementi bassi, per restare in equilibrio con la forza crescente dei mostri.</div>
+  `;
+}
+// Ritratto del mago nel Grimoire: stesso corpo del gioco, ruotato verso il puntatore reale.
+let portraitT = 0;
+// Corpo del mago in vista FRONTALE, a figura intera (usato solo nel ritratto del Grimoire —
+// la vista di gioco resta dall'alto). g già traslato al centro ai piedi/busto del mago;
+// R è il raggio di riferimento, t l'orologio per le animazioni, eyeAngle la direzione
+// (relativa alla testa) verso cui far seguire lo sguardo al puntatore.
+function drawMageBodyFront(g, R, t, eyeAngle){
+  const sway = Math.sin(t*1.4)*0.02; // leggerissimo respiro, resta comunque frontale
+  g.save();
+  g.rotate(sway);
+
+  // piedi
+  g.fillStyle = '#2a1440';
+  g.beginPath(); g.ellipse(-R*0.32, R*1.62, R*0.22, R*0.1, 0,0,TAU); g.fill();
+  g.beginPath(); g.ellipse(R*0.32, R*1.62, R*0.22, R*0.1, 0,0,TAU); g.fill();
+
+  // veste: ampio trapezio arrotondato dalle spalle fino ai piedi
+  g.fillStyle = '#7c3aed';
+  g.beginPath();
+  g.moveTo(-R*0.5, -R*0.55);
+  g.quadraticCurveTo(-R*1.05, R*0.4, -R*0.95, R*1.5);
+  g.quadraticCurveTo(0, R*1.68, R*0.95, R*1.5);
+  g.quadraticCurveTo(R*1.05, R*0.4, R*0.5, -R*0.55);
+  g.quadraticCurveTo(0, -R*0.75, -R*0.5, -R*0.55);
+  g.closePath(); g.fill();
+  g.strokeStyle='rgba(40,10,70,.7)'; g.lineWidth=R*0.03; g.stroke();
+
+  // fascia dorata diagonale sulla veste
+  g.save();
+  g.beginPath();
+  g.moveTo(-R*0.5, -R*0.55);
+  g.quadraticCurveTo(-R*1.05, R*0.4, -R*0.95, R*1.5);
+  g.quadraticCurveTo(0, R*1.68, R*0.95, R*1.5);
+  g.quadraticCurveTo(R*1.05, R*0.4, R*0.5, -R*0.55);
+  g.quadraticCurveTo(0, -R*0.75, -R*0.5, -R*0.55);
+  g.closePath(); g.clip();
+  g.fillStyle='#ffb703'; g.globalAlpha=.85;
+  g.beginPath();
+  g.moveTo(-R*0.9,-R*0.2); g.lineTo(-R*0.5,-R*0.55); g.lineTo(R*0.9,R*1.1); g.lineTo(R*0.5,R*1.35);
+  g.closePath(); g.fill();
+  g.globalAlpha=1;
+  g.restore();
+
+  // braccio che regge il bastone
+  g.fillStyle='#6b2fc9';
+  g.beginPath();
+  g.moveTo(R*0.42,-R*0.3); g.quadraticCurveTo(R*0.85,-R*0.15,R*0.78,R*0.35); g.quadraticCurveTo(R*0.55,R*0.4,R*0.45,R*0.05);
+  g.closePath(); g.fill();
+  g.fillStyle='#e8c9a0';
+  g.beginPath(); g.arc(R*0.78,R*0.36,R*0.12,0,TAU); g.fill();
+
+  // bastone, impugnato dalla mano, con punta runica pulsante
+  g.save();
+  g.translate(R*0.78,R*0.36);
+  g.rotate(-0.18);
+  g.strokeStyle='#8b5a2b'; g.lineWidth=R*0.07; g.lineCap='round';
+  g.beginPath(); g.moveTo(0,0); g.lineTo(0,-R*1.9); g.stroke();
+  const pulse = 1+Math.sin(t*8)*0.25;
+  g.save();
+  g.translate(0,-R*1.9); g.rotate(t*3);
+  g.shadowColor='#4deeea'; g.shadowBlur=14*pulse;
+  g.fillStyle='#4deeea';
+  g.beginPath();
+  for(let i=0;i<4;i++){ const a=i/4*TAU; const rr=(i%2===0?R*0.22:R*0.09)*pulse; const px=Math.cos(a)*rr, py=Math.sin(a)*rr; if(i===0) g.moveTo(px,py); else g.lineTo(px,py); }
+  g.closePath(); g.fill();
+  g.restore();
+  g.restore();
+
+  // testa
+  g.fillStyle='#e8c9a0';
+  g.beginPath(); g.arc(0,-R*0.85,R*0.34,0,TAU); g.fill();
+
+  // occhi: seguono leggermente la direzione del puntatore, restando frontali
+  const ex = clamp(Math.cos(eyeAngle), -1, 1)*R*0.045;
+  const ey = clamp(Math.sin(eyeAngle), -1, 1)*R*0.035;
+  g.fillStyle='#231041';
+  g.beginPath(); g.arc(-R*0.12+ex, -R*0.85+ey, R*0.045,0,TAU); g.fill();
+  g.beginPath(); g.arc(R*0.12+ex, -R*0.85+ey, R*0.045,0,TAU); g.fill();
+
+  // cappello a punta, con tesa e stellina
+  g.fillStyle='#5b21b6'; g.shadowColor='#5b21b6'; g.shadowBlur=8;
+  g.beginPath(); g.ellipse(0,-R*1.1,R*0.5,R*0.14,0,0,TAU); g.fill();
+  g.beginPath();
+  g.moveTo(-R*0.32,-R*1.14);
+  g.quadraticCurveTo(-R*0.1,-R*2.1, R*0.35,-R*2.25);
+  g.quadraticCurveTo(R*0.05,-R*1.6, R*0.32,-R*1.14);
+  g.closePath(); g.fill();
+  g.shadowBlur=0;
+  g.strokeStyle='rgba(255,183,3,.85)'; g.lineWidth=R*0.03;
+  g.beginPath(); g.ellipse(0,-R*1.1,R*0.5,R*0.14,0,0,TAU); g.stroke();
+  g.fillStyle='#ffe14d';
+  g.beginPath();
+  for(let i=0;i<4;i++){ const a=i/4*TAU+0.3; const rr=(i%2===0?R*0.09:R*0.035); const px=R*0.12+Math.cos(a)*rr, py=-R*1.7+Math.sin(a)*rr; if(i===0) g.moveTo(px,py); else g.lineTo(px,py); }
+  g.closePath(); g.fill();
+
+  g.restore();
+}
+function drawMagePortrait(t){
+  const cvs = document.getElementById('mage-portrait');
+  if(!cvs) return;
+  const g = cvs.getContext('2d');
+  const w = cvs.width, h = cvs.height;
+  g.clearRect(0,0,w,h);
+  const rect = cvs.getBoundingClientRect();
+  const R = 42;
+  // punto approssimativo della testa sullo schermo, per far seguire lo sguardo al puntatore
+  const headScreenX = rect.left + w/2;
+  const headScreenY = rect.top + h*0.62 - R*0.85;
+  const eyeAngle = Math.atan2(windowMouse.y-headScreenY, windowMouse.x-headScreenX);
+  g.save();
+  g.translate(w/2, h*0.62);
+  // ombra a terra
+  g.save(); g.translate(0, R*1.68);
+  const sg = g.createRadialGradient(0,0,0,0,0,R*1.1);
+  sg.addColorStop(0,'rgba(0,0,0,.35)'); sg.addColorStop(1,'rgba(0,0,0,0)');
+  g.fillStyle=sg; g.beginPath(); g.ellipse(0,0,R*1.1,R*0.35,0,0,TAU); g.fill();
+  g.restore();
+  // aura arcana statica, proporzionale allo scudo attuale — vista frontale, quindi ellittica
+  if(player.shield>0){
+    const shieldPct = clamp(player.shield/player.maxShield,0,1);
+    const shieldRx = R*1.35 + player.shieldPower*0.9;
+    const shieldRy = shieldRx*1.55;
+    g.save();
+    g.strokeStyle = `rgba(77,238,234,${0.25+0.4*shieldPct})`;
+    g.lineWidth = 2 + player.shieldPower*0.6;
+    g.shadowColor='#4deeea'; g.shadowBlur=10;
+    g.beginPath(); g.ellipse(0,-R*0.15,shieldRx,shieldRy,0,0,TAU); g.stroke();
+    g.restore();
+  }
+  drawMageBodyFront(g, R, t, eyeAngle);
+  g.restore();
 }
 function renderGrimoire(){
   const list = document.getElementById('grimoire-list');
@@ -871,19 +1139,22 @@ function renderGrimoire(){
     const count = player.runes[name]||0;
     const req = RUNES_REQUIRED[name];
     const unlocked = player.unlockedSpells.includes(name);
-    const ready = count>=req && !unlocked;
+    const ready = count>=req;
     const bonus = player.spellRuneBonus[name]||0;
     const bonusPct = Math.round(bonus*RUNE_BONUS_PER_RUNE*1000)/10;
     const row = document.createElement('div');
-    row.className = 'grimoire-entry'+(unlocked?' done':'')+(ready?' ready':'');
+    row.className = 'grimoire-entry'+(unlocked&&!ready?' done':'')+(ready?' ready':'');
+    const statusText = unlocked
+      ? count+' / '+req+' RUNE PER IL PROSSIMO POTENZIAMENTO'+(bonus>0?' — ATTUALE: +'+bonusPct+'% DANNO':'')
+      : count+' / '+req+' RUNE RACCOLTE PER LO SBLOCCO';
     row.innerHTML = `
-      <div class="g-swatch" style="background:${w.color};box-shadow:0 0 10px ${w.color}"></div>
+      <div class="g-swatch" style="background:rgba(20,10,5,.5);box-shadow:0 0 10px ${w.color}, inset 0 0 6px ${w.color}">${spellIconSVG(name)}</div>
       <div class="g-info">
         <div class="g-name">${w.label}</div>
         <div class="bar-track g-bar"><div class="bar-fill" style="width:${clamp(count/req,0,1)*100}%;background:${w.color}"></div></div>
-        <div class="g-count">${unlocked ? 'APPRESO PER SEMPRE'+(bonus>0?' — +'+bonusPct+'% DANNO':'') : count+' / '+req+' RUNE RACCOLTE'}</div>
+        <div class="g-count">${statusText}</div>
       </div>
-      <button class="neon-btn g-ritual-btn" data-spell="${name}" ${unlocked||!ready ? 'disabled':''}>${unlocked?'✓ NOTO':'RITUALE'}</button>
+      <button class="neon-btn g-ritual-btn" data-spell="${name}" ${ready ? '' : 'disabled'}>${unlocked?'POTENZIA':'RITUALE'}</button>
     `;
     list.appendChild(row);
   });
@@ -892,18 +1163,25 @@ function renderGrimoire(){
   });
 }
 function performRitual(name){
-  if(!name || player.unlockedSpells.includes(name)) return;
+  if(!name) return;
   const req = RUNES_REQUIRED[name];
   if((player.runes[name]||0) < req) return;
   player.runes[name] -= req;
-  player.unlockedSpells.push(name);
-  player.weapon = name;
-  player.weaponTimer = 0;
+  const wasUnlocked = player.unlockedSpells.includes(name);
+  if(!wasUnlocked){
+    player.unlockedSpells.push(name);
+    player.weapon = name;
+    player.weaponTimer = 0;
+    floatText(player.x, player.y-50, 'RITUALE COMPIUTO: '+WEAPONS[name].label, WEAPONS[name].color);
+  } else {
+    player.spellRuneBonus[name] = (player.spellRuneBonus[name]||0) + 1;
+    const totalPct = Math.round(player.spellRuneBonus[name]*RUNE_BONUS_PER_RUNE*1000)/10;
+    floatText(player.x, player.y-50, WEAPONS[name].label+' POTENZIATO (+'+totalPct+'% DANNO)', WEAPONS[name].color);
+  }
   spawnParticles(player.x, player.y, 44, WEAPONS[name].color, {speed:280, life:0.85, radius:4.2});
   spawnParticles(player.x, player.y, 18, '#ffffff', {speed:180, life:0.45, radius:2.2});
   shakeMag = Math.min(30, shakeMag+8);
   sfx.wave(); sfx.pickup();
-  floatText(player.x, player.y-50, 'RITUALE COMPIUTO: '+WEAPONS[name].label, WEAPONS[name].color);
   updateSpellHUD();
   updateHUDBars();
   renderGrimoire();
@@ -919,7 +1197,11 @@ function spawnEdgePosition(){
 }
 function makeEnemy(type){
   const p = spawnEdgePosition();
-  const scale = 1 + (waveNumber-1)*0.09;
+  // crescita dei mostri: uguale a prima nelle prime ~30 ondate, poi rallenta —
+  // altrimenti in una partita potenzialmente infinita diventerebbe ingiocabile
+  const w = waveNumber-1;
+  const cappedW = Math.min(w,30) + Math.max(0,w-30)*0.35;
+  const scale = 1 + cappedW*0.09;
   const base = {
     x:p.x, y:p.y, vx:0, vy:0, type, angle:0, t:rand(0,10),
     fireCooldown:rand(0.5,1.5), hitFlash:0, burnT:0, burnTick:0, burnDmg:0
@@ -1193,10 +1475,11 @@ function updatePlayer(dt){
     player.y += player.dashDir.y * 900 * dt;
     spawnParticles(player.x,player.y,2,'#c084fc',{speed:60,life:0.35,radius:3});
   } else {
+    const effMaxSpeed = player.maxSpeed + (player.weapon==='rapid' ? getRapidSpeedBonus() : 0);
     player.vx += dir.x * player.accel * dt;
     player.vy += dir.y * player.accel * dt;
     const sp = Math.hypot(player.vx,player.vy);
-    if(sp > player.maxSpeed){ player.vx *= player.maxSpeed/sp; player.vy *= player.maxSpeed/sp; }
+    if(sp > effMaxSpeed){ player.vx *= effMaxSpeed/sp; player.vy *= effMaxSpeed/sp; }
     player.vx -= player.vx * player.friction * dt;
     player.vy -= player.vy * player.friction * dt;
     player.x += player.vx*dt; player.y += player.vy*dt;
@@ -1241,6 +1524,23 @@ function updatePlayer(dt){
     player._flameCone = null;
   }
 
+  // aura magnetica: attrae le rune (non gli altri oggetti) verso il mago, si rafforza ogni 20 livelli
+  const magnetRadius = getMagnetRadius();
+  const magnetPull = getMagnetPull();
+  if(magnetRadius>0){
+    for(const pu of pickups){
+      if(!RITUAL_SPELLS.includes(pu.type)) continue;
+      const dx = player.x-pu.x, dy = player.y-pu.y;
+      const d = Math.hypot(dx,dy);
+      if(d>0 && d<magnetRadius){
+        // più vicino il mago, più forte tira (fino al limite dato dal livello)
+        const pull = magnetPull * (1 - d/magnetRadius);
+        pu.x += (dx/d) * pull * dt;
+        pu.y += (dy/d) * pull * dt;
+      }
+    }
+  }
+
   // pickups collision
   for(const pu of pickups){
     if(dist(player.x,player.y,pu.x,pu.y) < player.radius+pu.radius+4){
@@ -1258,7 +1558,13 @@ function fireWeapon(type){
   if(type==='blaster' || type==='rapid'){
     shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a, w.speed,'player',dmg,w.color,4);
   } else if(type==='homing'){
-    shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a, w.speed,'player',dmg,w.color,5,true);
+    const extra = getHomingExtraShots();
+    const totalSpheres = 1 + extra;
+    const spreadArc = Math.min(0.9, extra*0.12); // le sfere in più si aprono leggermente a ventaglio
+    for(let i=0;i<totalSpheres;i++){
+      const off = totalSpheres>1 ? (i/(totalSpheres-1) - 0.5)*spreadArc : 0;
+      shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a+off, w.speed,'player',dmg,w.color,5,true);
+    }
     sfx.homing();
   }
 }
@@ -1280,13 +1586,14 @@ function fireLaser(dt){
   const range = Math.hypot(W,H); // il fascio attraversa tutta la mappa, non si ferma a metà
   let hitTarget = null, hitDist = range;
   const targets = boss ? enemies.concat([boss]) : enemies;
+  const halfWidth = getLaserHalfWidth();
   for(const en of targets){
     const ex = en.x-origin.x, ey = en.y-origin.y;
     const projLen = ex*Math.cos(a) + ey*Math.sin(a);
     if(projLen < 0 || projLen > range) continue;
     const perpX = ex - Math.cos(a)*projLen, perpY = ey - Math.sin(a)*projLen;
     const perpDist = Math.hypot(perpX,perpY);
-    if(perpDist < en.radius+6 && projLen < hitDist){ hitDist = projLen; hitTarget = en; }
+    if(perpDist < en.radius+halfWidth && projLen < hitDist){ hitDist = projLen; hitTarget = en; }
   }
   player._laserStart = origin;
   player._laserEnd = {x:origin.x+Math.cos(a)*hitDist, y:origin.y+Math.sin(a)*hitDist};
@@ -1315,7 +1622,8 @@ function fireFlameCone(dt){
   flameTick -= dt;
   const a = player.angle;
   const origin = getStaffTip();
-  player._flameCone = {x:origin.x, y:origin.y, angle:a, range:FLAME_CONE_RANGE, half:FLAME_CONE_HALF_ANGLE};
+  const range = getFlameConeRange();
+  player._flameCone = {x:origin.x, y:origin.y, angle:a, range:range, half:FLAME_CONE_HALF_ANGLE};
   if(flameTick <= 0){
     flameTick = FLAME_TICK_INTERVAL;
     const dmg = WEAPONS.spread.dmg * player.powerMult * spellDmgMult('spread');
@@ -1323,7 +1631,7 @@ function fireFlameCone(dt){
     let any = false;
     for(const en of targets){
       const d = dist(origin.x,origin.y,en.x,en.y);
-      if(d > FLAME_CONE_RANGE + en.radius) continue;
+      if(d > range + en.radius) continue;
       let da = angleTo(origin.x,origin.y,en.x,en.y) - a;
       while(da > Math.PI) da -= TAU; while(da < -Math.PI) da += TAU;
       if(Math.abs(da) > FLAME_CONE_HALF_ANGLE) continue;
@@ -1361,7 +1669,7 @@ function fireChainLightning(dt){
     chainTick = 0.16;
     const FIRST_RANGE = 480; // portata per agganciare il primo bersaglio
     const JUMP_RANGE = 260;  // raggio di salto tra un bersaglio e il successivo
-    const maxTargets = 3 + Math.min(3, Math.floor(player.shieldPower*0.6));
+    const maxTargets = getChainMaxTargets();
     const pool = enemies.slice();
     if(boss) pool.push(boss);
     const hit = [];
@@ -1559,7 +1867,10 @@ function onBossDeath(){
 /* ============================= BOSS ============================= */
 function makeBoss(){
   // IL LICH: stregone non morto, signore degli spettri — versione più mostruosa e letale
-  const hp = 620 + waveNumber*130;
+  // stessa curva di prima fino all'ondata 30, poi cresce più lentamente per non
+  // rendere ingestibile una partita che può proseguire all'infinito
+  const cappedWave = Math.min(waveNumber,30) + Math.max(0,waveNumber-30)*0.35;
+  const hp = Math.round(620 + cappedWave*130);
   return {
     x:W/2, y:-90, vx:0, vy:0, radius:74, hp, maxHp:hp, value:1500+waveNumber*100,
     t:0, attackTimer:2.0, phase:'enter', dmg:30, hitFlash:0, color:'#8b5cf6',
@@ -1853,12 +2164,12 @@ const spawner = {
       }
     } else if(enemies.length===0){
       this.waveActive=false;
-      this.breaking=true; this.breakTimer=2.2;
+      this.breaking=true; this.breakTimer=4.6;
       addScore(80+waveNumber*10);
     }
   },
   onBossCleared(){
-    this.breaking=true; this.breakTimer=2.4;
+    this.breaking=true; this.breakTimer=5.2;
   }
 };
 let bannerTimer=0;
@@ -2005,6 +2316,60 @@ function drawGroundShadow(offsetY, rx, ry, alpha){
 }
 
 /* ============================= PLAYER DRAW ============================= */
+// Corpo del mago: usato sia in gioco (drawPlayer) sia nel ritratto del Grimoire,
+// così l'aspetto resta identico nei due posti. 'g' è il context già traslato/ruotato,
+// 'r' il raggio di riferimento, 't' l'orologio da usare per le animazioni (bob, rune).
+function drawMageBody(g, r, blink, t){
+  const bob = Math.sin(t*7)*0.9; // subtle walking bob
+
+  // wide shaolin pantaloni: flared fabric peeking from the back sides
+  g.fillStyle = '#3a1858';
+  g.beginPath(); g.moveTo(-r*0.15,-r*0.55); g.lineTo(-r*1.35,-r*0.95); g.lineTo(-r*0.75,-r*0.15); g.closePath(); g.fill();
+  g.beginPath(); g.moveTo(-r*0.15,r*0.55); g.lineTo(-r*1.35,r*0.95); g.lineTo(-r*0.75,r*0.15); g.closePath(); g.fill();
+
+  // staff: held slightly to one side, extends forward, glowing rune tip
+  const staffLen = r*2.1;
+  g.strokeStyle = '#8b5a2b'; g.lineWidth = 3;
+  g.beginPath(); g.moveTo(r*0.1,r*0.35); g.lineTo(staffLen, r*0.1); g.stroke();
+  const runePulse = 1+Math.sin(t*8)*0.25;
+  g.save();
+  g.translate(staffLen, r*0.1); g.rotate(t*4);
+  g.shadowColor='#4deeea'; g.shadowBlur = 14*runePulse;
+  g.fillStyle='#4deeea';
+  g.beginPath();
+  for(let i=0;i<4;i++){ const a=i/4*TAU; const rr=(i%2===0?5:2.2)*runePulse; const px=Math.cos(a)*rr, py=Math.sin(a)*rr; if(i===0) g.moveTo(px,py); else g.lineTo(px,py); }
+  g.closePath(); g.fill();
+  g.restore();
+  g.shadowBlur=0;
+
+  // purple shaolin robe (rounded body) with gold diagonal sash
+  g.fillStyle = blink ? '#c8a2ff' : '#7c3aed';
+  g.beginPath(); g.ellipse(0,bob*0.3,r*0.98,r*0.86,0,0,TAU); g.fill();
+  g.strokeStyle='rgba(40,10,70,.7)'; g.lineWidth=1.5; g.stroke();
+  g.save();
+  g.beginPath(); g.ellipse(0,bob*0.3,r*0.98,r*0.86,0,0,TAU); g.clip();
+  g.fillStyle='#ffb703'; g.globalAlpha=0.85;
+  g.beginPath();
+  g.moveTo(-r*1.2,-r*0.5); g.lineTo(-r*0.75,-r*0.9); g.lineTo(r*1.2,r*0.55); g.lineTo(r*0.75,r*0.95); g.closePath(); g.fill();
+  g.globalAlpha=1;
+  g.restore();
+
+  // pointed wizard hat (viewed from above), tip flopped to the back
+  g.fillStyle='#5b21b6'; g.shadowColor='#5b21b6'; g.shadowBlur = blink?2:10;
+  g.beginPath();
+  g.ellipse(-r*0.05,bob*0.3,r*0.62,r*0.5,0,0,TAU); g.fill(); // brim
+  g.beginPath();
+  g.moveTo(-r*0.3,-r*0.34); g.quadraticCurveTo(-r*1.5,-r*0.55,-r*1.85,-r*0.15);
+  g.quadraticCurveTo(-r*0.9,r*0.05,r*0.05,r*0.32);
+  g.closePath(); g.fill();
+  g.strokeStyle='rgba(255,183,3,.85)'; g.lineWidth=1.5;
+  g.beginPath(); g.ellipse(-r*0.05,bob*0.3,r*0.62,r*0.5,0,0,TAU); g.stroke();
+  // small star glyph on the hat
+  g.shadowBlur=0; g.fillStyle='#ffe14d';
+  g.beginPath();
+  for(let i=0;i<4;i++){ const a=i/4*TAU+0.3; const rr=(i%2===0?3.4:1.4); const px=-r*0.75+Math.cos(a)*rr, py=-r*0.35+Math.sin(a)*rr; if(i===0) g.moveTo(px,py); else g.lineTo(px,py); }
+  g.closePath(); g.fill();
+}
 function drawPlayer(){
   if(!player.alive) return;
   ctx.save();
@@ -2055,66 +2420,18 @@ function drawPlayer(){
   ctx.rotate(player.angle);
   ctx.globalAlpha = blink?0.5:1;
   const r = player.radius;
-  const bob = Math.sin(elapsed*7)*0.9; // subtle walking bob
-
-  // wide shaolin pantaloni: flared fabric peeking from the back sides
-  ctx.fillStyle = '#3a1858';
-  ctx.beginPath(); ctx.moveTo(-r*0.15,-r*0.55); ctx.lineTo(-r*1.35,-r*0.95); ctx.lineTo(-r*0.75,-r*0.15); ctx.closePath(); ctx.fill();
-  ctx.beginPath(); ctx.moveTo(-r*0.15,r*0.55); ctx.lineTo(-r*1.35,r*0.95); ctx.lineTo(-r*0.75,r*0.15); ctx.closePath(); ctx.fill();
-
-  // staff: held slightly to one side, extends forward, glowing rune tip
-  const staffLen = r*2.1;
-  ctx.strokeStyle = '#8b5a2b'; ctx.lineWidth = 3;
-  ctx.beginPath(); ctx.moveTo(r*0.1,r*0.35); ctx.lineTo(staffLen, r*0.1); ctx.stroke();
-  const runePulse = 1+Math.sin(elapsed*8)*0.25;
-  ctx.save();
-  ctx.translate(staffLen, r*0.1); ctx.rotate(elapsed*4);
-  ctx.shadowColor='#4deeea'; ctx.shadowBlur = 14*runePulse;
-  ctx.fillStyle='#4deeea';
-  ctx.beginPath();
-  for(let i=0;i<4;i++){ const a=i/4*TAU; const rr=(i%2===0?5:2.2)*runePulse; const px=Math.cos(a)*rr, py=Math.sin(a)*rr; if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
-  ctx.closePath(); ctx.fill();
-  ctx.restore();
-  ctx.shadowBlur=0;
-
-  // purple shaolin robe (rounded body) with gold diagonal sash
-  ctx.fillStyle = blink ? '#c8a2ff' : '#7c3aed';
-  ctx.beginPath(); ctx.ellipse(0,bob*0.3,r*0.98,r*0.86,0,0,TAU); ctx.fill();
-  ctx.strokeStyle='rgba(40,10,70,.7)'; ctx.lineWidth=1.5; ctx.stroke();
-  ctx.save();
-  ctx.beginPath(); ctx.ellipse(0,bob*0.3,r*0.98,r*0.86,0,0,TAU); ctx.clip();
-  ctx.fillStyle='#ffb703'; ctx.globalAlpha=0.85;
-  ctx.beginPath();
-  ctx.moveTo(-r*1.2,-r*0.5); ctx.lineTo(-r*0.75,-r*0.9); ctx.lineTo(r*1.2,r*0.55); ctx.lineTo(r*0.75,r*0.95); ctx.closePath(); ctx.fill();
-  ctx.globalAlpha=1;
-  ctx.restore();
-
-  // pointed wizard hat (viewed from above), tip flopped to the back
-  ctx.fillStyle='#5b21b6'; ctx.shadowColor='#5b21b6'; ctx.shadowBlur = blink?2:10;
-  ctx.beginPath();
-  ctx.ellipse(-r*0.05,bob*0.3,r*0.62,r*0.5,0,0,TAU); ctx.fill(); // brim
-  ctx.beginPath();
-  ctx.moveTo(-r*0.3,-r*0.34); ctx.quadraticCurveTo(-r*1.5,-r*0.55,-r*1.85,-r*0.15);
-  ctx.quadraticCurveTo(-r*0.9,r*0.05,r*0.05,r*0.32);
-  ctx.closePath(); ctx.fill();
-  ctx.strokeStyle='rgba(255,183,3,.85)'; ctx.lineWidth=1.5;
-  ctx.beginPath(); ctx.ellipse(-r*0.05,bob*0.3,r*0.62,r*0.5,0,0,TAU); ctx.stroke();
-  // small star glyph on the hat
-  ctx.shadowBlur=0; ctx.fillStyle='#ffe14d';
-  ctx.beginPath();
-  for(let i=0;i<4;i++){ const a=i/4*TAU+0.3; const rr=(i%2===0?3.4:1.4); const px=-r*0.75+Math.cos(a)*rr, py=-r*0.35+Math.sin(a)*rr; if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
-  ctx.closePath(); ctx.fill();
-
+  drawMageBody(ctx, r, blink, elapsed);
   ctx.globalAlpha=1;
   ctx.restore();
 
   // laser beam — parte dalla punta del bastone, non dal cappello
   if(player.weapon==='laser' && firing() && player._laserEnd && player._laserStart){
     ctx.save();
+    const laserVisualWidth = getLaserHalfWidth()*1.3;
     ctx.strokeStyle='#ffb703'; ctx.shadowColor='#ffb703'; ctx.shadowBlur=16;
-    ctx.lineWidth=4; ctx.globalAlpha=0.85;
+    ctx.lineWidth=laserVisualWidth; ctx.globalAlpha=0.85;
     ctx.beginPath(); ctx.moveTo(player._laserStart.x,player._laserStart.y); ctx.lineTo(player._laserEnd.x,player._laserEnd.y); ctx.stroke();
-    ctx.lineWidth=1.4; ctx.globalAlpha=1; ctx.strokeStyle='#fff';
+    ctx.lineWidth=Math.max(1.4, laserVisualWidth*0.35); ctx.globalAlpha=1; ctx.strokeStyle='#fff';
     ctx.beginPath(); ctx.moveTo(player._laserStart.x,player._laserStart.y); ctx.lineTo(player._laserEnd.x,player._laserEnd.y); ctx.stroke();
     ctx.restore();
   }
@@ -2199,7 +2516,9 @@ function loop(now){
   requestAnimationFrame(loop);
   let dt = (now-lastT)/1000; lastT = now;
   dt = Math.min(dt, 0.05);
+  portraitT += dt; // orologio indipendente: il ritratto del mago nel Grimoire anima anche a gioco fermo
 
+  if(state==='grimoire') drawMagePortrait(portraitT);
   if(state!=='playing'){ render(dt); return; }
 
   elapsed += dt;
