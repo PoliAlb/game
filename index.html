@@ -5,22 +5,25 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>L'ARCIMAGO</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cinzel+Decorative:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Cinzel+Decorative:wght@700;900&family=MedievalSharp&display=swap');
 :root{
-  --void:#050608;
-  --deep:#0a0f24;
-  --panel:#0c1330;
+  --void:#0a0715;
+  --deep:#120b26;
+  --panel:#170f2e;
   --cyan:#4deeea;
   --magenta:#ff2fb0;
   --amber:#ffb703;
   --violet:#8b5cf6;
-  --ghost:#dfe9ff;
+  --ghost:#e4dcff;
   --green:#39ff88;
   --red:#ff3b4e;
+  --ink:#1b1408;
+  --cream:#f4e9d0;
+  --cream-dark:#e3d3a8;
   --parchment:#e8d9b5;
   --parchment-dark:#b89a63;
   --leather:#3b2416;
-  --leather-dark:#241408;
+  --leather-dark:#1c1006;
   --gold:#d4af37;
 }
 *{box-sizing:border-box; margin:0; padding:0;}
@@ -30,23 +33,25 @@ html,body{
   font-family:"Cinzel","Times New Roman",serif;
   color:var(--ghost);
   user-select:none;
-  cursor:crosshair;
+  cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'><g fill='none' stroke='%230a0715' stroke-width='2.6' stroke-linejoin='round'><path d='M15 2 L18 12 L28 15 L18 18 L15 28 L12 18 L2 15 L12 12 Z'/></g><g fill='%23ffd76a' stroke='%23d4af37' stroke-width='1' stroke-linejoin='round'><path d='M15 4 L17.5 12.5 L26 15 L17.5 17.5 L15 26 L12.5 17.5 L4 15 L12.5 12.5 Z'/></g><circle cx='15' cy='15' r='2' fill='%23fff6da'/></svg>") 15 15, crosshair;
 }
 canvas#game{
   position:fixed; inset:0; display:block; background:var(--void);
 }
 #vignette{
   position:fixed; inset:0; pointer-events:none; z-index:5;
-  background:radial-gradient(ellipse at center, rgba(0,0,0,0) 45%, rgba(0,0,0,0.75) 100%);
+  background:radial-gradient(ellipse at center, rgba(6,4,14,0) 40%, rgba(4,2,10,0.72) 100%);
 }
 #scanlines{
-  position:fixed; inset:0; pointer-events:none; z-index:6; opacity:.12;
-  background:repeating-linear-gradient(to bottom, rgba(255,255,255,.5) 0px, rgba(255,255,255,.5) 1px, transparent 2px, transparent 4px);
+  position:fixed; inset:0; pointer-events:none; z-index:6; opacity:.07;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   mix-blend-mode:overlay;
+  animation:grainFlicker .12s steps(1) infinite;
 }
+@keyframes grainFlicker{0%,100%{opacity:.05;}50%{opacity:.09;}}
 #hex-hp{
   position:fixed; left:14px; bottom:14px; z-index:7; pointer-events:none;
-  filter:drop-shadow(0 0 6px rgba(77,238,234,.35));
+  filter:drop-shadow(0 0 8px rgba(212,175,55,.35));
 }
 #hud{
   position:fixed; inset:0; z-index:8; pointer-events:none;
@@ -54,157 +59,151 @@ canvas#game{
 }
 #hud-top-left{
   position:absolute; top:16px; left:16px; display:flex; gap:22px;
-  background:linear-gradient(180deg, rgba(10,15,36,.75), rgba(10,15,36,.35));
-  border:1px solid rgba(77,238,234,.25);
-  padding:10px 16px; clip-path:polygon(0 0,100% 0,100% 100%,10px 100%,0 calc(100% - 10px));
-  backdrop-filter:blur(2px);
+  background:linear-gradient(180deg, rgba(59,36,22,.88), rgba(28,16,6,.92));
+  border:1px solid var(--gold);
+  border-radius:8px;
+  padding:10px 16px;
+  box-shadow:0 0 16px rgba(212,175,55,.18), inset 0 1px 0 rgba(255,255,255,.08);
 }
 .stat{display:flex; flex-direction:column; gap:2px;}
-.stat .label{font-size:10px; color:rgba(223,233,255,.55); letter-spacing:2px;}
-.stat .value{font-size:18px; font-weight:700; color:var(--cyan); text-shadow:0 0 8px rgba(77,238,234,.6);}
-#combo .value{color:var(--amber); text-shadow:0 0 8px rgba(255,183,3,.6);}
-#level .value,#level-wrap .value{color:var(--violet); text-shadow:0 0 8px rgba(139,92,246,.7);}
+.stat .label{font-size:10px; color:rgba(228,220,255,.55); letter-spacing:2px; font-weight:600;}
+.stat .value{font-family:"Cinzel Decorative",serif; font-size:19px; font-weight:700; letter-spacing:1px; color:var(--cyan); text-shadow:0 0 10px rgba(77,238,234,.6);}
+#combo .value{color:var(--magenta); text-shadow:0 0 10px rgba(255,47,176,.6);}
+#level .value,#level-wrap .value{color:var(--violet); text-shadow:0 0 10px rgba(139,92,246,.7);}
 #xp-hud{
   position:absolute; top:74px; left:16px; width:260px; pointer-events:none;
 }
-.bar-track.xp{height:5px; background:rgba(255,255,255,.08); border:1px solid rgba(139,92,246,.3);}
+.bar-track.xp{height:6px; background:rgba(255,255,255,.06); border:1px solid rgba(139,92,246,.4); border-radius:3px;}
 .bar-track.xp .bar-fill{background:linear-gradient(90deg, var(--violet), #c4b5fd); box-shadow:0 0 6px rgba(139,92,246,.7);}
-#spellbook{display:flex; gap:5px; margin-top:8px;}
+#spellbook{display:flex; gap:6px; pointer-events:all;}
 .spell-slot{
-  position:relative; width:28px; height:28px; border:1px solid rgba(255,183,3,.25);
-  background:rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center;
-  font-size:10px; font-weight:700; color:rgba(223,233,255,.3);
-  clip-path:polygon(5px 0,100% 0,100% 100%,0 100%,0 5px);
+  position:relative; width:30px; height:30px; border:1.5px solid rgba(212,175,55,.4);
+  background:rgba(20,12,6,.55); display:flex; align-items:center; justify-content:center;
+  font-family:"Cinzel Decorative",serif; font-size:12px; color:rgba(228,220,255,.3);
+  border-radius:6px;
   transition:all .15s ease;
 }
 .spell-slot.locked::after{content:'🔒'; font-size:9px; opacity:.5;}
-.spell-slot.unlocked{color:var(--ghost); border-color:rgba(255,183,3,.5);}
-.spell-slot.ready{border-color:var(--violet); box-shadow:0 0 10px rgba(139,92,246,.7); animation:spellReadyPulse 1.4s infinite ease-in-out;}
+.spell-slot.unlocked{color:var(--ghost); border-color:var(--gold);}
+.spell-slot.ready{border-color:var(--violet); box-shadow:0 0 10px rgba(139,92,246,.8); animation:spellReadyPulse 1.4s infinite ease-in-out;}
 .spell-slot.ready::after{content:''; }
-.spell-slot .rune-count{position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:8px; color:rgba(223,233,255,.6); white-space:nowrap;}
-@keyframes spellReadyPulse{0%,100%{box-shadow:0 0 6px rgba(139,92,246,.5);} 50%{box-shadow:0 0 16px rgba(139,92,246,.95);}}
+.spell-slot .rune-count{position:absolute; bottom:-14px; left:50%; transform:translateX(-50%); font-size:8px; font-family:"Cinzel",serif; color:rgba(228,220,255,.6); white-space:nowrap;}
+@keyframes spellReadyPulse{0%,100%{box-shadow:0 0 8px rgba(139,92,246,.5);} 50%{box-shadow:0 0 18px rgba(139,92,246,1);}}
 .spell-slot{cursor:pointer; pointer-events:all;}
 .spell-slot.active{
-  color:var(--void); background:var(--amber); border-color:#fff;
-  box-shadow:0 0 12px rgba(255,183,3,.9), 0 0 22px rgba(255,183,3,.5);
+  color:var(--void); background:var(--amber); border-color:#fff6da;
+  box-shadow:0 0 14px rgba(255,183,3,.9), 0 0 26px rgba(255,183,3,.5);
   transform:translateY(-2px) scale(1.08);
 }
 #pause-btn{
   position:absolute; top:16px; right:16px; pointer-events:all;
-  background:rgba(10,15,36,.75); border:1px solid rgba(77,238,234,.35); color:var(--cyan);
+  background:linear-gradient(180deg, rgba(59,36,22,.88), rgba(28,16,6,.92)); border:1px solid var(--gold); color:var(--gold); border-radius:8px;
   width:40px; height:40px; font-size:14px; cursor:pointer; letter-spacing:0;
-  clip-path:polygon(0 0,100% 0,100% 100%,6px 100%,0 calc(100% - 6px));
+  box-shadow:0 0 12px rgba(212,175,55,.2);
 }
-#pause-btn:hover{background:rgba(77,238,234,.15);}
+#pause-btn:hover{box-shadow:0 0 20px rgba(212,175,55,.55);}
 #grimoire-btn{
   position:absolute; top:16px; right:64px; pointer-events:all;
-  background:rgba(10,15,36,.75); border:1px solid rgba(139,92,246,.4); color:var(--violet);
+  background:linear-gradient(180deg, rgba(59,36,22,.88), rgba(28,16,6,.92)); border:1px solid var(--violet); color:var(--violet); border-radius:8px;
   width:40px; height:40px; font-size:16px; cursor:pointer; letter-spacing:0;
-  clip-path:polygon(0 0,100% 0,100% 100%,6px 100%,0 calc(100% - 6px));
+  box-shadow:0 0 12px rgba(139,92,246,.25);
 }
-#grimoire-btn:hover{background:rgba(139,92,246,.18);}
+#grimoire-btn:hover{box-shadow:0 0 22px rgba(139,92,246,.6);}
 #weapon-hud{
-  position:absolute; right:16px; bottom:16px; width:190px;
-  background:linear-gradient(180deg, rgba(10,15,36,.75), rgba(10,15,36,.35));
-  border:1px solid rgba(255,183,3,.3); padding:8px 12px;
-  clip-path:polygon(10px 0,100% 0,100% 100%,0 100%,0 10px);
+  position:absolute; right:16px; bottom:16px; width:52px; height:52px;
+  background:linear-gradient(180deg, rgba(59,36,22,.88), rgba(28,16,6,.92)); border:1px solid var(--gold); border-radius:10px;
+  box-shadow:0 0 16px rgba(212,175,55,.22), inset 0 1px 0 rgba(255,255,255,.08);
+  display:flex; align-items:center; justify-content:center;
 }
-#weapon-name{font-size:11px; letter-spacing:2px; color:var(--amber); margin-bottom:6px;}
-.bar-track{width:100%; height:7px; background:rgba(255,255,255,.08); position:relative; overflow:hidden;}
-.bar-fill{height:100%; width:100%; background:linear-gradient(90deg, var(--amber), #ff7a00); transition:width .08s linear;}
+#weapon-icon{
+  width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+}
+#weapon-icon svg{width:28px; height:28px;}
+.bar-track{width:100%; height:7px; background:rgba(255,255,255,.06); border:1px solid rgba(212,175,55,.35); border-radius:3px; position:relative; overflow:hidden;}
+.bar-fill{height:100%; width:100%; background:linear-gradient(90deg, var(--amber), #ff7a00); transition:width .08s linear; box-shadow:0 0 6px rgba(255,183,3,.6);}
 #boss-hud{
   position:absolute; top:16px; left:50%; transform:translateX(-50%); width:min(560px,70vw);
   text-align:center;
 }
 #boss-hud.hidden{display:none;}
-#boss-name{font-size:12px; letter-spacing:4px; color:var(--magenta); text-shadow:0 0 8px rgba(255,47,176,.7); margin-bottom:6px;}
-.bar-track.boss{height:12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,47,176,.4);}
-.bar-track.boss .bar-fill{background:linear-gradient(90deg, var(--magenta), #ff7ad4);}
+#boss-name{font-family:"Cinzel Decorative",serif; font-size:14px; font-weight:700; letter-spacing:4px; color:var(--magenta); text-shadow:0 0 10px rgba(255,47,176,.7); margin-bottom:6px;}
+.bar-track.boss{height:13px; background:rgba(255,255,255,.06); border:1px solid rgba(255,47,176,.5); border-radius:5px;}
+.bar-track.boss .bar-fill{background:linear-gradient(90deg, var(--magenta), #ff7ad4); box-shadow:0 0 8px rgba(255,47,176,.7);}
 #dash-hud{
   position:absolute; left:16px; bottom:120px; width:120px;
 }
-#dash-label{font-size:10px; color:rgba(223,233,255,.55); letter-spacing:2px; margin-bottom:4px;}
-.bar-track.dash{height:6px; background:rgba(255,255,255,.08);}
-.bar-track.dash .bar-fill{background:linear-gradient(90deg, var(--green), #8dffb0);}
+#dash-label{font-size:10px; color:rgba(228,220,255,.55); letter-spacing:2px; margin-bottom:4px; font-weight:600;}
+.bar-track.dash{height:6px; background:rgba(255,255,255,.06); border:1px solid rgba(57,255,136,.4); border-radius:3px;}
+.bar-track.dash .bar-fill{background:linear-gradient(90deg, var(--green), #8dffb0); box-shadow:0 0 6px rgba(57,255,136,.6);}
 
 .overlay{
   position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
-  background:radial-gradient(ellipse at center, rgba(14,26,18,.82), rgba(5,10,7,.94));
-  backdrop-filter:blur(2.5px) saturate(1.15);
+  background:radial-gradient(ellipse at center, rgba(20,12,32,.93), rgba(6,4,14,.97));
   text-align:center; padding:20px;
 }
 .overlay.hidden{display:none;}
 .title{
-  font-family:"Cinzel Decorative","Cinzel",serif;
+  font-family:"Cinzel Decorative",serif;
   font-size:clamp(34px,8vw,76px); font-weight:900; letter-spacing:6px;
   color:var(--ghost); position:relative; text-transform:uppercase;
-  text-shadow:0 0 18px rgba(255,183,3,.5), 0 0 42px rgba(139,92,246,.35);
+  text-shadow:0 0 18px rgba(255,183,3,.55), 0 0 46px rgba(139,92,246,.4), 0 2px 0 rgba(0,0,0,.6);
+  animation:titleGlow 3s ease-in-out infinite;
 }
-.title::before,.title::after{
-  content:attr(data-text); position:absolute; left:0; top:0; width:100%; height:100%;
-  clip-path:inset(0 0 0 0);
-}
-.title::before{color:var(--violet); left:3px; animation:glitch1 3.2s infinite linear; opacity:.7;}
-.title::after{color:var(--amber); left:-3px; animation:glitch2 2.6s infinite linear; opacity:.7;}
-@keyframes glitch1{
-  0%,100%{clip-path:inset(0 0 90% 0);} 10%{clip-path:inset(10% 0 60% 0);} 20%{clip-path:inset(70% 0 5% 0);}
-  30%{clip-path:inset(40% 0 40% 0);} 40%{clip-path:inset(5% 0 80% 0);} 50%{clip-path:inset(60% 0 10% 0);}
-  60%{clip-path:inset(20% 0 65% 0);} 70%{clip-path:inset(85% 0 2% 0);} 80%{clip-path:inset(30% 0 50% 0);} 90%{clip-path:inset(0 0 95% 0);}
-}
-@keyframes glitch2{
-  0%,100%{clip-path:inset(80% 0 2% 0);} 15%{clip-path:inset(20% 0 60% 0);} 25%{clip-path:inset(50% 0 20% 0);}
-  35%{clip-path:inset(5% 0 85% 0);} 45%{clip-path:inset(65% 0 10% 0);} 55%{clip-path:inset(15% 0 70% 0);}
-  65%{clip-path:inset(45% 0 30% 0);} 75%{clip-path:inset(2% 0 90% 0);} 85%{clip-path:inset(55% 0 15% 0);} 95%{clip-path:inset(25% 0 55% 0);}
-}
-.subtitle{color:rgba(223,233,255,.72); font-size:14px; letter-spacing:2px; max-width:560px;}
+@keyframes titleGlow{0%,100%{text-shadow:0 0 18px rgba(255,183,3,.55), 0 0 46px rgba(139,92,246,.4), 0 2px 0 rgba(0,0,0,.6);} 50%{text-shadow:0 0 28px rgba(255,183,3,.85), 0 0 64px rgba(139,92,246,.65), 0 2px 0 rgba(0,0,0,.6);}}
+.subtitle{color:rgba(228,220,255,.72); font-size:14px; letter-spacing:2px; max-width:560px; font-weight:500;}
 .controls-grid{
-  display:grid; grid-template-columns:repeat(2,1fr); gap:8px 28px; font-size:12px; color:rgba(223,233,255,.75);
-  background:rgba(20,14,32,.35);
-  border:1px solid rgba(255,183,3,.28); padding:14px 22px; margin-top:6px;
-  clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px);
+  display:grid; grid-template-columns:repeat(2,1fr); gap:8px 28px; font-size:12px; color:rgba(228,220,255,.75);
+  background:rgba(20,12,32,.4);
+  border:1px solid rgba(212,175,55,.3); padding:14px 22px; margin-top:6px; border-radius:8px;
 }
 .controls-grid b{color:var(--amber);}
 .neon-btn{
-  pointer-events:all; cursor:pointer; background:transparent; color:var(--amber);
-  border:1px solid var(--amber); padding:12px 40px; font-size:15px; letter-spacing:4px; font-weight:700;
-  text-transform:uppercase; clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px);
-  transition:all .15s ease; box-shadow:0 0 14px rgba(255,183,3,.25) inset;
+  pointer-events:all; cursor:pointer; background:linear-gradient(180deg, var(--leather), var(--leather-dark)); color:var(--gold);
+  border:1px solid var(--gold); padding:12px 40px; font-family:"Cinzel Decorative",serif; font-size:15px; letter-spacing:4px; font-weight:700;
+  text-transform:uppercase; border-radius:6px;
+  transition:all .15s ease; box-shadow:0 0 16px rgba(212,175,55,.28), inset 0 1px 0 rgba(255,255,255,.1);
 }
-.neon-btn:hover{background:rgba(255,183,3,.15); box-shadow:0 0 24px rgba(255,183,3,.55); transform:translateY(-1px);}
-#gameover-screen .title::before{color:var(--red);}
-#gameover-screen .neon-btn{color:var(--red); border-color:var(--red); box-shadow:0 0 14px rgba(255,59,78,.25) inset;}
-#gameover-screen .neon-btn:hover{background:rgba(255,59,78,.15); box-shadow:0 0 24px rgba(255,59,78,.55);}
+.neon-btn:hover{box-shadow:0 0 28px rgba(212,175,55,.6), inset 0 1px 0 rgba(255,255,255,.15); transform:translateY(-1px);}
+.neon-btn:active{transform:translateY(1px);}
+#gameover-screen .title{color:var(--ghost); text-shadow:0 0 18px rgba(255,59,78,.6), 0 0 46px rgba(139,92,246,.3);}
+#gameover-screen .neon-btn{color:var(--red); border-color:var(--red); box-shadow:0 0 16px rgba(255,59,78,.3), inset 0 1px 0 rgba(255,255,255,.1);}
+#gameover-screen .neon-btn:hover{box-shadow:0 0 28px rgba(255,59,78,.6);}
 #stats-final{display:flex; gap:34px; margin-top:4px;}
 #stats-final div{display:flex; flex-direction:column; align-items:center; gap:4px;}
-#stats-final .label{font-size:11px; letter-spacing:2px; color:rgba(223,233,255,.55);}
-#stats-final .value{font-size:26px; font-weight:800; color:var(--amber); text-shadow:0 0 10px rgba(255,183,3,.5);}
+#stats-final .label{font-size:11px; letter-spacing:2px; color:rgba(228,220,255,.55);}
+#stats-final .value{font-family:"Cinzel Decorative",serif; font-size:27px; font-weight:700; color:var(--amber); text-shadow:0 0 10px rgba(255,183,3,.6);}
 #wave-banner{
   position:fixed; top:38%; left:50%; transform:translate(-50%,-50%); z-index:15; pointer-events:none;
-  font-size:clamp(24px,5vw,48px); font-weight:900; letter-spacing:6px; color:var(--ghost);
-  text-shadow:0 0 20px rgba(139,92,246,.65); opacity:0; text-align:center;
+  font-family:"Cinzel Decorative",serif; letter-spacing:5px; color:var(--ghost);
+  opacity:0; text-align:center;
 }
-#wave-banner small{display:block; font-size:14px; letter-spacing:3px; color:var(--amber); margin-top:8px;}
+#wave-banner .wb-title{
+  display:block; font-size:clamp(24px,5vw,50px); font-weight:900; line-height:1.15;
+  text-shadow:0 0 20px rgba(139,92,246,.7), 0 0 40px rgba(255,183,3,.4);
+}
+#wave-banner small{display:block; font-family:"Cinzel",serif; font-size:14px; line-height:1.4; letter-spacing:3px; color:var(--amber); margin-top:12px; font-weight:600; text-shadow:0 0 8px rgba(255,183,3,.5);}
 .book{
   display:flex; flex-direction:column; align-items:center; gap:12px; max-width:920px; width:94vw;
-  background:linear-gradient(180deg, var(--leather), var(--leather-dark));
-  border:10px solid var(--leather);
+  background:linear-gradient(180deg, #241634, #150c1f);
+  border:10px solid #241634;
   outline:1px solid var(--gold);
   outline-offset:-6px;
   padding:18px 20px;
   border-radius:6px 18px 6px 18px;
-  box-shadow:0 0 0 2px var(--leather-dark), 0 20px 60px rgba(0,0,0,.65), inset 0 0 50px rgba(90,60,20,.35);
-  color:var(--leather-dark);
+  box-shadow:0 0 0 2px #0e0815, 0 20px 70px rgba(0,0,0,.8), 0 0 40px rgba(139,92,246,.15), inset 0 0 50px rgba(139,92,246,.12);
+  color:var(--ghost);
   max-height:90vh;
 }
-.book .title{ color:var(--leather-dark); text-shadow:0 1px 0 rgba(255,255,255,.35), 0 0 18px rgba(212,175,55,.5); }
-.book .subtitle{ color:rgba(59,36,22,.85); }
+.book .title{ color:var(--ghost); text-shadow:0 0 18px rgba(255,183,3,.5), 0 0 34px rgba(139,92,246,.5); }
+.book .subtitle{ color:rgba(228,220,255,.8); }
 .book-pages{
   display:flex; width:100%; position:relative; align-items:stretch;
   background:
-    radial-gradient(ellipse at 20% 10%, rgba(255,255,255,.10), transparent 45%),
-    linear-gradient(180deg, var(--parchment), var(--parchment-dark));
+    radial-gradient(ellipse at 20% 10%, rgba(139,92,246,.14), transparent 50%),
+    radial-gradient(ellipse at 80% 90%, rgba(77,238,234,.08), transparent 55%),
+    linear-gradient(180deg, #241a34, #170f24);
   border-radius:4px 14px 4px 14px;
-  box-shadow:inset 0 0 40px rgba(90,60,20,.3);
+  box-shadow:inset 0 0 50px rgba(0,0,0,.5), inset 0 0 2px rgba(212,175,55,.3);
   overflow:hidden;
 }
 .book-page{
@@ -214,70 +213,71 @@ canvas#game{
 .book-page-left{ align-items:stretch; }
 .book-spine{
   width:14px; flex:0 0 auto;
-  background:linear-gradient(90deg, rgba(0,0,0,.28), rgba(0,0,0,.05) 30%, rgba(0,0,0,.05) 70%, rgba(0,0,0,.28));
-  box-shadow:inset 0 0 12px rgba(0,0,0,.45);
+  background:linear-gradient(90deg, rgba(0,0,0,.5), rgba(139,92,246,.08) 30%, rgba(139,92,246,.08) 70%, rgba(0,0,0,.5));
+  box-shadow:inset 0 0 14px rgba(0,0,0,.6);
 }
 .page-heading{
   font-family:"Cinzel Decorative","Cinzel",serif; font-size:15px; letter-spacing:3px; text-transform:uppercase;
-  color:var(--leather-dark); text-shadow:0 1px 0 rgba(255,255,255,.35);
-  border-bottom:1px solid rgba(90,60,20,.35); padding-bottom:6px; width:100%; text-align:center;
+  color:var(--gold); text-shadow:0 0 12px rgba(212,175,55,.5);
+  border-bottom:1px solid rgba(212,175,55,.3); padding-bottom:6px; width:100%; text-align:center;
 }
 #mage-portrait{
-  background:radial-gradient(ellipse at 50% 30%, rgba(255,255,255,.18), transparent 60%);
-  border:1px solid rgba(90,60,20,.35); border-radius:8px;
-  box-shadow:inset 0 0 20px rgba(90,60,20,.2);
+  background:radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.22), transparent 60%);
+  border:1px solid rgba(212,175,55,.3); border-radius:8px;
+  box-shadow:inset 0 0 24px rgba(139,92,246,.15);
 }
 .mage-stats{ width:100%; display:flex; flex-direction:column; gap:9px; }
 .mage-stat-row{ display:flex; flex-direction:column; gap:3px; }
-.mage-stat-label{ display:flex; justify-content:space-between; font-size:10px; letter-spacing:1.5px; color:rgba(59,36,22,.85); }
-.mage-stat-label b{ color:var(--leather-dark); font-weight:700; }
-.bar-track.hp-bar{height:8px; background:rgba(90,60,20,.18);}
-.bar-track.hp-bar .bar-fill{background:linear-gradient(90deg, var(--red), #ff8a8a);}
-.bar-track.shield-bar{height:8px; background:rgba(90,60,20,.18);}
-.bar-track.shield-bar .bar-fill{background:linear-gradient(90deg, var(--cyan), #a8f4ff);}
-.mage-stat-note{ font-size:9.5px; letter-spacing:1px; color:rgba(59,36,22,.7); text-align:center; margin-top:2px; line-height:1.5; }
+.mage-stat-label{ display:flex; justify-content:space-between; font-size:10px; letter-spacing:1.5px; color:rgba(228,220,255,.85); }
+.mage-stat-label b{ color:var(--gold); font-weight:700; }
+.bar-track.hp-bar{height:8px; background:rgba(0,0,0,.4); border:1px solid rgba(255,59,78,.35);}
+.bar-track.hp-bar .bar-fill{background:linear-gradient(90deg, var(--red), #ff8a8a); box-shadow:0 0 6px rgba(255,59,78,.6);}
+.bar-track.shield-bar{height:8px; background:rgba(0,0,0,.4); border:1px solid rgba(77,238,234,.35);}
+.bar-track.shield-bar .bar-fill{background:linear-gradient(90deg, var(--cyan), #a8f4ff); box-shadow:0 0 6px rgba(77,238,234,.6);}
+.mage-stat-note{ font-size:9.5px; letter-spacing:1px; color:rgba(228,220,255,.6); text-align:center; margin-top:2px; line-height:1.5; }
 @media (max-width:720px){
   .book-pages{ flex-direction:column; }
-  .book-spine{ width:auto; height:10px; background:linear-gradient(180deg, rgba(0,0,0,.28), rgba(0,0,0,.05) 30%, rgba(0,0,0,.05) 70%, rgba(0,0,0,.28)); }
+  .book-spine{ width:auto; height:10px; background:linear-gradient(180deg, rgba(0,0,0,.5), rgba(139,92,246,.08) 30%, rgba(139,92,246,.08) 70%, rgba(0,0,0,.5)); }
   .book-page{ max-height:none; }
 }
 #grimoire-list{width:100%; display:flex; flex-direction:column; gap:10px; pointer-events:all;}
 .grimoire-entry{
   display:flex; align-items:center; gap:14px; padding:10px 14px;
-  border:1px solid rgba(90,60,20,.35); background:rgba(255,248,225,.35);
-  border-radius:4px;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
+  border:1px solid rgba(139,92,246,.3); background:rgba(10,7,20,.5);
+  border-radius:6px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
 }
-.grimoire-entry.ready{border-color:var(--gold); box-shadow:0 0 14px rgba(212,175,55,.45), inset 0 1px 0 rgba(255,255,255,.4);}
-.grimoire-entry.done{opacity:.7; border-color:rgba(57,140,80,.45);}
+.grimoire-entry.ready{border-color:var(--gold); box-shadow:0 0 16px rgba(212,175,55,.4), inset 0 1px 0 rgba(255,255,255,.08);}
+.grimoire-entry.done{opacity:.75; border-color:rgba(57,255,136,.35);}
 .g-swatch{
   width:26px; height:26px; flex:0 0 auto; position:relative;
   clip-path:polygon(50% 0%,90% 20%,100% 60%,75% 100%,25% 100%,0% 60%,10% 20%);
-  box-shadow:inset -3px -4px 6px rgba(0,0,0,.45), inset 2px 3px 5px rgba(255,255,255,.55), 0 0 8px rgba(0,0,0,.35);
+  box-shadow:inset -3px -4px 6px rgba(0,0,0,.6), inset 2px 3px 5px rgba(255,255,255,.25), 0 0 10px rgba(0,0,0,.5);
   display:flex; align-items:center; justify-content:center;
 }
 .g-swatch::after{
   content:''; position:absolute; top:14%; left:20%; width:32%; height:22%;
-  background:rgba(255,255,255,.65); filter:blur(1.5px);
+  background:rgba(255,255,255,.4); filter:blur(1.5px);
   clip-path:polygon(50% 0%,90% 20%,100% 60%,75% 100%,25% 100%,0% 60%,10% 20%);
 }
 .g-info{flex:1; text-align:left; display:flex; flex-direction:column; gap:4px;}
-.g-name{font-size:12px; letter-spacing:1.5px; color:var(--leather-dark); font-weight:600;}
-.bar-track.g-bar{height:5px; background:rgba(90,60,20,.18);}
-.g-count{font-size:10px; letter-spacing:1px; color:rgba(59,36,22,.75);}
+.g-name{font-size:12px; letter-spacing:1.5px; color:var(--ghost); font-weight:600;}
+.bar-track.g-bar{height:5px; background:rgba(0,0,0,.4); border:1px solid rgba(212,175,55,.25);}
+.g-count{font-size:10px; letter-spacing:1px; color:rgba(228,220,255,.7);}
+.g-perk{font-size:9.5px; letter-spacing:.5px; color:rgba(228,220,255,.55); font-style:italic; margin-top:1px;}
 .g-ritual-btn{
   pointer-events:all; cursor:pointer; font-family:"Cinzel",serif; font-size:10px; letter-spacing:2px; padding:8px 14px;
-  background:var(--leather); color:var(--gold); border:1px solid var(--gold);
-  border-radius:3px;
+  background:#241634; color:var(--gold); border:1px solid var(--gold);
+  border-radius:4px;
   text-transform:uppercase; font-weight:700; white-space:nowrap;
 }
-.g-ritual-btn:not(:disabled):hover{background:#4a2e1c; box-shadow:0 0 16px rgba(212,175,55,.5);}
-.g-ritual-btn:disabled{opacity:.4; cursor:not-allowed; color:rgba(59,36,22,.5); border-color:rgba(59,36,22,.35); background:rgba(90,60,20,.15);}
+.g-ritual-btn:not(:disabled):hover{background:#3a2454; box-shadow:0 0 18px rgba(212,175,55,.5);}
+.g-ritual-btn:disabled{opacity:.4; cursor:not-allowed; color:rgba(228,220,255,.4); border-color:rgba(228,220,255,.25); background:rgba(0,0,0,.3);}
 .book .neon-btn{
-  color:var(--gold); border-color:var(--gold); background:var(--leather);
-  box-shadow:0 0 14px rgba(212,175,55,.2) inset;
+  color:var(--gold); border-color:var(--gold); background:#241634;
+  box-shadow:0 0 16px rgba(212,175,55,.25) inset;
 }
-.book .neon-btn:hover{background:#4a2e1c; box-shadow:0 0 20px rgba(212,175,55,.5);}
+.book .neon-btn:hover{background:#3a2454; box-shadow:0 0 24px rgba(212,175,55,.5);}
 @media (max-width:640px){
   .controls-grid{grid-template-columns:1fr; font-size:11px;}
   #hud-top-left{gap:14px; padding:8px 12px;}
@@ -305,23 +305,21 @@ canvas#game{
   <button id="pause-btn" title="Pausa">❚❚</button>
   <button id="grimoire-btn" title="Grimoire (Esc)">📖</button>
   <div id="weapon-hud">
-    <div id="weapon-name">BASTONE ARCANO</div>
-    <div class="bar-track"><div id="weapon-bar" class="bar-fill" style="width:100%"></div></div>
-    <div id="spellbook"></div>
+    <div id="weapon-icon"></div>
   </div>
   <div id="dash-hud">
     <div id="dash-label">PASSO ARCANO</div>
     <div class="bar-track dash"><div id="dash-bar" class="bar-fill" style="width:100%"></div></div>
   </div>
   <div id="boss-hud" class="hidden">
-    <div id="boss-name">IL LICH</div>
+    <div id="boss-name">IL FANTASMA</div>
     <div class="bar-track boss"><div id="boss-bar" class="bar-fill" style="width:100%"></div></div>
   </div>
 </div>
 
 <div id="start-screen" class="overlay">
   <h1 class="title" data-text="L'ARCIMAGO">L'ARCIMAGO</h1>
-  <p class="subtitle">Un covo senza fine di goblin, orchi e spettri ti circonda nel bosco maledetto. Sopravvivi alle ondate, raccogli incantesimi, abbatti i Lich e diventa leggenda.</p>
+  <p class="subtitle">Un covo senza fine di goblin, orchi e spettri ti circonda nel bosco maledetto. Sopravvivi alle ondate, raccogli incantesimi, sfuggi al Fantasma e diventa leggenda.</p>
   <div class="controls-grid">
     <div><b>WASD / Frecce</b> — Movimento</div>
     <div><b>Mouse</b> — Mira</div>
@@ -332,7 +330,7 @@ canvas#game{
     <div><b>P</b> — Pausa</div>
     <div><b>Touch</b> — Trascina per muoverti</div>
   </div>
-  <p class="subtitle" style="max-width:560px;font-size:12px;margin-top:2px;">Combattendo, il mago impara: accresce il suo potere, rafforza la sua Aura Arcana e raccoglie rune. Ogni incantesimo richiede un numero diverso di rune: raggiunta la soglia, apri il Grimoire e compi il rituale per sbloccarlo — poi continua a raccogliere le stesse rune e ripeti il rituale per potenziarlo ancora, senza limiti.</p>
+  <p class="subtitle" style="max-width:560px;font-size:12px;margin-top:2px;">Combattendo, il mago impara: accresce il suo potere, rafforza la sua Aura Arcana e raccoglie rune. Ogni incantesimo richiede un numero diverso di rune per lo sblocco iniziale; da lì in poi bastano sempre 7 rune per ogni ulteriore potenziamento, che oltre al danno porta anche un beneficio specifico per quell'incantesimo, senza limiti.</p>
   <button id="start-btn" class="neon-btn">Inizia</button>
 </div>
 
@@ -346,7 +344,7 @@ canvas#game{
     <div class="book-pages">
       <div class="book-page book-page-left">
         <h3 class="page-heading">Rituali Arcani</h3>
-        <p class="subtitle" style="max-width:none;font-size:11px;">Ogni incantesimo ha una sua soglia di rune: raggiungila e compi il rituale per sbloccarlo. Una volta appreso, continua a raccogliere le stesse rune fino a riempire di nuovo la barra e ripeti il rituale per potenziarlo: più danno, ogni volta, senza limite.</p>
+        <p class="subtitle" style="max-width:none;font-size:11px;">Ogni incantesimo ha una sua soglia di rune per lo sblocco iniziale. Una volta appreso, bastano sempre 7 rune per ogni ulteriore potenziamento: più danno, e in più un beneficio specifico per quell'incantesimo — senza limiti.</p>
         <div id="grimoire-list"></div>
       </div>
       <div class="book-spine"></div>
@@ -488,10 +486,6 @@ canvas.addEventListener('wheel', e=>{
   e.preventDefault();
   cycleSpell(e.deltaY > 0 ? 1 : -1);
 }, {passive:false});
-// Puntatore reale in coordinate di viewport, sempre aggiornato — usato dal ritratto
-// del mago nel Grimoire, che resta visibile anche quando il canvas di gioco è coperto.
-const windowMouse = {x:innerWidth/2, y:innerHeight/2};
-window.addEventListener('mousemove', e=>{ windowMouse.x = e.clientX; windowMouse.y = e.clientY; });
 let touchActive = false;
 canvas.addEventListener('touchstart', e=>{
   ensureAudio(); touchActive = true; mouse.down = true;
@@ -524,7 +518,7 @@ function dashPressed(){ return keys['ShiftLeft']||keys['ShiftRight']; }
 
 /* ============================= FIREFLIES / EMBERS ============================= */
 let stars = [[],[],[]]; // reused as 3 depth-layers of drifting fireflies & embers
-const MOTE_COLORS = ['#8dffb0','#ffd75e','#bfeeff'];
+const MOTE_COLORS = ['#8b5cf6','#4deeea','#ffd76a'];
 function buildStarfield(){
   stars = [[],[],[]];
   const counts = [50,32,18];
@@ -574,7 +568,7 @@ function buildForest(){
     leaves.push({
       x:rand(0,W), y:rand(0,H), r:rand(4,7.5), speed:rand(16,32),
       sway:rand(0,TAU), rot:rand(0,TAU), rotSpeed:rand(-1.4,1.4),
-      color: pick(['#d97b3f','#e0a545','#9fb24a','#c2542f'])
+      color: pick(['#5b3f8a','#2f6f8f','#7a5a3a','#3a5a7a'])
     });
   }
 }
@@ -582,9 +576,11 @@ function drawTreeCanopy(){
   for(const t of treeCanopies){
     ctx.save();
     ctx.translate(t.x,t.y);
-    const shade = 12+t.tone*20;
-    ctx.fillStyle = `rgb(${8+shade*0.25},${16+shade},${10+shade*0.35})`;
-    ctx.shadowColor='#000'; ctx.shadowBlur=22;
+    const shade = t.tone;
+    // fogliame notturno: verde-blu scuro con un filo di bagliore arcano sul bordo
+    ctx.fillStyle = shade>0.5 ? '#1e2f2a' : '#182a3a';
+    ctx.shadowColor = shade>0.5 ? 'rgba(77,238,234,.18)' : 'rgba(139,92,246,.2)'; ctx.shadowBlur=18;
+    ctx.strokeStyle = 'rgba(0,0,0,.7)'; ctx.lineWidth = 3;
     ctx.beginPath();
     const bumps=8;
     const swayAmt = Math.sin(elapsed*0.5+t.sway)*2;
@@ -594,7 +590,13 @@ function drawTreeCanopy(){
       const px=Math.cos(a)*rr+swayAmt, py=Math.sin(a)*rr;
       if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
     }
-    ctx.closePath(); ctx.fill();
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.shadowBlur=0;
+    // ombra profonda su un lato, per dare volume nella notte
+    ctx.save(); ctx.clip();
+    ctx.fillStyle='rgba(0,0,0,.35)';
+    ctx.beginPath(); ctx.ellipse(-t.r*0.3,t.r*0.25,t.r*0.9,t.r*0.75,0,0,TAU); ctx.fill();
+    ctx.restore();
     ctx.restore();
   }
 }
@@ -605,50 +607,55 @@ function drawForestFloorDecor(){
     ctx.scale(d.scale,d.scale);
     if(d.kind==='fern'){
       const sway = Math.sin(elapsed*1.3+d.sway)*0.12;
-      ctx.strokeStyle='#204a2c'; ctx.fillStyle='#2f7a3f';
+      ctx.strokeStyle='rgba(0,0,0,.6)'; ctx.fillStyle='#1e5a3a'; ctx.lineWidth=1;
       for(let i=0;i<3;i++){
         ctx.save(); ctx.rotate(d.rot + (i-1)*0.55 + sway);
         ctx.beginPath();
         ctx.moveTo(0,0);
         ctx.quadraticCurveTo(5,-10,0,-19);
         ctx.quadraticCurveTo(-5,-10,0,0);
-        ctx.fill();
+        ctx.fill(); ctx.stroke();
         ctx.restore();
       }
     } else if(d.kind==='mushroom'){
       ctx.rotate(d.rot*0.15);
-      ctx.fillStyle='#e8dfc8'; ctx.fillRect(-1.6,-6,3.2,6.5);
-      ctx.fillStyle='#c8324a';
-      ctx.beginPath(); ctx.ellipse(0,-7,6.2,4.2,0,Math.PI,0,true); ctx.fill();
-      ctx.fillStyle='rgba(255,255,255,.85)';
+      ctx.strokeStyle='rgba(0,0,0,.6)'; ctx.lineWidth=1;
+      ctx.fillStyle='#2a2438'; ctx.fillRect(-1.6,-6,3.2,6.5); ctx.strokeRect(-1.6,-6,3.2,6.5);
+      ctx.fillStyle='#8b5cf6'; ctx.shadowColor='#8b5cf6'; ctx.shadowBlur=8;
+      ctx.beginPath(); ctx.ellipse(0,-7,6.2,4.2,0,Math.PI,0,true); ctx.fill(); ctx.stroke();
+      ctx.shadowBlur=0;
+      ctx.fillStyle='rgba(255,255,255,.9)';
       ctx.beginPath(); ctx.arc(-2.2,-8,1,0,TAU); ctx.fill();
       ctx.beginPath(); ctx.arc(2,-6.6,0.8,0,TAU); ctx.fill();
     } else if(d.kind==='rock'){
       ctx.rotate(d.rot*0.2);
-      ctx.fillStyle='#383f3d';
-      ctx.beginPath(); ctx.ellipse(0,0,8.5,5.2,0,0,TAU); ctx.fill();
-      ctx.fillStyle='rgba(255,255,255,.07)';
+      ctx.strokeStyle='rgba(0,0,0,.6)'; ctx.lineWidth=1;
+      ctx.fillStyle='#3a3650';
+      ctx.beginPath(); ctx.ellipse(0,0,8.5,5.2,0,0,TAU); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='rgba(139,92,246,.15)';
       ctx.beginPath(); ctx.ellipse(-2.2,-1.6,3,1.5,0,0,TAU); ctx.fill();
     } else if(d.kind==='log'){
       ctx.rotate(d.rot*0.1);
-      ctx.fillStyle='#4a3221';
-      ctx.beginPath(); ctx.ellipse(0,0,15,5.2,0,0,TAU); ctx.fill();
-      ctx.fillStyle='#6b4a30';
-      ctx.beginPath(); ctx.ellipse(-11.5,0,3.2,4.5,0,0,TAU); ctx.fill();
-      ctx.fillStyle='rgba(0,0,0,.2)';
+      ctx.strokeStyle='rgba(0,0,0,.6)'; ctx.lineWidth=1;
+      ctx.fillStyle='#3a2a20';
+      ctx.beginPath(); ctx.ellipse(0,0,15,5.2,0,0,TAU); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='#5a4030';
+      ctx.beginPath(); ctx.ellipse(-11.5,0,3.2,4.5,0,0,TAU); ctx.fill(); ctx.stroke();
+      ctx.fillStyle='rgba(0,0,0,.3)';
       ctx.beginPath(); ctx.ellipse(2,0,10,1.6,0,0,TAU); ctx.fill();
     } else if(d.kind==='flower'){
       const sway = Math.sin(elapsed*1.1+d.sway)*0.15;
       ctx.rotate(sway);
-      ctx.strokeStyle='#2f7a3f'; ctx.lineWidth=1.4;
+      ctx.strokeStyle='rgba(0,0,0,.5)'; ctx.lineWidth=1.1;
       ctx.beginPath(); ctx.moveTo(0,4); ctx.lineTo(0,-6); ctx.stroke();
-      ctx.fillStyle = '#ffb3d1';
+      ctx.fillStyle = '#4deeea'; ctx.shadowColor='#4deeea'; ctx.shadowBlur=6;
       for(let i=0;i<5;i++){
         const a=i/5*TAU;
-        ctx.beginPath(); ctx.ellipse(Math.cos(a)*3.4,-6+Math.sin(a)*3.4,2.1,1.4,a,0,TAU); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(Math.cos(a)*3.4,-6+Math.sin(a)*3.4,2.1,1.4,a,0,TAU); ctx.fill(); ctx.stroke();
       }
-      ctx.fillStyle='#ffe14d';
-      ctx.beginPath(); ctx.arc(0,-6,1.4,0,TAU); ctx.fill();
+      ctx.shadowBlur=0;
+      ctx.fillStyle='#f0c030';
+      ctx.beginPath(); ctx.arc(0,-6,1.4,0,TAU); ctx.fill(); ctx.stroke();
     }
     ctx.restore();
   }
@@ -662,9 +669,9 @@ function drawLeaves(){
     if(l.x<-10) l.x=W+10; if(l.x>W+10) l.x=-10;
     ctx.save();
     ctx.translate(l.x,l.y); ctx.rotate(l.rot);
-    ctx.fillStyle=l.color; ctx.globalAlpha=0.8;
+    ctx.fillStyle=l.color; ctx.globalAlpha=0.85;
     ctx.beginPath(); ctx.ellipse(0,0,l.r,l.r*0.48,0,0,TAU); ctx.fill();
-    ctx.strokeStyle='rgba(0,0,0,.15)'; ctx.lineWidth=0.6; ctx.stroke();
+    ctx.strokeStyle='rgba(27,20,8,.5)'; ctx.lineWidth=1; ctx.stroke();
     ctx.restore();
   }
   ctx.globalAlpha=1;
@@ -698,25 +705,35 @@ function spellDmgMult(name){
 }
 const SPELL_KEYS = ['blaster','spread','rapid','homing','laser','chain'];
 const RITUAL_SPELLS = ['spread','rapid','homing','laser','chain'];
-const RUNES_REQUIRED = {spread:5, rapid:10, homing:15, laser:20, chain:25};
-// ogni runa raccolta oltre la soglia di sblocco di un incantesimo già appreso
-// aumenta permanentemente (di una piccola percentuale) il danno di quello specifico incantesimo
-const RUNE_BONUS_PER_RUNE = 0.01; // +1% danno per runa "extra"
+const RUNES_REQUIRED = {spread:5, rapid:10, homing:15, laser:20, chain:25}; // soglia di RUNE per lo SBLOCCO iniziale (varia per incantesimo)
+const UPGRADE_RUNES_REQUIRED = 7; // soglia FISSA di rune per ogni POTENZIAMENTO successivo, uguale per tutti gli incantesimi
+function runesNeededFor(name){ return player.unlockedSpells.includes(name) ? UPGRADE_RUNES_REQUIRED : RUNES_REQUIRED[name]; }
+// ogni potenziamento (rituale ripetuto dopo lo sblocco) aumenta permanentemente
+// una piccola percentuale di danno per quello specifico incantesimo
+const RUNE_BONUS_PER_RUNE = 0.01; // +1% danno per potenziamento
 
-// --- Potenziamenti speciali per-incantesimo dati dalle rune raccolte DOPO lo sblocco ---
-const FLAME_RANGE_PER_RUNE = 5;      // il cono di fiamme si allunga un po' ad ogni runa
-const RAPID_SPEED_PER_RUNE = 6;      // la runa di rapidità accresce anche la velocità del mago...
-const RAPID_SPEED_CAP = 170;         // ...ma non oltre questo limite, per restare controllabile
-const HOMING_RUNES_PER_EXTRA_SPHERE = 5;  // ogni 5 rune, una sfera arcana in più per lancio
-const LASER_WIDTH_PER_RUNE = 0.35;   // il fascio runico si allarga gradualmente
-const CHAIN_RUNES_PER_EXTRA_TARGET = 6;   // ogni 6 rune, un nemico in più colpito dalla catena
-const CHAIN_BASE_TARGETS = 1;        // la catena di fulmini parte colpendo un solo nemico alla volta
+// --- Potenziamenti speciali per-incantesimo: ogni potenziamento (ogni rituale, non ogni runa
+// singola) porta con sé anche un piccolo bonus di gameplay specifico per quell'incantesimo ---
+const FLAME_RANGE_PER_UPGRADE = 7;        // il cono di fiamme si allunga progressivamente
+const RAPID_RATE_CUT_PER_UPGRADE = 0.011; // la runa di rapidità accresce la cadenza di fuoco...
+const RAPID_MIN_RATE = 0.045;             // ...ma non oltre questo limite, per restare giocabile
+const HOMING_EXTRA_PER_UPGRADE = 1;       // +1 sfera indipendente per lancio ad ogni potenziamento
+const LASER_WIDTH_PER_UPGRADE = 0.55;     // il fascio runico si allarga di poco ad ogni potenziamento
+const CHAIN_EXTRA_PER_UPGRADE = 1;        // +1 nemico colpito dalla catena ad ogni potenziamento
+const CHAIN_BASE_TARGETS = 1;             // la catena di fulmini parte colpendo un solo nemico alla volta
 
-function getFlameConeRange(){ return FLAME_CONE_RANGE + (player.spellRuneBonus.spread||0)*FLAME_RANGE_PER_RUNE; }
-function getRapidSpeedBonus(){ return Math.min(RAPID_SPEED_CAP, (player.spellRuneBonus.rapid||0)*RAPID_SPEED_PER_RUNE); }
-function getHomingExtraShots(){ return Math.floor((player.spellRuneBonus.homing||0)/HOMING_RUNES_PER_EXTRA_SPHERE); }
-function getLaserHalfWidth(){ return 6 + (player.spellRuneBonus.laser||0)*LASER_WIDTH_PER_RUNE; }
-function getChainMaxTargets(){ return CHAIN_BASE_TARGETS + Math.floor((player.spellRuneBonus.chain||0)/CHAIN_RUNES_PER_EXTRA_TARGET); }
+function getFlameConeRange(){ return FLAME_CONE_RANGE + (player.spellRuneBonus.spread||0)*FLAME_RANGE_PER_UPGRADE; }
+function getEffectiveRate(name){
+  const w = WEAPONS[name];
+  if(name==='rapid'){
+    const cut = (player.spellRuneBonus.rapid||0)*RAPID_RATE_CUT_PER_UPGRADE;
+    return Math.max(RAPID_MIN_RATE, w.rate - cut);
+  }
+  return w.rate;
+}
+function getHomingExtraShots(){ return (player.spellRuneBonus.homing||0)*HOMING_EXTRA_PER_UPGRADE; }
+function getLaserHalfWidth(){ return 6 + (player.spellRuneBonus.laser||0)*LASER_WIDTH_PER_UPGRADE; }
+function getChainMaxTargets(){ return CHAIN_BASE_TARGETS + (player.spellRuneBonus.chain||0)*CHAIN_EXTRA_PER_UPGRADE; }
 
 // --- Aura magnetica: attrae le rune verso il mago, si rafforza ogni 20 livelli (parte da zero) ---
 const MAGNET_LEVEL_STEP = 20;
@@ -745,15 +762,15 @@ const WEAPON_DURATION = {spread:11, rapid:9, homing:11, laser:7, chain:9};
 function spellIconSVG(name){
   switch(name){
     case 'spread': // cono di fiamme -> fiamma
-      return '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="#ff7a2e" d="M12.5 1.8c1.1 3.1-1.9 4.4-2.3 7.2-.3 2 .8 3.3 2.1 3.3 1.6 0 2.4-1.5 2.1-3-.1-.6-.5-1.1-.4-1.6 1.8 1.1 3.2 3.6 3.2 6a5.7 5.7 0 1 1-11.4 0c0-4.9 4.4-7.2 6.7-11.9z"/><path fill="#ffd24d" d="M12.1 10.3c.4 1.1-.7 1.7-.7 2.8a1.6 1.6 0 0 0 3.2 0c0-1.6-1.3-2.1-2.5-2.8z"/></svg>';
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="#ff7a2e" stroke="#1b1408" stroke-width="1" d="M12.5 1.8c1.1 3.1-1.9 4.4-2.3 7.2-.3 2 .8 3.3 2.1 3.3 1.6 0 2.4-1.5 2.1-3-.1-.6-.5-1.1-.4-1.6 1.8 1.1 3.2 3.6 3.2 6a5.7 5.7 0 1 1-11.4 0c0-4.9 4.4-7.2 6.7-11.9z"/><path fill="#ffd24d" d="M12.1 10.3c.4 1.1-.7 1.7-.7 2.8a1.6 1.6 0 0 0 3.2 0c0-1.6-1.3-2.1-2.5-2.8z"/></svg>';
     case 'rapid': // runa di rapidità -> fulmine giallo
-      return '<svg viewBox="0 0 24 24" width="16" height="16"><polygon fill="#ffe14d" points="13,2 4,14 11,14 9,22 20,9 12,9"/></svg>';
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><polygon fill="#e0a83a" stroke="#1b1408" stroke-width="1" stroke-linejoin="round" points="13,2 4,14 11,14 9,22 20,9 12,9"/></svg>';
     case 'homing': // sfera arcana cercante -> sfera viola con occhio
-      return '<svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="9.2" fill="#8b5cf6"/><ellipse cx="12" cy="12" rx="5.4" ry="3.2" fill="#f5f0ff"/><circle cx="12" cy="12" r="2" fill="#231041"/></svg>';
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="9.2" fill="#8b5cf6" stroke="#1b1408" stroke-width="1"/><ellipse cx="12" cy="12" rx="5.4" ry="3.2" fill="#f5f0ff"/><circle cx="12" cy="12" r="2" fill="#231041"/></svg>';
     case 'laser': // fascio runico -> riga diagonale coi colori del fascio
-      return '<svg viewBox="0 0 24 24" width="16" height="16"><line x1="4" y1="20" x2="20" y2="4" stroke="#ffb703" stroke-width="3.4" stroke-linecap="round"/><line x1="4" y1="20" x2="20" y2="4" stroke="#fff" stroke-width="1.1" stroke-linecap="round"/></svg>';
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><line x1="4" y1="20" x2="20" y2="4" stroke="#1b1408" stroke-width="5" stroke-linecap="round"/><line x1="4" y1="20" x2="20" y2="4" stroke="#e0a83a" stroke-width="3.2" stroke-linecap="round"/><line x1="4" y1="20" x2="20" y2="4" stroke="#fff" stroke-width="1" stroke-linecap="round"/></svg>';
     case 'chain': // catena di fulmini -> fulmine azzurro
-      return '<svg viewBox="0 0 24 24" width="16" height="16"><polygon fill="#4deeea" points="13,2 4,14 11,14 9,22 20,9 12,9"/></svg>';
+      return '<svg viewBox="0 0 24 24" width="16" height="16"><polygon fill="#2f8f9f" stroke="#1b1408" stroke-width="1" stroke-linejoin="round" points="13,2 4,14 11,14 9,22 20,9 12,9"/></svg>';
     default: return '';
   }
 }
@@ -843,9 +860,9 @@ function applyPickup(type){
       break;
     default: { // runa di incantesimo: spread, rapid, homing, laser, chain
       const already = player.unlockedSpells.includes(type);
-      const req = RUNES_REQUIRED[type];
-      // sia prima che dopo lo sblocco, le rune riempiono la stessa barra:
-      // prima serve per il rituale di sblocco, dopo per il rituale di potenziamento
+      const req = runesNeededFor(type);
+      // prima dello sblocco le rune riempiono la barra fino alla soglia di sblocco (variabile per incantesimo);
+      // dopo lo sblocco, ogni potenziamento richiede sempre 7 rune, uguale per tutti gli incantesimi
       player.runes[type] = Math.min(req, (player.runes[type]||0) + 1);
       const n = player.runes[type];
       if(already){
@@ -924,7 +941,7 @@ function selectSpell(idx){
   const name = SPELL_KEYS[idx];
   if(!name || !player.alive) return;
   if(!player.unlockedSpells.includes(name)){
-    floatText(player.x, player.y-30, 'INCANTESIMO NON ANCORA APPRESO — APRI IL GRIMOIRE (ESC)', 'rgba(223,233,255,.6)');
+    floatText(player.x, player.y-30, 'INCANTESIMO NON ANCORA APPRESO — APRI IL GRIMOIRE (ESC)', 'rgba(228,220,255,.85)');
     return;
   }
   if(player.weapon !== name){
@@ -950,7 +967,7 @@ function updateSpellHUD(){
   SPELL_KEYS.forEach((name,i)=>{
     const unlocked = player.unlockedSpells.includes(name);
     const active = player.weapon===name;
-    const req = RUNES_REQUIRED[name];
+    const req = name!=='blaster' ? runesNeededFor(name) : 0;
     const ready = name!=='blaster' && (player.runes[name]||0) >= req;
     const slot = document.createElement('div');
     slot.className = 'spell-slot'+(unlocked?' unlocked':' locked')+(active?' active':'')+(ready?' ready':'');
@@ -1004,52 +1021,88 @@ let portraitT = 0;
 // la vista di gioco resta dall'alto). g già traslato al centro ai piedi/busto del mago;
 // R è il raggio di riferimento, t l'orologio per le animazioni, eyeAngle la direzione
 // (relativa alla testa) verso cui far seguire lo sguardo al puntatore.
-function drawMageBodyFront(g, R, t, eyeAngle){
+function drawMageBodyFront(g, R, t){
   const sway = Math.sin(t*1.4)*0.02; // leggerissimo respiro, resta comunque frontale
   g.save();
   g.rotate(sway);
 
-  // piedi
-  g.fillStyle = '#2a1440';
-  g.beginPath(); g.ellipse(-R*0.32, R*1.62, R*0.22, R*0.1, 0,0,TAU); g.fill();
-  g.beginPath(); g.ellipse(R*0.32, R*1.62, R*0.22, R*0.1, 0,0,TAU); g.fill();
+  // piedi, leggermente artigliati come nel riferimento
+  g.fillStyle = '#d68a1c';
+  for(const side of [-1,1]){
+    g.beginPath(); g.ellipse(side*R*0.34, R*1.6, R*0.24, R*0.11, 0,0,TAU); g.fill();
+    g.fillStyle = '#b5700f';
+    for(let c=-1;c<=1;c++){ g.beginPath(); g.ellipse(side*R*0.34+c*R*0.09, R*1.68, R*0.045,R*0.06,0,0,TAU); g.fill(); }
+    g.fillStyle = '#d68a1c';
+  }
 
-  // veste: ampio trapezio arrotondato dalle spalle fino ai piedi
-  g.fillStyle = '#7c3aed';
+  // pantaloni ampi stile hakama: gambe separate, fianchi arrotondati, si stringono alla caviglia
+  g.fillStyle = '#12142a';
   g.beginPath();
-  g.moveTo(-R*0.5, -R*0.55);
-  g.quadraticCurveTo(-R*1.05, R*0.4, -R*0.95, R*1.5);
-  g.quadraticCurveTo(0, R*1.68, R*0.95, R*1.5);
-  g.quadraticCurveTo(R*1.05, R*0.4, R*0.5, -R*0.55);
-  g.quadraticCurveTo(0, -R*0.75, -R*0.5, -R*0.55);
+  g.moveTo(-R*0.6,R*0.28);
+  g.quadraticCurveTo(-R*1.05,R*0.5,-R*0.98,R*0.95);
+  g.quadraticCurveTo(-R*0.93,R*1.28,-R*0.5,R*1.38);
+  g.lineTo(-R*0.36,R*0.95);
+  g.lineTo(-R*0.08,R*1.38);
+  g.lineTo(R*0.08,R*1.38);
+  g.lineTo(R*0.36,R*0.95);
+  g.lineTo(R*0.5,R*1.38);
+  g.quadraticCurveTo(R*0.93,R*1.28,R*0.98,R*0.95);
+  g.quadraticCurveTo(R*1.05,R*0.5,R*0.6,R*0.28);
+  g.quadraticCurveTo(0,R*0.42,-R*0.6,R*0.28);
   g.closePath(); g.fill();
-  g.strokeStyle='rgba(40,10,70,.7)'; g.lineWidth=R*0.03; g.stroke();
-
-  // fascia dorata diagonale sulla veste
-  g.save();
-  g.beginPath();
-  g.moveTo(-R*0.5, -R*0.55);
-  g.quadraticCurveTo(-R*1.05, R*0.4, -R*0.95, R*1.5);
-  g.quadraticCurveTo(0, R*1.68, R*0.95, R*1.5);
-  g.quadraticCurveTo(R*1.05, R*0.4, R*0.5, -R*0.55);
-  g.quadraticCurveTo(0, -R*0.75, -R*0.5, -R*0.55);
-  g.closePath(); g.clip();
-  g.fillStyle='#ffb703'; g.globalAlpha=.85;
-  g.beginPath();
-  g.moveTo(-R*0.9,-R*0.2); g.lineTo(-R*0.5,-R*0.55); g.lineTo(R*0.9,R*1.1); g.lineTo(R*0.5,R*1.35);
-  g.closePath(); g.fill();
+  g.strokeStyle='rgba(0,0,0,.55)'; g.lineWidth=R*0.025; g.stroke();
+  // pieghe del tessuto
+  g.strokeStyle='rgba(0,0,0,.3)'; g.lineWidth=R*0.02;
+  for(const dx of [-0.7,-0.28,0.28,0.7]){ g.beginPath(); g.moveTo(dx*R,R*0.4); g.quadraticCurveTo((dx*1.12)*R,R*0.85,(dx*1.3)*R,R*1.28); g.stroke(); }
+  // cintura/obi che segna il punto vita, tra giacca e hakama
+  g.fillStyle='#d4af37'; g.globalAlpha=.9;
+  g.beginPath(); g.moveTo(-R*0.42,R*0.16); g.quadraticCurveTo(0,R*0.26,R*0.42,R*0.16); g.lineTo(R*0.4,R*0.24); g.quadraticCurveTo(0,R*0.34,-R*0.4,R*0.24); g.closePath(); g.fill();
   g.globalAlpha=1;
-  g.restore();
 
-  // braccio che regge il bastone
-  g.fillStyle='#6b2fc9';
+  // veste: giacca scura oversize dal colletto alto, spalle rotonde e vita segnata (non più un triangolo)
+  g.fillStyle = '#171a30';
+  g.beginPath();
+  g.moveTo(-R*0.48,-R*0.5);
+  g.quadraticCurveTo(-R*0.66,-R*0.38,-R*0.6,-R*0.18);
+  g.quadraticCurveTo(-R*0.5,R*0.0,-R*0.4,R*0.08);
+  g.quadraticCurveTo(-R*0.55,R*0.18,-R*0.62,R*0.3);
+  g.quadraticCurveTo(0,R*0.44,R*0.62,R*0.3);
+  g.quadraticCurveTo(R*0.55,R*0.18,R*0.4,R*0.08);
+  g.quadraticCurveTo(R*0.5,R*0.0,R*0.6,-R*0.18);
+  g.quadraticCurveTo(R*0.66,-R*0.38,R*0.48,-R*0.5);
+  g.quadraticCurveTo(0, -R*0.68,-R*0.48,-R*0.5);
+  g.closePath(); g.fill();
+  g.strokeStyle='rgba(0,0,0,.6)'; g.lineWidth=R*0.03; g.stroke();
+
+  // colletto alto sollevato attorno al collo
+  g.fillStyle = '#232849';
+  g.beginPath();
+  g.moveTo(-R*0.42,-R*0.55); g.quadraticCurveTo(-R*0.5,-R*0.98,-R*0.1,-R*1.0);
+  g.lineTo(R*0.1,-R*1.0); g.quadraticCurveTo(R*0.5,-R*0.98,R*0.42,-R*0.55);
+  g.quadraticCurveTo(0,-R*0.68,-R*0.42,-R*0.55);
+  g.closePath(); g.fill();
+  g.strokeStyle='rgba(0,0,0,.45)'; g.lineWidth=R*0.02; g.stroke();
+
+  // bottoni dorati lungo il petto
+  g.fillStyle='#d4af37'; g.shadowColor='#d4af37'; g.shadowBlur=R*0.1;
+  g.beginPath(); g.arc(R*0.03,-R*0.28,R*0.06,0,TAU); g.fill();
+  g.beginPath(); g.arc(R*0.03,R*0.02,R*0.06,0,TAU); g.fill();
+  g.shadowBlur=0;
+
+  // braccio sinistro appoggiato (mano in tasca), per bilanciare la sagoma
+  g.fillStyle='#20264a';
+  g.beginPath();
+  g.moveTo(-R*0.42,-R*0.28); g.quadraticCurveTo(-R*0.72,-R*0.1,-R*0.62,R*0.28); g.quadraticCurveTo(-R*0.48,R*0.32,-R*0.4,R*0.02);
+  g.closePath(); g.fill();
+
+  // braccio destro che regge il bastone
+  g.fillStyle='#20264a';
   g.beginPath();
   g.moveTo(R*0.42,-R*0.3); g.quadraticCurveTo(R*0.85,-R*0.15,R*0.78,R*0.35); g.quadraticCurveTo(R*0.55,R*0.4,R*0.45,R*0.05);
   g.closePath(); g.fill();
-  g.fillStyle='#e8c9a0';
-  g.beginPath(); g.arc(R*0.78,R*0.36,R*0.12,0,TAU); g.fill();
+  g.fillStyle='#e8c9a0';  g.beginPath(); g.arc(R*0.78,R*0.36,R*0.12,0,TAU); g.fill();
 
-  // bastone, impugnato dalla mano, con punta runica pulsante
+  // bastone, impugnato dalla mano, con punta runica pulsante viola
   g.save();
   g.translate(R*0.78,R*0.36);
   g.rotate(-0.18);
@@ -1058,8 +1111,8 @@ function drawMageBodyFront(g, R, t, eyeAngle){
   const pulse = 1+Math.sin(t*8)*0.25;
   g.save();
   g.translate(0,-R*1.9); g.rotate(t*3);
-  g.shadowColor='#4deeea'; g.shadowBlur=14*pulse;
-  g.fillStyle='#4deeea';
+  g.shadowColor='#a78bfa'; g.shadowBlur=14*pulse;
+  g.fillStyle='#a78bfa';
   g.beginPath();
   for(let i=0;i<4;i++){ const a=i/4*TAU; const rr=(i%2===0?R*0.22:R*0.09)*pulse; const px=Math.cos(a)*rr, py=Math.sin(a)*rr; if(i===0) g.moveTo(px,py); else g.lineTo(px,py); }
   g.closePath(); g.fill();
@@ -1070,15 +1123,17 @@ function drawMageBodyFront(g, R, t, eyeAngle){
   g.fillStyle='#e8c9a0';
   g.beginPath(); g.arc(0,-R*0.85,R*0.34,0,TAU); g.fill();
 
-  // occhi: seguono leggermente la direzione del puntatore, restando frontali
-  const ex = clamp(Math.cos(eyeAngle), -1, 1)*R*0.045;
-  const ey = clamp(Math.sin(eyeAngle), -1, 1)*R*0.035;
+  // occhi: sguardo fisso e leggermente fiero, con battito di palpebre periodico (loop, nessun input esterno)
+  const lookX = Math.sin(t*0.35)*R*0.02;
+  const blinkPhase = (t%4.2);
+  const blink = blinkPhase>3.9 ? 1-((blinkPhase-3.9)/0.3) : (blinkPhase<0.1 ? blinkPhase/0.1 : 0);
+  const eyeH = R*0.045*(1-Math.min(1,blink*1.4));
   g.fillStyle='#231041';
-  g.beginPath(); g.arc(-R*0.12+ex, -R*0.85+ey, R*0.045,0,TAU); g.fill();
-  g.beginPath(); g.arc(R*0.12+ex, -R*0.85+ey, R*0.045,0,TAU); g.fill();
+  g.beginPath(); g.ellipse(-R*0.12+lookX, -R*0.85, R*0.045, Math.max(R*0.006,eyeH), 0,0,TAU); g.fill();
+  g.beginPath(); g.ellipse(R*0.12+lookX, -R*0.85, R*0.045, Math.max(R*0.006,eyeH), 0,0,TAU); g.fill();
 
   // cappello a punta, con tesa e stellina
-  g.fillStyle='#5b21b6'; g.shadowColor='#5b21b6'; g.shadowBlur=8;
+  g.fillStyle='#7b4fa0'; g.shadowColor='#a97fd4'; g.shadowBlur=8;
   g.beginPath(); g.ellipse(0,-R*1.1,R*0.5,R*0.14,0,0,TAU); g.fill();
   g.beginPath();
   g.moveTo(-R*0.32,-R*1.14);
@@ -1086,14 +1141,37 @@ function drawMageBodyFront(g, R, t, eyeAngle){
   g.quadraticCurveTo(R*0.05,-R*1.6, R*0.32,-R*1.14);
   g.closePath(); g.fill();
   g.shadowBlur=0;
-  g.strokeStyle='rgba(255,183,3,.85)'; g.lineWidth=R*0.03;
+  g.strokeStyle='rgba(212,175,55,.85)'; g.lineWidth=R*0.03;
   g.beginPath(); g.ellipse(0,-R*1.1,R*0.5,R*0.14,0,0,TAU); g.stroke();
-  g.fillStyle='#ffe14d';
+  g.fillStyle='#a78bfa';
   g.beginPath();
   for(let i=0;i<4;i++){ const a=i/4*TAU+0.3; const rr=(i%2===0?R*0.09:R*0.035); const px=R*0.12+Math.cos(a)*rr, py=-R*1.7+Math.sin(a)*rr; if(i===0) g.moveTo(px,py); else g.lineTo(px,py); }
   g.closePath(); g.fill();
 
   g.restore();
+}
+// Aura di fiamme viola attorno al mago, come nel riferimento — lingue di fuoco stilizzate
+// che tremolano in loop (funzioni periodiche di t, nessuna dipendenza da input esterni).
+function drawAuraFlames(g, R, t, intensity){
+  const N = 10;
+  for(let i=0;i<N;i++){
+    const a = -TAU*0.25 + (i/(N-1)-0.5)*TAU*0.92; // concentrate ai lati e dietro, come in figura
+    const flicker = 0.65+0.35*Math.sin(t*3.1+i*1.9);
+    const len = R*(1.05+0.75*flicker)*intensity;
+    const bx = Math.cos(a)*R*0.95, by = Math.sin(a)*R*1.35*0.55 + R*0.55;
+    const midA = a + Math.sin(t*2.2+i*0.7)*0.22;
+    const tx = Math.cos(midA)*(R*0.95+len*0.35), ty = by - len;
+    g.save();
+    g.globalAlpha = 0.5*intensity;
+    g.fillStyle = i%2===0 ? '#8b5cf6' : '#a78bfa';
+    g.shadowColor = '#8b5cf6'; g.shadowBlur = 16;
+    g.beginPath();
+    g.moveTo(bx-R*0.05,by);
+    g.quadraticCurveTo(bx+Math.cos(midA)*len*0.4, by-len*0.55, tx, ty);
+    g.quadraticCurveTo(bx+Math.cos(midA)*len*0.2, by-len*0.3, bx+R*0.05, by);
+    g.closePath(); g.fill();
+    g.restore();
+  }
 }
 function drawMagePortrait(t){
   const cvs = document.getElementById('mage-portrait');
@@ -1101,12 +1179,7 @@ function drawMagePortrait(t){
   const g = cvs.getContext('2d');
   const w = cvs.width, h = cvs.height;
   g.clearRect(0,0,w,h);
-  const rect = cvs.getBoundingClientRect();
   const R = 42;
-  // punto approssimativo della testa sullo schermo, per far seguire lo sguardo al puntatore
-  const headScreenX = rect.left + w/2;
-  const headScreenY = rect.top + h*0.62 - R*0.85;
-  const eyeAngle = Math.atan2(windowMouse.y-headScreenY, windowMouse.x-headScreenX);
   g.save();
   g.translate(w/2, h*0.62);
   // ombra a terra
@@ -1115,29 +1188,27 @@ function drawMagePortrait(t){
   sg.addColorStop(0,'rgba(0,0,0,.35)'); sg.addColorStop(1,'rgba(0,0,0,0)');
   g.fillStyle=sg; g.beginPath(); g.ellipse(0,0,R*1.1,R*0.35,0,0,TAU); g.fill();
   g.restore();
-  // aura arcana statica, proporzionale allo scudo attuale — vista frontale, quindi ellittica
-  if(player.shield>0){
-    const shieldPct = clamp(player.shield/player.maxShield,0,1);
-    const shieldRx = R*1.35 + player.shieldPower*0.9;
-    const shieldRy = shieldRx*1.55;
-    g.save();
-    g.strokeStyle = `rgba(77,238,234,${0.25+0.4*shieldPct})`;
-    g.lineWidth = 2 + player.shieldPower*0.6;
-    g.shadowColor='#4deeea'; g.shadowBlur=10;
-    g.beginPath(); g.ellipse(0,-R*0.15,shieldRx,shieldRy,0,0,TAU); g.stroke();
-    g.restore();
-  }
-  drawMageBodyFront(g, R, t, eyeAngle);
+  // aura di fiamme viola, disegnata dietro al mago — la sua intensità riflette l'Aura Arcana attuale
+  const intensity = 0.55 + Math.min(0.85, player.shieldPower*0.05);
+  drawAuraFlames(g, R, t, intensity);
+  drawMageBodyFront(g, R, t);
   g.restore();
 }
 function renderGrimoire(){
   const list = document.getElementById('grimoire-list');
   if(!list) return;
   list.innerHTML = '';
+  const SPELL_PERK_DESC = {
+    spread: 'allunga anche il cono di fiamme',
+    rapid: 'accresce anche la cadenza (fino a un limite)',
+    homing: 'aggiunge una sfera indipendente per lancio',
+    laser: 'allarga di poco il fascio',
+    chain: 'colpisce un nemico in più con la catena'
+  };
   RITUAL_SPELLS.forEach(name=>{
     const w = WEAPONS[name];
     const count = player.runes[name]||0;
-    const req = RUNES_REQUIRED[name];
+    const req = runesNeededFor(name);
     const unlocked = player.unlockedSpells.includes(name);
     const ready = count>=req;
     const bonus = player.spellRuneBonus[name]||0;
@@ -1153,6 +1224,7 @@ function renderGrimoire(){
         <div class="g-name">${w.label}</div>
         <div class="bar-track g-bar"><div class="bar-fill" style="width:${clamp(count/req,0,1)*100}%;background:${w.color}"></div></div>
         <div class="g-count">${statusText}</div>
+        <div class="g-perk">Ogni potenziamento: +danno e ${SPELL_PERK_DESC[name]}</div>
       </div>
       <button class="neon-btn g-ritual-btn" data-spell="${name}" ${ready ? '' : 'disabled'}>${unlocked?'POTENZIA':'RITUALE'}</button>
     `;
@@ -1164,7 +1236,7 @@ function renderGrimoire(){
 }
 function performRitual(name){
   if(!name) return;
-  const req = RUNES_REQUIRED[name];
+  const req = runesNeededFor(name);
   if((player.runes[name]||0) < req) return;
   player.runes[name] -= req;
   const wasUnlocked = player.unlockedSpells.includes(name);
@@ -1195,6 +1267,7 @@ function spawnEdgePosition(){
   if(side===2) return {x:rand(0,W), y:H+40};
   return {x:-40, y:rand(0,H)};
 }
+let nextEnemyId = 1;
 function makeEnemy(type){
   const p = spawnEdgePosition();
   // crescita dei mostri: uguale a prima nelle prime ~30 ondate, poi rallenta —
@@ -1203,6 +1276,7 @@ function makeEnemy(type){
   const cappedW = Math.min(w,30) + Math.max(0,w-30)*0.35;
   const scale = 1 + cappedW*0.09;
   const base = {
+    id: nextEnemyId++,
     x:p.x, y:p.y, vx:0, vy:0, type, angle:0, t:rand(0,10),
     fireCooldown:rand(0.5,1.5), hitFlash:0, burnT:0, burnTick:0, burnDmg:0
   };
@@ -1415,15 +1489,24 @@ function drawEnemy(en){
 }
 
 /* ============================= BULLETS ============================= */
-function shootBullet(x,y,angle,speed,owner,dmg,color,radius,homing){
-  bullets.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,owner,dmg,color,radius,life:2.6,homing:!!homing,angle});
+function shootBullet(x,y,angle,speed,owner,dmg,color,radius,homing,targetId){
+  bullets.push({x,y,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,owner,dmg,color,radius,life:2.6,homing:!!homing,angle,targetId:targetId||null});
 }
 function updateBullets(dt){
   for(const b of bullets){
     if(b.homing && b.owner==='player'){
-      let target=null, best=Infinity;
-      for(const en of enemies){ const d=dist2(b.x,b.y,en.x,en.y); if(d<best){best=d;target=en;} }
-      if(boss){ const d=dist2(b.x,b.y,boss.x,boss.y); if(d<best){best=d;target=boss;} }
+      // ogni sfera insegue il proprio bersaglio assegnato al lancio (non sempre il più vicino):
+      // così più sfere indipendenti si dividono i nemici invece di convergere tutte sullo stesso
+      let target=null;
+      if(b.targetId==='boss'){ if(boss) target=boss; }
+      else if(b.targetId!=null){ target = enemies.find(e=>e.id===b.targetId) || null; }
+      if(!target){
+        // bersaglio perso o già sconfitto: riaggancia al nemico rimasto più vicino
+        let best=Infinity;
+        for(const en of enemies){ const d=dist2(b.x,b.y,en.x,en.y); if(d<best){best=d;target=en;} }
+        if(boss){ const d=dist2(b.x,b.y,boss.x,boss.y); if(d<best){best=d;target=boss;} }
+        b.targetId = target ? (target===boss?'boss':target.id) : null;
+      }
       if(target){
         const desired = angleTo(b.x,b.y,target.x,target.y);
         let diff = desired - b.angle;
@@ -1441,9 +1524,13 @@ function drawBullets(){
   for(const b of bullets){
     ctx.save();
     ctx.translate(b.x,b.y);
-    ctx.shadowColor = b.color; ctx.shadowBlur = 12;
+    ctx.shadowColor = b.color; ctx.shadowBlur = 10;
     ctx.fillStyle = b.color;
     ctx.beginPath(); ctx.arc(0,0,b.radius,0,TAU); ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.lineWidth = Math.max(1, b.radius*0.35);
+    ctx.strokeStyle = 'rgba(27,20,8,.65)';
+    ctx.stroke();
     ctx.restore();
   }
 }
@@ -1475,11 +1562,10 @@ function updatePlayer(dt){
     player.y += player.dashDir.y * 900 * dt;
     spawnParticles(player.x,player.y,2,'#c084fc',{speed:60,life:0.35,radius:3});
   } else {
-    const effMaxSpeed = player.maxSpeed + (player.weapon==='rapid' ? getRapidSpeedBonus() : 0);
     player.vx += dir.x * player.accel * dt;
     player.vy += dir.y * player.accel * dt;
     const sp = Math.hypot(player.vx,player.vy);
-    if(sp > effMaxSpeed){ player.vx *= effMaxSpeed/sp; player.vy *= effMaxSpeed/sp; }
+    if(sp > player.maxSpeed){ player.vx *= player.maxSpeed/sp; player.vy *= player.maxSpeed/sp; }
     player.vx -= player.vx * player.friction * dt;
     player.vy -= player.vy * player.friction * dt;
     player.x += player.vx*dt; player.y += player.vy*dt;
@@ -1514,7 +1600,7 @@ function updatePlayer(dt){
     } else if(player.weapon === 'spread'){
       fireFlameCone(dt);
     } else if(player.fireCooldown <= 0){
-      player.fireCooldown = w.rate;
+      player.fireCooldown = getEffectiveRate(player.weapon);
       fireWeapon(player.weapon);
       sfx.shoot(player.weapon);
     }
@@ -1561,9 +1647,16 @@ function fireWeapon(type){
     const extra = getHomingExtraShots();
     const totalSpheres = 1 + extra;
     const spreadArc = Math.min(0.9, extra*0.12); // le sfere in più si aprono leggermente a ventaglio
+    // ogni sfera punta a un nemico diverso: prendiamo i bersagli più vicini in ordine,
+    // così le sfere indipendenti si dividono davvero il gruppo invece di convergere tutte sullo stesso
+    const candidates = enemies.slice();
+    if(boss) candidates.push(boss);
+    candidates.sort((e1,e2)=>dist2(player.x,player.y,e1.x,e1.y)-dist2(player.x,player.y,e2.x,e2.y));
     for(let i=0;i<totalSpheres;i++){
       const off = totalSpheres>1 ? (i/(totalSpheres-1) - 0.5)*spreadArc : 0;
-      shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a+off, w.speed,'player',dmg,w.color,5,true);
+      const target = candidates.length ? candidates[i % candidates.length] : null;
+      const targetId = target ? (target===boss?'boss':target.id) : null;
+      shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a+off, w.speed,'player',dmg,w.color,5,true,targetId);
     }
     sfx.homing();
   }
@@ -1716,14 +1809,8 @@ function drawLightningBolt(x1,y1,x2,y2,color){
 
 /* ============================= HUD BARS / HEX HP ============================= */
 function updateHUDBars(){
-  const w = WEAPONS[player.weapon];
-  document.getElementById('weapon-name').textContent = w.label+' · Lv.'+player.level;
-  const wb = document.getElementById('weapon-bar');
-  // barra di prontezza dell'incantesimo (si ricarica dopo ogni lancio)
-  const rate = (player.weapon==='laser'||player.weapon==='chain') ? 0.001 : Math.max(w.rate,0.001);
-  const readiness = (player.weapon==='laser'||player.weapon==='chain') ? 1 : clamp(1 - (player.fireCooldown/rate), 0, 1);
-  wb.style.width = (readiness*100)+'%';
-  wb.style.background = `linear-gradient(90deg, ${w.color}, #ffffff88)`;
+  const icon = document.getElementById('weapon-icon');
+  if(icon) icon.innerHTML = spellIconSVG(player.weapon) || '<span style="font-family:\'Cinzel Decorative\',serif;font-size:18px;color:var(--gold);">✦</span>';
   document.getElementById('dash-bar').style.width = (100 - clamp(player.dashCooldown/player.dashCooldownMax,0,1)*100)+'%';
   const xb = document.getElementById('xp-bar');
   if(xb) xb.style.width = clamp(player.xp/player.xpToNext,0,1)*100+'%';
@@ -1753,15 +1840,15 @@ function drawHexHP(){
     } else { hexCtx.globalAlpha=1; hexCtx.fillStyle='rgba(30,34,50,.6)'; }
     hexCtx.fill();
     hexCtx.globalAlpha=1;
-    hexCtx.strokeStyle='rgba(223,233,255,.35)'; hexCtx.lineWidth=1.5; hexCtx.stroke();
+    hexCtx.strokeStyle='rgba(212,175,55,.6)'; hexCtx.lineWidth=2; hexCtx.stroke();
   }
-  hexCtx.fillStyle='rgba(223,233,255,.6)'; hexCtx.font='11px Cinzel, serif'; hexCtx.fillText('ENERGIA VITALE', 18, 58);
+  hexCtx.fillStyle='rgba(228,220,255,.85)'; hexCtx.font='11px Cinzel, serif'; hexCtx.fillText('ENERGIA VITALE', 18, 58);
   // shield bar
   const sw = 6*34-10;
   hexCtx.fillStyle='rgba(255,255,255,.08)'; hexCtx.fillRect(18,66,sw,8);
-  hexCtx.fillStyle='rgba(77,238,234,.85)'; hexCtx.fillRect(18,66,sw*clamp(player.shield/player.maxShield,0,1),8);
-  hexCtx.strokeStyle='rgba(77,238,234,.4)'; hexCtx.strokeRect(18,66,sw,8);
-  hexCtx.fillStyle='rgba(223,233,255,.55)'; hexCtx.fillText('AURA ARCANA', 18, 88);
+  hexCtx.fillStyle='rgba(47,111,143,.9)'; hexCtx.fillRect(18,66,sw*clamp(player.shield/player.maxShield,0,1),8);
+  hexCtx.strokeStyle='rgba(212,175,55,.6)'; hexCtx.strokeRect(18,66,sw,8);
+  hexCtx.fillStyle='rgba(228,220,255,.85)'; hexCtx.fillText('AURA ARCANA', 18, 88);
 }
 
 /* ============================= DAMAGE ============================= */
@@ -1818,7 +1905,7 @@ function handleCollisions(){
     }
   }
   if(boss && boss.phase!=='enter' && dist(boss.x,boss.y,player.x,player.y) < player.radius+boss.radius){
-    damagePlayer(boss.phase==='dash' ? 34 : 20);
+    damagePlayer(boss.phase==='dash' ? 52 : 34);
   }
   // dead enemies
   const survivors = [];
@@ -1859,22 +1946,23 @@ function onBossDeath(){
   gainXP(boss.value*0.4);
   for(let i=0;i<4;i++) spawnPickup(boss.x+rand(-40,40), boss.y+rand(-40,40));
   document.getElementById('boss-hud').classList.add('hidden');
-  floatText(boss.x,boss.y-60,'LICH DISTRUTTO','#ffb703');
+  floatText(boss.x,boss.y-60,'FANTASMA DISSOLTO','#e0a83a');
   boss = null;
   spawner.onBossCleared();
 }
 
 /* ============================= BOSS ============================= */
 function makeBoss(){
-  // IL LICH: stregone non morto, signore degli spettri — versione più mostruosa e letale
-  // stessa curva di prima fino all'ondata 30, poi cresce più lentamente per non
-  // rendere ingestibile una partita che può proseguire all'infinito
+  // IL FANTASMA: spettro errante che alterna inseguimento e fuga — stessa
+  // curva di difficoltà di prima fino all'ondata 30, poi cresce più lentamente
+  // per non rendere ingestibile una partita che può proseguire all'infinito
   const cappedWave = Math.min(waveNumber,30) + Math.max(0,waveNumber-30)*0.35;
   const hp = Math.round(620 + cappedWave*130);
   return {
     x:W/2, y:-90, vx:0, vy:0, radius:74, hp, maxHp:hp, value:1500+waveNumber*100,
-    t:0, attackTimer:2.0, phase:'enter', dmg:30, hitFlash:0, color:'#8b5cf6',
-    telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0, enraged:false
+    t:0, attackTimer:2.0, phase:'enter', dmg:30, hitFlash:0, color:'#7b4fa0',
+    telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0, enraged:false,
+    huntState:'chase', huntTimer:rand(2.2,3.2), orbitDir:1
   };
 }
 function updateBoss(dt){
@@ -1882,7 +1970,7 @@ function updateBoss(dt){
   boss.t += dt;
   if(boss.hitFlash>0) boss.hitFlash-=dt;
   tickBurn(boss, dt);
-  // furia: sotto il 40% di HP il Lich diventa più rapido e aggressivo
+  // furia: sotto il 40% di HP il Fantasma diventa più rapido e aggressivo
   boss.enraged = boss.hp < boss.maxHp*0.4;
   const cdMul = boss.enraged ? 0.7 : 1;
   const moveMul = boss.enraged ? 1.55 : 1;
@@ -1891,12 +1979,40 @@ function updateBoss(dt){
     if(boss.y > 130){ boss.phase='idle'; sfx.bossRoar(); }
     return;
   }
-  // gentle hover toward a point at distance from player
-  const desiredX = clamp(player.x + Math.sin(boss.t*0.5)*260, boss.radius, W-boss.radius);
-  const desiredY = clamp(140 + Math.sin(boss.t*0.7)*40, boss.radius, H*0.5);
+  // il Fantasma alterna caccia, fuga e un'orbita insidiosa attorno al mago, con
+  // traiettorie ondulate su più frequenze: un percorso più complesso e meno prevedibile
+  boss.huntTimer -= dt;
+  if(boss.huntTimer<=0){
+    const options = {chase:['flee','circle'], flee:['chase','circle'], circle:['chase','flee']}[boss.huntState] || ['chase','flee','circle'];
+    boss.huntState = pick(options);
+    boss.huntTimer = boss.huntState==='chase' ? rand(2.0,3.2) : boss.huntState==='flee' ? rand(1.4,2.2) : rand(2.4,3.6);
+    boss.orbitDir = Math.random()<0.5 ? 1 : -1;
+  }
+  let desiredX, desiredY;
+  if(boss.huntState==='chase'){
+    const wob = Math.sin(boss.t*0.6)*0.35 + Math.sin(boss.t*1.7)*0.18;
+    const a = angleTo(boss.x,boss.y,player.x,player.y) + wob;
+    const standoff = 120 + Math.sin(boss.t*0.7)*40 + Math.sin(boss.t*1.3)*22;
+    desiredX = clamp(player.x - Math.cos(a)*standoff, boss.radius, W-boss.radius);
+    desiredY = clamp(player.y - Math.sin(a)*standoff, boss.radius, H-boss.radius);
+  } else if(boss.huntState==='flee'){
+    const wob = Math.sin(boss.t*0.8)*0.5 + Math.sin(boss.t*2.1)*0.2;
+    const a = angleTo(player.x,player.y,boss.x,boss.y) + wob;
+    const runDist = 300 + Math.sin(boss.t*1.1)*60;
+    desiredX = clamp(player.x + Math.cos(a)*runDist, boss.radius, W-boss.radius);
+    desiredY = clamp(player.y + Math.sin(a)*runDist, boss.radius, H*0.6);
+  } else { // circle: orbita insidiosa attorno al mago, avvicinandosi e allontanandosi mentre gira
+    const baseA = angleTo(player.x,player.y,boss.x,boss.y);
+    const orbitSpeed = (boss.enraged?1.7:1.15) * (boss.orbitDir||1);
+    const a = baseA + boss.t*orbitSpeed;
+    const orbitR = 200 + Math.sin(boss.t*0.9)*70;
+    desiredX = clamp(player.x + Math.cos(a)*orbitR, boss.radius, W-boss.radius);
+    desiredY = clamp(player.y + Math.sin(a)*orbitR, boss.radius, H-boss.radius);
+  }
   if(boss.phase==='idle' || boss.phase==='attack'){
-    boss.x += (desiredX-boss.x)*dt*1.2*moveMul;
-    boss.y += (desiredY-boss.y)*dt*1.2*moveMul;
+    const chaseMul = boss.huntState==='chase' ? 1.5 : boss.huntState==='circle' ? 1.3 : 1.15;
+    boss.x += (desiredX-boss.x)*dt*1.2*moveMul*chaseMul;
+    boss.y += (desiredY-boss.y)*dt*1.2*moveMul*chaseMul;
   }
 
   if(boss.phase==='charge'){
@@ -1948,9 +2064,11 @@ function updateBoss(dt){
       boss.attackTimer = 2.8*cdMul;
       boss.phase='idle';
     } else if(atk==='summon'){
+      // il Fantasma può ora evocare qualunque tipo di mostro incontrato finora, non solo un paio fissi
       const n = boss.enraged ? 4 : 3;
+      const roster = ['chaser','shooter','splitter','orbiter','bomber'];
       for(let i=0;i<n;i++){
-        const e = makeEnemy(Math.random()<0.5?'chaser':'splitling');
+        const e = makeEnemy(pick(roster));
         e.x = boss.x+rand(-60,60); e.y = boss.y+rand(20,60);
         enemies.push(e);
       }
@@ -1977,139 +2095,67 @@ function drawBoss(){
   if(!boss) return;
   ctx.save();
   ctx.translate(boss.x,boss.y);
-  drawGroundShadow(boss.radius*0.95, boss.radius*1.5, boss.radius*0.6, 0.46);
+  drawGroundShadow(boss.radius*0.95, boss.radius*1.35, boss.radius*0.5, 0.32);
   const rageFlicker = boss.enraged ? 0.75+Math.sin(elapsed*14)*0.25 : 0;
-  const pulse = 1+Math.sin(boss.t*(boss.enraged?6:3))*(boss.enraged?0.06:0.03);
+  const pulse = 1+Math.sin(boss.t*(boss.enraged?6:3))*(boss.enraged?0.05:0.03);
   const flash = boss.hitFlash>0;
+  const floatY = Math.sin(boss.t*2.1)*7;
+  ctx.translate(0, floatY);
 
-  // doppia aura di magia nera rotante: anello esterno viola, anello interno verde malato
+  // aura spettrale rotante, in stile cartoon: anello sottile che pulsa
   ctx.save();
   ctx.rotate(boss.t*(boss.enraged?0.4:0.15));
-  ctx.shadowColor = flash ? '#ffffff' : '#8b5cf6';
-  ctx.shadowBlur = 34;
-  ctx.fillStyle = flash ? 'rgba(255,255,255,.5)' : `rgba(139,92,246,${0.26+rageFlicker*0.14})`;
-  ctx.beginPath();
-  const spikes=14;
-  for(let i=0;i<spikes*2;i++){
-    const a = i/(spikes*2)*TAU;
-    const rr = (i%2===0 ? boss.radius*1.08 : boss.radius*0.66) * pulse;
-    const px=Math.cos(a)*rr, py=Math.sin(a)*rr;
-    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-  }
-  ctx.closePath(); ctx.fill();
-  ctx.lineWidth=2.5; ctx.strokeStyle='rgba(139,92,246,.65)'; ctx.stroke();
+  ctx.shadowColor = boss.enraged?'#c1272d':'#7b4fa0'; ctx.shadowBlur=26;
+  ctx.strokeStyle = boss.enraged ? `rgba(193,39,45,${0.4+rageFlicker*0.3})` : `rgba(123,79,160,${0.35+rageFlicker*0.2})`;
+  ctx.lineWidth=3;
+  ctx.beginPath(); ctx.arc(0,0,boss.radius*1.28*pulse,0,TAU); ctx.stroke();
   ctx.restore();
-  ctx.save();
-  ctx.rotate(-boss.t*(boss.enraged?0.6:0.24));
-  ctx.shadowColor = '#39ff88'; ctx.shadowBlur = 20;
-  ctx.strokeStyle = `rgba(57,255,136,${0.35+rageFlicker*0.3})`; ctx.lineWidth=1.6;
-  ctx.beginPath();
-  const spikes2=9;
-  for(let i=0;i<spikes2*2;i++){
-    const a = i/(spikes2*2)*TAU;
-    const rr = (i%2===0 ? boss.radius*0.86 : boss.radius*0.5) * pulse;
-    const px=Math.cos(a)*rr, py=Math.sin(a)*rr;
-    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
-  }
-  ctx.closePath(); ctx.stroke();
-  ctx.restore();
+  ctx.shadowBlur=0;
 
-  // schegge d'osso in orbita lenta attorno al corpo
-  const boneCount = 6;
-  for(let i=0;i<boneCount;i++){
-    const a = boss.t*0.5 + i/boneCount*TAU;
-    const br = boss.radius*1.18;
-    const bx = Math.cos(a)*br, by = Math.sin(a)*br*0.9;
-    ctx.save();
-    ctx.translate(bx,by); ctx.rotate(a+Math.PI/2);
-    ctx.fillStyle='#d9d2c4'; ctx.shadowColor='#000'; ctx.shadowBlur=4; ctx.globalAlpha=0.85;
-    ctx.beginPath(); ctx.ellipse(0,0,3.2,9,0,0,TAU); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(0,-8,3.6,3.2,0,0,TAU); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(0,8,3.6,3.2,0,0,TAU); ctx.fill();
-    ctx.globalAlpha=1;
-    ctx.restore();
-  }
-
-  // tunica lacera e asimmetrica, molto più grande e sfrangiata
-  const bodyR = boss.radius*0.78;
-  ctx.shadowBlur=22; ctx.shadowColor='#1a0a2e';
-  ctx.fillStyle = flash ? '#ffffff' : (boss.enraged ? '#3a1030' : '#241238');
+  // IL FANTASMA: corpo a goccia rovesciata con code ondulate, stile cartoon a contorno spesso
+  const bodyR = boss.radius*0.86;
+  ctx.fillStyle = flash ? '#ffffff' : (boss.enraged ? '#f3cfd6' : '#f3ecff');
+  ctx.globalAlpha = 0.95;
   ctx.beginPath();
-  ctx.moveTo(-bodyR*1.02,-bodyR*0.55);
-  ctx.quadraticCurveTo(0,-bodyR*1.35,bodyR*1.0,-bodyR*0.55);
-  ctx.lineTo(bodyR*1.18,bodyR*0.5);
-  // orlo stracciato e irregolare, con code spettrali sventolanti
-  const tatters=9;
-  for(let i=0;i<=tatters;i++){
-    const tt = i/tatters;
-    const px = bodyR*1.18 - tt*bodyR*2.36;
-    const sway = Math.sin(boss.t*2.2 + i*1.3)*bodyR*0.14;
-    const py = bodyR*0.85 + (i%2===0? bodyR*0.55+sway : bodyR*0.15+sway*0.5);
+  ctx.moveTo(-bodyR, bodyR*0.28);
+  ctx.quadraticCurveTo(-bodyR*1.06, -bodyR*1.05, 0, -bodyR*1.08);
+  ctx.quadraticCurveTo(bodyR*1.06, -bodyR*1.05, bodyR, bodyR*0.28);
+  const tails=6;
+  for(let i=0;i<=tails;i++){
+    const tt = i/tails;
+    const px = bodyR - tt*bodyR*2;
+    const sway = Math.sin(boss.t*2.4 + i*1.4)*bodyR*0.16;
+    const py = bodyR*0.28 + (i%2===0 ? bodyR*0.58+sway : bodyR*0.22+sway*0.5);
     ctx.lineTo(px,py);
   }
-  ctx.lineTo(-bodyR*1.18,bodyR*0.5);
   ctx.closePath(); ctx.fill();
-  ctx.strokeStyle=boss.enraged?'rgba(255,80,80,.6)':'rgba(139,92,246,.55)'; ctx.lineWidth=2.2; ctx.stroke();
+  ctx.globalAlpha = 1;
+  ctx.lineWidth=5; ctx.strokeStyle='#1b1408'; ctx.stroke();
 
-  // nucleo/filatterio pulsante visibile tra gli squarci della tunica
-  const coreGlow = 0.55+0.45*Math.sin(boss.t*5);
-  ctx.shadowColor = boss.enraged?'#ff3b4e':'#39ff88'; ctx.shadowBlur=16;
-  ctx.fillStyle = boss.enraged ? `rgba(255,59,78,${coreGlow})` : `rgba(57,255,136,${coreGlow})`;
-  ctx.beginPath(); ctx.arc(0,bodyR*0.12,bodyR*0.13*pulse,0,TAU); ctx.fill();
-  ctx.shadowBlur=0;
+  // braccine spettrali corte, appena accennate
+  ctx.strokeStyle='#1b1408'; ctx.lineWidth=4.5; ctx.lineCap='round';
+  const armSway = Math.sin(boss.t*3)*bodyR*0.08;
+  ctx.beginPath(); ctx.moveTo(-bodyR*0.92,-bodyR*0.1); ctx.quadraticCurveTo(-bodyR*1.28,bodyR*0.05+armSway,-bodyR*1.1,bodyR*0.32); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(bodyR*0.92,-bodyR*0.1); ctx.quadraticCurveTo(bodyR*1.28,bodyR*0.05-armSway,bodyR*1.1,bodyR*0.32); ctx.stroke();
 
-  // artigli scheletrici: due braccia protese, dita ricurve affilate
-  ctx.strokeStyle = flash?'#fff':'#cfc6b8'; ctx.lineWidth=4; ctx.lineCap='round';
-  for(const side of [-1,1]){
-    const shoulderX = side*bodyR*0.85, shoulderY = -bodyR*0.15;
-    const elbowX = side*bodyR*1.35, elbowY = bodyR*0.25;
-    const handX = side*bodyR*1.65, handY = -bodyR*0.05 + Math.sin(boss.t*3+side)*bodyR*0.08;
-    ctx.beginPath(); ctx.moveTo(shoulderX,shoulderY); ctx.quadraticCurveTo(elbowX,elbowY,handX,handY); ctx.stroke();
-    ctx.lineWidth=2.6;
-    for(const fa of [-0.5,-0.15,0.2,0.55]){
-      const fx = handX + Math.cos(fa+ (side>0?0:Math.PI))*bodyR*0.32*side;
-      const fy = handY + Math.sin(fa)*bodyR*0.32 - bodyR*0.05;
-      ctx.beginPath(); ctx.moveTo(handX,handY); ctx.quadraticCurveTo(handX+side*bodyR*0.14,fy-bodyR*0.06,fx,fy); ctx.stroke();
-    }
-    ctx.lineWidth=4;
-  }
+  // occhi grandi e tondi, rossi e feroci quando infuriato
+  const eyeGlow = (boss.enraged?0.85:0.7)+0.3*Math.sin(boss.t*(boss.enraged?9:5));
+  ctx.fillStyle = boss.enraged ? `rgba(193,39,45,${eyeGlow})` : '#1b1408';
+  if(boss.enraged){ ctx.shadowColor='#c1272d'; ctx.shadowBlur=14; }
+  ctx.beginPath(); ctx.ellipse(-bodyR*0.28,-bodyR*0.18,bodyR*0.15,bodyR*0.19,0,0,TAU); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(bodyR*0.28,-bodyR*0.18,bodyR*0.15,bodyR*0.19,0,0,TAU); ctx.fill();
+  ctx.shadowBlur=0;
+  // piccoli riflessi negli occhi, per un tocco cartoon
+  ctx.fillStyle='rgba(255,255,255,.9)';
+  ctx.beginPath(); ctx.arc(-bodyR*0.24,-bodyR*0.24,bodyR*0.045,0,TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(bodyR*0.32,-bodyR*0.24,bodyR*0.045,0,TAU); ctx.fill();
 
-  // cappuccio ombroso + teschio allungato e crepato
-  ctx.fillStyle='#0a0512';
-  ctx.beginPath(); ctx.ellipse(0,-bodyR*0.24,bodyR*0.62,bodyR*0.58,0,0,TAU); ctx.fill();
-  ctx.fillStyle= boss.enraged ? '#f0d8d8' : '#e9e2d8';
-  ctx.beginPath(); ctx.ellipse(0,-bodyR*0.22,bodyR*0.42,bodyR*0.48,0,0,TAU); ctx.fill();
-  // crepe sul teschio
-  ctx.strokeStyle='rgba(0,0,0,.4)'; ctx.lineWidth=1.2;
-  ctx.beginPath(); ctx.moveTo(-bodyR*0.06,-bodyR*0.62); ctx.lineTo(bodyR*0.02,-bodyR*0.4); ctx.lineTo(-bodyR*0.05,-bodyR*0.2); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(bodyR*0.28,-bodyR*0.42); ctx.lineTo(bodyR*0.2,-bodyR*0.22); ctx.stroke();
-  // occhi incandescenti, più grandi e feroci
-  const eyeGlow = (boss.enraged?0.75:0.6)+0.4*Math.sin(boss.t*(boss.enraged?9:6));
-  ctx.fillStyle=`rgba(255,${boss.enraged?30:45},${boss.enraged?20:45},${eyeGlow})`; ctx.shadowColor=boss.enraged?'#ff3b1a':'#ff2d2d'; ctx.shadowBlur=16;
-  ctx.beginPath(); ctx.ellipse(-bodyR*0.16,-bodyR*0.26,bodyR*0.12,bodyR*0.16,-0.15,0,TAU); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(bodyR*0.16,-bodyR*0.26,bodyR*0.12,bodyR*0.16,0.15,0,TAU); ctx.fill();
-  ctx.shadowBlur=0;
-  // mascella spalancata con denti aguzzi
-  ctx.fillStyle='#0a0512';
-  ctx.beginPath(); ctx.ellipse(0,bodyR*0.02,bodyR*0.24,bodyR*0.14,0,0,TAU); ctx.fill();
-  ctx.fillStyle='#f4efe4';
-  const teeth=6;
-  for(let i=0;i<teeth;i++){
-    const tx = -bodyR*0.2 + i*(bodyR*0.4/(teeth-1));
-    ctx.beginPath(); ctx.moveTo(tx,bodyR*-0.06); ctx.lineTo(tx+bodyR*0.03,bodyR*0.04); ctx.lineTo(tx-bodyR*0.03,bodyR*0.04); ctx.closePath(); ctx.fill();
-  }
-  // corona d'ossa e corna asimmetriche (non più un'elegante corona d'oro)
-  ctx.fillStyle= boss.enraged ? '#ffb0a0' : '#cfc6b8';
-  ctx.shadowColor = boss.enraged ? '#ff3b4e' : '#8b5cf6'; ctx.shadowBlur=10;
-  const crownY = -bodyR*0.68 + Math.sin(boss.t*2)*2;
-  ctx.beginPath();
-  ctx.moveTo(-bodyR*0.4,crownY); ctx.lineTo(-bodyR*0.42,crownY-bodyR*0.5); ctx.lineTo(-bodyR*0.18,crownY-bodyR*0.1);
-  ctx.lineTo(-bodyR*0.06,crownY-bodyR*0.62); ctx.lineTo(bodyR*0.08,crownY-bodyR*0.15);
-  ctx.lineTo(bodyR*0.3,crownY-bodyR*0.7); ctx.lineTo(bodyR*0.24,crownY-bodyR*0.05);
-  ctx.lineTo(bodyR*0.42,crownY); ctx.closePath(); ctx.fill();
-  ctx.shadowBlur=0;
+  // bocca ovale spalancata, sempre un po' sorpresa
+  ctx.fillStyle='#1b1408';
+  ctx.beginPath(); ctx.ellipse(0,bodyR*0.2,bodyR*0.15,bodyR*0.2,0,0,TAU); ctx.fill();
 
   ctx.restore();
+
 
   if(boss.phase==='charge'){
     ctx.save();
@@ -2120,7 +2166,7 @@ function drawBoss(){
 
   document.getElementById('boss-hud').classList.remove('hidden');
   document.getElementById('boss-bar').style.width = clamp(boss.hp/boss.maxHp,0,1)*100+'%';
-  document.getElementById('boss-name').textContent = (boss.enraged ? 'IL LICH INFURIATO' : 'IL LICH') + ' · ONDATA '+waveNumber;
+  document.getElementById('boss-name').textContent = (boss.enraged ? 'IL FANTASMA INFURIATO' : 'IL FANTASMA') + ' · ONDATA '+waveNumber;
 }
 
 /* ============================= SPAWNER / WAVES ============================= */
@@ -2131,7 +2177,7 @@ const spawner = {
     if(waveNumber % 5 === 0){
       boss = makeBoss();
       this.waveActive = false;
-      showWaveBanner('ONDATA '+waveNumber, 'IL LICH SI RISVEGLIA');
+      showWaveBanner('ONDATA '+waveNumber, 'IL FANTASMA SI MANIFESTA');
       return;
     }
     this.toSpawn = 5 + waveNumber*2;
@@ -2175,7 +2221,7 @@ const spawner = {
 let bannerTimer=0;
 function showWaveBanner(title,sub){
   const el = document.getElementById('wave-banner');
-  el.innerHTML = title+'<small>'+sub+'</small>';
+  el.innerHTML = '<span class="wb-title">'+title+'</span><small>'+sub+'</small>';
   el.style.transition='none'; el.style.opacity='1'; el.style.transform='translate(-50%,-50%) scale(1.05)';
   bannerTimer = 2.2;
   sfx.wave();
@@ -2211,21 +2257,34 @@ function drawParticles(){
   ctx.globalAlpha=1; ctx.textAlign='left';
 }
 function drawPickups(){
-  const colors = {heal:'#39ff88',shield:'#4deeea',spread:'#ff8a3d',rapid:'#ffe14d',homing:'#ff2fb0',laser:'#ffb703',chain:'#8dfcff',nuke:'#ff3b4e',multi:'#ffb703'};
+  const colors = {heal:'#2e9e4f',shield:'#2f6f8f',spread:'#e0672c',rapid:'#e8b923',homing:'#c1276b',laser:'#e07a2c',chain:'#2f8f9f',nuke:'#c1272d',multi:'#7b4fa0'};
   for(const pu of pickups){
     const bob = Math.sin(elapsed*3+pu.phase)*5;
     const pulse = 1 + Math.sin(elapsed*4.5+pu.phase)*0.12;
-    const c = colors[pu.type]||'#ffffff';
+    const c = colors[pu.type]||'#241a10';
     ctx.save();
     ctx.translate(pu.x, pu.y);
     drawGroundShadow(pu.radius*0.6, pu.radius*0.9, pu.radius*0.35, 0.3);
     ctx.translate(0, bob);
 
+    // pietra runica scura con bagliore colorato: sembra una gemma incisa, coerente col tema arcano
+    ctx.beginPath(); ctx.arc(0,0,pu.radius*pulse*1.14,0,TAU);
+    ctx.fillStyle='#1a1226'; ctx.fill();
+    ctx.shadowColor=c; ctx.shadowBlur=16;
+    ctx.lineWidth=1.8; ctx.strokeStyle=c; ctx.stroke();
+    ctx.shadowBlur=0;
+    ctx.lineWidth=2; ctx.strokeStyle='rgba(212,175,55,.55)'; ctx.stroke();
+    // sottile riflesso in alto a sinistra, come luce su pietra levigata
+    ctx.save();
+    ctx.beginPath(); ctx.arc(0,0,pu.radius*pulse*1.14,0,TAU); ctx.clip();
+    ctx.fillStyle='rgba(255,255,255,.16)';
+    ctx.beginPath(); ctx.ellipse(-pu.radius*0.42,-pu.radius*0.48,pu.radius*0.4,pu.radius*0.22,-0.5,0,TAU); ctx.fill();
+    ctx.restore();
+
     // rotating rune-circle base (slow) + inner glow disc
     ctx.save();
     ctx.rotate(elapsed*1.1);
-    ctx.shadowColor=c; ctx.shadowBlur=16;
-    ctx.strokeStyle=c; ctx.lineWidth=2.2; ctx.globalAlpha=0.85;
+    ctx.strokeStyle=c; ctx.lineWidth=2.4; ctx.globalAlpha=0.95;
     ctx.beginPath();
     for(let k=0;k<6;k++){ const a=k/6*TAU; const px=Math.cos(a)*pu.radius*pulse, py=Math.sin(a)*pu.radius*pulse; if(k===0) ctx.moveTo(px,py); else ctx.lineTo(px,py); }
     ctx.closePath(); ctx.stroke();
@@ -2237,63 +2296,80 @@ function drawPickups(){
       const sa = elapsed*3 + s*(TAU/3);
       const sr = pu.radius+7;
       ctx.beginPath(); ctx.arc(Math.cos(sa)*sr, Math.sin(sa)*sr, 1.8, 0, TAU);
-      ctx.fillStyle=c; ctx.globalAlpha=0.8; ctx.fill(); ctx.globalAlpha=1;
+      ctx.fillStyle=c; ctx.shadowColor=c; ctx.shadowBlur=6; ctx.globalAlpha=0.9; ctx.fill(); ctx.globalAlpha=1;
     }
+    ctx.shadowBlur=0;
 
-    // per-type glyph, drawn upright (counter-rotated / not spinning with rune circle)
+    // per-type glyph, drawn upright (counter-rotated / not spinning with rune circle) — inciso luminoso su pietra scura
     ctx.scale(pulse,pulse);
-    ctx.strokeStyle='#fff'; ctx.fillStyle='#fff'; ctx.lineWidth=1.8;
-    ctx.shadowColor=c; ctx.shadowBlur=10;
+    ctx.strokeStyle='#f4e9d0'; ctx.fillStyle='#f4e9d0'; ctx.lineWidth=1.8;
+    ctx.shadowColor=c; ctx.shadowBlur=6;
     const r = pu.radius*0.62;
+    ctx.lineJoin='round';
     switch(pu.type){
       case 'heal': { // potion bottle
         ctx.fillStyle=c;
         ctx.beginPath(); ctx.moveTo(-3,-r); ctx.lineTo(3,-r); ctx.lineTo(3,-r*0.4); ctx.lineTo(6,r*0.1);
         ctx.lineTo(6,r); ctx.lineTo(-6,r); ctx.lineTo(-6,r*0.1); ctx.lineTo(-3,-r*0.4); ctx.closePath(); ctx.fill();
-        ctx.strokeStyle='rgba(0,0,0,.35)'; ctx.lineWidth=1; ctx.stroke();
+        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.3; ctx.stroke();
         ctx.fillStyle='rgba(255,255,255,.85)'; ctx.fillRect(-4,-r*1.15,8,3);
         break; }
       case 'shield': { // ward rune: triangle in circle
-        ctx.beginPath(); ctx.arc(0,0,r,0,TAU); ctx.strokeStyle=c; ctx.stroke();
+        ctx.beginPath(); ctx.arc(0,0,r,0,TAU); ctx.strokeStyle=c; ctx.lineWidth=2.4; ctx.stroke();
         ctx.beginPath(); ctx.moveTo(0,-r*0.7); ctx.lineTo(r*0.6,r*0.5); ctx.lineTo(-r*0.6,r*0.5); ctx.closePath();
-        ctx.strokeStyle='#fff'; ctx.stroke();
+        ctx.fillStyle=c; ctx.globalAlpha=0.85; ctx.fill(); ctx.globalAlpha=1;
+        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.6; ctx.stroke();
         break; }
       case 'spread': { // three small flames
         for(const off of [-7,0,7]){
           ctx.beginPath();
           ctx.moveTo(off,r*0.6); ctx.quadraticCurveTo(off+4,-r*0.2,off,-r*0.75); ctx.quadraticCurveTo(off-4,-r*0.2,off,r*0.6);
           ctx.fillStyle=c; ctx.fill();
+          ctx.strokeStyle='#1b1408'; ctx.lineWidth=1; ctx.stroke();
         }
         break; }
       case 'rapid': { // lightning bolt
         ctx.beginPath();
         ctx.moveTo(2,-r); ctx.lineTo(-4,1); ctx.lineTo(1,1); ctx.lineTo(-2,r); ctx.lineTo(5,-1); ctx.lineTo(0,-1); ctx.closePath();
         ctx.fillStyle=c; ctx.fill();
+        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.2; ctx.stroke();
         break; }
       case 'homing': { // seeking eye
-        ctx.beginPath(); ctx.ellipse(0,0,r,r*0.6,0,0,TAU); ctx.strokeStyle=c; ctx.stroke();
+        ctx.beginPath(); ctx.ellipse(0,0,r,r*0.6,0,0,TAU); ctx.fillStyle='#fff'; ctx.fill();
+        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.4; ctx.stroke();
         ctx.beginPath(); ctx.arc(0,0,r*0.32,0,TAU); ctx.fillStyle=c; ctx.fill();
+        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1; ctx.stroke();
         break; }
       case 'laser': { // rune beam
-        ctx.beginPath(); ctx.moveTo(-r,0); ctx.lineTo(r,0); ctx.strokeStyle=c; ctx.lineWidth=3; ctx.stroke();
-        ctx.beginPath(); ctx.arc(r*0.6,0,2.4,0,TAU); ctx.fillStyle='#fff'; ctx.fill();
+        ctx.beginPath(); ctx.moveTo(-r,0); ctx.lineTo(r,0); ctx.strokeStyle='#1b1408'; ctx.lineWidth=4.4; ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-r,0); ctx.lineTo(r,0); ctx.strokeStyle=c; ctx.lineWidth=2.6; ctx.stroke();
+        ctx.beginPath(); ctx.arc(r*0.6,0,2.2,0,TAU); ctx.fillStyle='#1b1408'; ctx.fill();
         break; }
       case 'chain': { // forked lightning: three converging bolts
-        ctx.strokeStyle=c; ctx.lineWidth=2; ctx.lineJoin='round';
+        ctx.lineWidth=3.2; ctx.strokeStyle='#1b1408';
         for(const off of [-6,0,6]){
           ctx.beginPath();
           ctx.moveTo(off,-r); ctx.lineTo(off-3,-r*0.15); ctx.lineTo(off+2.5,-r*0.05); ctx.lineTo(off-2,r);
           ctx.stroke();
         }
-        ctx.beginPath(); ctx.arc(0,0,2,0,TAU); ctx.fillStyle='#fff'; ctx.fill();
+        ctx.lineWidth=1.6; ctx.strokeStyle=c;
+        for(const off of [-6,0,6]){
+          ctx.beginPath();
+          ctx.moveTo(off,-r); ctx.lineTo(off-3,-r*0.15); ctx.lineTo(off+2.5,-r*0.05); ctx.lineTo(off-2,r);
+          ctx.stroke();
+        }
+        ctx.beginPath(); ctx.arc(0,0,2,0,TAU); ctx.fillStyle='#1b1408'; ctx.fill();
         break; }
       case 'nuke': { // meteor with trail
         ctx.beginPath(); ctx.moveTo(-r,-r); ctx.lineTo(-r*0.2,-r*0.2); ctx.strokeStyle=c; ctx.lineWidth=3; ctx.globalAlpha=0.6; ctx.stroke(); ctx.globalAlpha=1;
         ctx.beginPath(); ctx.arc(r*0.25,r*0.25,r*0.55,0,TAU); ctx.fillStyle=c; ctx.fill();
+        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.4; ctx.stroke();
         break; }
       case 'multi': { // gem
         ctx.beginPath(); ctx.moveTo(0,-r); ctx.lineTo(r*0.7,0); ctx.lineTo(0,r); ctx.lineTo(-r*0.7,0); ctx.closePath();
-        ctx.fillStyle=c; ctx.fill(); ctx.strokeStyle='#fff'; ctx.globalAlpha=0.6; ctx.stroke(); ctx.globalAlpha=1;
+        ctx.fillStyle=c; ctx.fill(); ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.6; ctx.globalAlpha=1; ctx.stroke();
+        ctx.fillStyle='rgba(255,255,255,.5)';
+        ctx.beginPath(); ctx.moveTo(0,-r*0.8); ctx.lineTo(r*0.2,-r*0.1); ctx.lineTo(0,0); ctx.lineTo(-r*0.2,-r*0.1); ctx.closePath(); ctx.fill();
         break; }
     }
     ctx.restore();
@@ -2322,8 +2398,8 @@ function drawGroundShadow(offsetY, rx, ry, alpha){
 function drawMageBody(g, r, blink, t){
   const bob = Math.sin(t*7)*0.9; // subtle walking bob
 
-  // wide shaolin pantaloni: flared fabric peeking from the back sides
-  g.fillStyle = '#3a1858';
+  // ampi hakama scuri: si intravede il tessuto ai lati (dietro la giacca)
+  g.fillStyle = '#0e0a1a';
   g.beginPath(); g.moveTo(-r*0.15,-r*0.55); g.lineTo(-r*1.35,-r*0.95); g.lineTo(-r*0.75,-r*0.15); g.closePath(); g.fill();
   g.beginPath(); g.moveTo(-r*0.15,r*0.55); g.lineTo(-r*1.35,r*0.95); g.lineTo(-r*0.75,r*0.15); g.closePath(); g.fill();
 
@@ -2342,27 +2418,29 @@ function drawMageBody(g, r, blink, t){
   g.restore();
   g.shadowBlur=0;
 
-  // purple shaolin robe (rounded body) with gold diagonal sash
-  g.fillStyle = blink ? '#c8a2ff' : '#7c3aed';
+  // giacca scura dal colletto alto (stile haori/streetwear notturno) con bottoni dorati
+  g.fillStyle = blink ? '#4b5088' : '#171a30';
   g.beginPath(); g.ellipse(0,bob*0.3,r*0.98,r*0.86,0,0,TAU); g.fill();
-  g.strokeStyle='rgba(40,10,70,.7)'; g.lineWidth=1.5; g.stroke();
-  g.save();
-  g.beginPath(); g.ellipse(0,bob*0.3,r*0.98,r*0.86,0,0,TAU); g.clip();
-  g.fillStyle='#ffb703'; g.globalAlpha=0.85;
-  g.beginPath();
-  g.moveTo(-r*1.2,-r*0.5); g.lineTo(-r*0.75,-r*0.9); g.lineTo(r*1.2,r*0.55); g.lineTo(r*0.75,r*0.95); g.closePath(); g.fill();
-  g.globalAlpha=1;
-  g.restore();
+  g.strokeStyle='rgba(0,0,0,.6)'; g.lineWidth=1.5; g.stroke();
+  // colletto alto sollevato, appena sotto il cappello
+  g.fillStyle = blink ? '#5a5f9c' : '#232849';
+  g.beginPath(); g.ellipse(-r*0.05,bob*0.3-r*0.05,r*0.4,r*0.34,0,0,TAU); g.fill();
+  g.strokeStyle='rgba(0,0,0,.45)'; g.lineWidth=1; g.stroke();
+  // due bottoni dorati lungo il petto
+  g.fillStyle='#d4af37'; g.shadowColor='#d4af37'; g.shadowBlur=4;
+  g.beginPath(); g.arc(r*0.08,-r*0.05,r*0.055,0,TAU); g.fill();
+  g.beginPath(); g.arc(r*0.16,r*0.28,r*0.055,0,TAU); g.fill();
+  g.shadowBlur=0;
 
-  // pointed wizard hat (viewed from above), tip flopped to the back
-  g.fillStyle='#5b21b6'; g.shadowColor='#5b21b6'; g.shadowBlur = blink?2:10;
+  // cappuccio a punta scuro in tinta con la giacca, tesa e stellina dorata
+  g.fillStyle='#7b4fa0'; g.shadowColor='#a97fd4'; g.shadowBlur = blink?2:10;
   g.beginPath();
   g.ellipse(-r*0.05,bob*0.3,r*0.62,r*0.5,0,0,TAU); g.fill(); // brim
   g.beginPath();
   g.moveTo(-r*0.3,-r*0.34); g.quadraticCurveTo(-r*1.5,-r*0.55,-r*1.85,-r*0.15);
   g.quadraticCurveTo(-r*0.9,r*0.05,r*0.05,r*0.32);
   g.closePath(); g.fill();
-  g.strokeStyle='rgba(255,183,3,.85)'; g.lineWidth=1.5;
+  g.strokeStyle='rgba(212,175,55,.85)'; g.lineWidth=1.5;
   g.beginPath(); g.ellipse(-r*0.05,bob*0.3,r*0.62,r*0.5,0,0,TAU); g.stroke();
   // small star glyph on the hat
   g.shadowBlur=0; g.fillStyle='#ffe14d';
@@ -2464,9 +2542,9 @@ function drawPlayer(){
 
 /* ============================= BACKGROUND: MYSTIC FOREST ============================= */
 function drawBackground(){
-  // mossy forest-floor gradient, lighter in the clearing centre, darker toward the treeline
+  // radura arcana notturna: luce lunare fredda al centro, buio della foresta ai bordi
   const g = ctx.createRadialGradient(W/2,H/2,40, W/2,H/2, Math.max(W,H)*0.72);
-  g.addColorStop(0,'#1b3324'); g.addColorStop(0.55,'#122a1e'); g.addColorStop(1,'#0a1710');
+  g.addColorStop(0,'#2a2450'); g.addColorStop(0.55,'#1a1636'); g.addColorStop(1,'#0a0818');
   ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
   // undergrowth: ferns, mushrooms, rocks, fallen logs, wildflowers
@@ -2475,8 +2553,8 @@ function drawBackground(){
   // treeline canopy framing the clearing from above
   drawTreeCanopy();
 
-  // faint drifting arcane mist bands
-  ctx.globalAlpha=0.05;
+  // bande di nebbia arcana, violacea, che fluttua lentamente
+  ctx.globalAlpha=0.07;
   for(let i=0;i<3;i++){
     const my = (H*0.2 + i*H*0.3 + Math.sin(elapsed*0.15+i)*30);
     const mg = ctx.createLinearGradient(0,my-60,0,my+60);
@@ -2488,7 +2566,7 @@ function drawBackground(){
   // gently falling autumn leaves
   drawLeaves();
 
-  // drifting fireflies & embers, gently swaying, rising slowly
+  // scintille arcane e lucciole, fluttuanti, in colori magici
   const speeds=[5,10,17];
   for(let layer=0; layer<3; layer++){
     for(const s of stars[layer]){
@@ -2497,17 +2575,17 @@ function drawBackground(){
       if(s.y< -4){ s.y=H+4; s.x=rand(0,W); }
       const glow = 0.55+0.45*Math.sin(elapsed*2.2+s.sway*3);
       ctx.globalAlpha = (layer===0?0.45:(layer===1?0.7:0.95)) * glow;
-      ctx.fillStyle = s.color; ctx.shadowColor=s.color; ctx.shadowBlur = layer===2?6:2;
+      ctx.fillStyle = s.color; ctx.shadowColor=s.color; ctx.shadowBlur = layer===2?8:4;
       ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,TAU); ctx.fill();
     }
   }
   ctx.shadowBlur=0;
   ctx.globalAlpha=1;
 
-  // ground mist near the bottom for depth
-  const fog = ctx.createLinearGradient(0,H*0.72,0,H);
-  fog.addColorStop(0,'rgba(20,10,35,0)'); fog.addColorStop(1,'rgba(20,10,35,.55)');
-  ctx.fillStyle=fog; ctx.fillRect(0,H*0.72,W,H*0.28);
+  // oscurità ai bordi per dare profondità e mistero, come un bosco illuminato solo al centro
+  const fog = ctx.createLinearGradient(0,H*0.68,0,H);
+  fog.addColorStop(0,'rgba(10,7,20,0)'); fog.addColorStop(1,'rgba(10,7,20,.5)');
+  ctx.fillStyle=fog; ctx.fillRect(0,H*0.68,W,H*0.32);
 }
 
 /* ============================= MAIN LOOP ============================= */
