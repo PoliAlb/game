@@ -73,6 +73,14 @@ canvas#game{
 #xp-hud{
   position:absolute; top:74px; left:16px; width:260px; pointer-events:none;
 }
+#corruption-hud{
+  position:absolute; top:96px; left:16px; width:260px; pointer-events:none; transition:opacity .4s ease;
+}
+#corruption-hud.hidden{display:none;}
+#corruption-label{font-size:9.5px; color:rgba(200,120,220,.85); letter-spacing:2px; margin-bottom:3px; font-weight:700; text-shadow:0 0 6px rgba(180,60,220,.5);}
+#corruption-pct{color:#e089ff;}
+.bar-track.corruption{height:6px; background:rgba(255,255,255,.06); border:1px solid rgba(180,60,220,.5); border-radius:3px;}
+.bar-track.corruption .bar-fill{background:linear-gradient(90deg, #7c2d92, #e089ff); box-shadow:0 0 7px rgba(180,60,220,.8); transition:width .3s ease;}
 .bar-track.xp{height:6px; background:rgba(255,255,255,.06); border:1px solid rgba(139,92,246,.4); border-radius:3px;}
 .bar-track.xp .bar-fill{background:linear-gradient(90deg, var(--violet), #c4b5fd); box-shadow:0 0 6px rgba(139,92,246,.7);}
 #spellbook{display:flex; gap:6px; pointer-events:all;}
@@ -256,6 +264,16 @@ canvas#game{
   color:var(--gold); text-shadow:0 0 12px rgba(212,175,55,.5);
   border-bottom:1px solid rgba(212,175,55,.3); padding-bottom:6px; width:100%; text-align:center;
 }
+.book-spread{ display:none; width:100%; }
+.book-spread.active{ display:flex; animation:pageIn .35s ease; }
+@keyframes pageIn{ from{opacity:0; transform:translateX(14px);} to{opacity:1; transform:translateX(0);} }
+.book-nav{ display:flex; align-items:center; justify-content:center; gap:18px; width:100%; }
+.page-dots{ display:flex; gap:7px; }
+.page-dot{ width:8px; height:8px; border-radius:50%; background:rgba(228,220,255,.25); border:1px solid rgba(212,175,55,.4); transition:all .2s ease; }
+.page-dot.active{ background:var(--gold); box-shadow:0 0 8px rgba(212,175,55,.7); }
+.rules-list{ display:flex; flex-direction:column; gap:9px; font-size:11.5px; color:rgba(228,220,255,.8); text-align:left; width:100%; }
+.rules-list b{ color:var(--amber); }
+.g-progress{ font-size:10px; letter-spacing:.5px; color:var(--gold); font-weight:600; margin-top:1px; }
 #mage-portrait{
   background:radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.22), transparent 60%);
   border:1px solid rgba(212,175,55,.3); border-radius:8px;
@@ -280,6 +298,7 @@ canvas#game{
 .synergy-desc{ font-size:9px; letter-spacing:.5px; color:rgba(228,220,255,.55); margin-top:2px; line-height:1.4; }
 @media (max-width:720px){
   .book-pages{ flex-direction:column; }
+  .book-spread.active{ flex-direction:column; }
   .book-spine{ width:auto; height:10px; background:linear-gradient(180deg, rgba(0,0,0,.5), rgba(139,92,246,.08) 30%, rgba(139,92,246,.08) 70%, rgba(0,0,0,.5)); }
   .book-page{ max-height:none; }
 }
@@ -308,6 +327,7 @@ canvas#game{
 .bar-track.g-bar{height:5px; background:rgba(0,0,0,.4); border:1px solid rgba(212,175,55,.25);}
 .g-count{font-size:10px; letter-spacing:1px; color:rgba(228,220,255,.7);}
 .g-perk{font-size:9.5px; letter-spacing:.5px; color:rgba(228,220,255,.55); font-style:italic; margin-top:1px;}
+.g-progress{font-size:10.5px; letter-spacing:.5px; color:var(--gold); font-weight:700; margin-top:2px;}
 .g-ritual-btn{
   pointer-events:all; cursor:pointer; font-family:"Cinzel",serif; font-size:10px; letter-spacing:2px; padding:8px 14px;
   background:#241634; color:var(--gold); border:1px solid var(--gold);
@@ -344,6 +364,10 @@ canvas#game{
   </div>
   <div id="xp-hud">
     <div class="bar-track xp"><div id="xp-bar" class="bar-fill" style="width:0%"></div></div>
+  </div>
+  <div id="corruption-hud" class="hidden">
+    <div id="corruption-label">CORRUZIONE <span id="corruption-pct">0%</span> · <span id="corruption-tier-name"></span></div>
+    <div class="bar-track corruption"><div id="corruption-bar" class="bar-fill" style="width:0%"></div></div>
   </div>
   <button id="pause-btn" title="Pausa">❚❚</button>
   <button id="grimoire-btn" title="Grimoire (Esc)">📖</button>
@@ -406,17 +430,56 @@ canvas#game{
 <div id="grimoire-screen" class="overlay hidden">
   <div class="book">
     <div class="book-pages">
-      <div class="book-page book-page-left">
-        <h3 class="page-heading">Rituali Arcani</h3>
-        <p class="subtitle" style="max-width:none;font-size:11px;">Ogni incantesimo ha una sua soglia di rune per lo sblocco iniziale. Una volta appreso, bastano sempre 7 rune per ogni ulteriore potenziamento: più danno, e in più un beneficio specifico per quell'incantesimo — senza limiti. Sbloccare più rituali contemporaneamente attiva anche delle Sinergie Arcane permanenti, visibili qui a destra.</p>
-        <div id="grimoire-list"></div>
+      <div class="book-spread active" id="spread-1">
+        <div class="book-page book-page-left">
+          <h3 class="page-heading">Rituali Arcani</h3>
+          <div id="grimoire-list"></div>
+        </div>
+        <div class="book-spine"></div>
+        <div class="book-page book-page-right">
+          <h3 class="page-heading">L'Arcimago</h3>
+          <canvas id="mage-portrait" width="220" height="240"></canvas>
+          <div id="mage-stats" class="mage-stats"></div>
+        </div>
       </div>
-      <div class="book-spine"></div>
-      <div class="book-page book-page-right">
-        <h3 class="page-heading">L'Arcimago</h3>
-        <canvas id="mage-portrait" width="220" height="240"></canvas>
-        <div id="mage-stats" class="mage-stats"></div>
+      <div class="book-spread" id="spread-2">
+        <div class="book-page book-page-left">
+          <h3 class="page-heading">Come si Gioca</h3>
+          <div class="controls-grid">
+            <div><b>WASD / Frecce</b> — Movimento</div>
+            <div><b>Mouse</b> — Mira</div>
+            <div><b>Click / Spazio</b> — Incantesimo</div>
+            <div><b>Shift</b> — Passo Arcano (scatta verso il puntatore, invulnerabile)</div>
+            <div><b>1-6</b> — Cambia incantesimo appreso</div>
+            <div><b>Esc</b> — Apri/chiudi questo Grimoire e pausa</div>
+            <div><b>P</b> — Pausa</div>
+            <div><b>Touch</b> — Trascina per muoverti</div>
+          </div>
+          <p class="subtitle" style="max-width:none;font-size:10.5px;opacity:.75;margin-top:2px;">I tasti di movimento, incantesimo, passo arcano e pausa sono personalizzabili dal menu "Tasti", raggiungibile dalla schermata iniziale o dalla pausa.</p>
+        </div>
+        <div class="book-spine"></div>
+        <div class="book-page book-page-right">
+          <h3 class="page-heading">Regole Arcane</h3>
+          <div class="rules-list">
+            <div><b>Ondate e Fantasma</b> — Ogni 5 ondate Il Fantasma si manifesta: sconfiggilo per proseguire.</div>
+            <div><b>Rune e Rituali</b> — Ogni incantesimo ha una soglia di rune per lo sblocco iniziale. Una volta appreso, bastano sempre 7 rune per ogni ulteriore potenziamento: più danno, e in più un beneficio specifico per quell'incantesimo — senza limiti.</div>
+            <div><b>Sinergie Arcane</b> — Sbloccare più rituali contemporaneamente attiva bonus passivi permanenti che restano attivi qualunque incantesimo tu stia usando.</div>
+            <div><b>Reliquie</b> — Oggetti rari, unici e permanenti per la run: cadono raramente dai mostri comuni e sono garantiti alla sconfitta di ogni Fantasma.</div>
+            <div><b>Modificatori d'Ondata</b> — Talvolta un'ondata porta con sé nebbia, terreno paludoso o vento arcano che devia i proiettili.</div>
+            <div><b>Mostri d'Elite</b> — Circa ogni 3 ondate (escluse quelle del Fantasma) un mostro comune reso d'elite compare da solo, molto più forte del normale.</div>
+            <div><b>Corruzione</b> — Dall'ondata 15 un indicatore di Corruzione cresce e sblocca a tappe mutazioni sui mostri comuni: pozze corrosive alla morte, scissione in schegge, maggiore aggressività, fino a raffiche di proiettili post-mortem.</div>
+            <div><b>Vita e Aura Arcana</b> — Crescono leggermente ad ogni livello: incrementi bassi, per restare in equilibrio con la forza crescente dei mostri.</div>
+          </div>
+        </div>
       </div>
+    </div>
+    <div class="book-nav">
+      <button id="page-prev-btn" class="neon-btn small-btn">◀</button>
+      <div class="page-dots">
+        <span class="page-dot active" data-page="0"></span>
+        <span class="page-dot" data-page="1"></span>
+      </div>
+      <button id="page-next-btn" class="neon-btn small-btn">▶</button>
     </div>
     <button id="grimoire-close-btn" class="neon-btn">Chiudi (Esc)</button>
   </div>
@@ -462,6 +525,13 @@ const dist = (x1,y1,x2,y2) => Math.hypot(x1-x2,y1-y2);
 const lerp = (a,b,t) => a+(b-a)*t;
 const angleTo = (x1,y1,x2,y2) => Math.atan2(y2-y1,x2-x1);
 function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function darkenHex(hex, amt){
+  const n = parseInt(hex.slice(1),16);
+  const r = Math.max(0,Math.round(((n>>16)&255)*(1-amt)));
+  const g = Math.max(0,Math.round(((n>>8)&255)*(1-amt)));
+  const b = Math.max(0,Math.round((n&255)*(1-amt)));
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
 function weightedPick(entries){ // [[value,weight], ...]
   const total = entries.reduce((s,e)=>s+e[1],0);
   let r = Math.random()*total;
@@ -999,12 +1069,14 @@ function resetGame(){
   score = 0; waveNumber = 1; combo = 0; comboTimer = 0; comboMultiplier = 1;
   shakeMag = 0; elapsed = 0;
   waveModifier = null; modifierFade = 0; modifierFadeType = null;
+  hazards = [];
   spawner.reset();
   updateHUDText();
   updateSpellHUD();
   updateRelicHUD();
   document.getElementById('boss-hud').classList.add('hidden');
   document.getElementById('modifier-hud').classList.add('hidden');
+  document.getElementById('corruption-hud').classList.add('hidden');
   document.getElementById('grimoire-screen').classList.add('hidden');
 }
 
@@ -1206,6 +1278,7 @@ function toggleGrimoire(){
     state='grimoire';
     renderGrimoire();
     renderMageStats();
+    goToGrimoirePage(0);
     el.classList.remove('hidden');
   } else if(state==='grimoire'){
     state='playing';
@@ -1231,6 +1304,7 @@ function renderMageStats(){
       <div class="synergy-desc">${r.desc}</div>
     </div>`;
   }).join('') || `<div class="synergy-row locked"><div class="synergy-desc">Nessuna reliquia ancora trovata in questa run. Sconfiggi mostri e Fantasmi per scoprirle.</div></div>`;
+  const totalUpgrades = Object.values(player.spellRuneBonus).reduce((s,v)=>s+(v||0),0);
   el.innerHTML = `
     <div class="mage-stat-row">
       <div class="mage-stat-label"><span>LIVELLO</span><b>${player.level}</b></div>
@@ -1238,10 +1312,18 @@ function renderMageStats(){
     <div class="mage-stat-row">
       <div class="mage-stat-label"><span>VITA</span><b>${Math.round(player.hp)} / ${player.maxHp}</b></div>
       <div class="bar-track hp-bar"><div class="bar-fill" style="width:${hpPct}%"></div></div>
+      <div class="g-progress" style="font-size:9.5px;">Massimale: ${player.maxHp} <span style="opacity:.6">(base 100${player.maxHp>100?', +'+(player.maxHp-100):''})</span></div>
     </div>
     <div class="mage-stat-row">
       <div class="mage-stat-label"><span>AURA ARCANA (SCUDO)</span><b>${Math.round(player.shield)} / ${player.maxShield}</b></div>
       <div class="bar-track shield-bar"><div class="bar-fill" style="width:${shPct}%"></div></div>
+      <div class="g-progress" style="font-size:9.5px;">Massimale: ${player.maxShield} <span style="opacity:.6">(base 50${player.maxShield>50?', +'+(player.maxShield-50):''})</span></div>
+    </div>
+    <div class="mage-stat-row">
+      <div class="mage-stat-label"><span>INCANTESIMI APPRESI</span><b>${player.unlockedSpells.length-1} / ${RITUAL_SPELLS.length}</b></div>
+    </div>
+    <div class="mage-stat-row">
+      <div class="mage-stat-label"><span>POTENZIAMENTI TOTALI</span><b>${totalUpgrades}</b></div>
     </div>
     <div class="mage-stat-note">Vita e Aura Arcana crescono leggermente ad ogni livello — incrementi bassi, per restare in equilibrio con la forza crescente dei mostri.</div>
     <div class="synergy-list">
@@ -1452,17 +1534,22 @@ function renderGrimoire(){
     const ready = count>=req;
     const bonus = player.spellRuneBonus[name]||0;
     const bonusPct = Math.round(bonus*RUNE_BONUS_PER_RUNE*1000)/10;
+    const effDmg = Math.round(w.dmg * spellDmgMult(name) * 10)/10;
     const row = document.createElement('div');
     row.className = 'grimoire-entry'+(unlocked&&!ready?' done':'')+(ready?' ready':'');
-    const statusText = unlocked
-      ? count+' / '+req+' RUNE PER IL PROSSIMO POTENZIAMENTO'+(bonus>0?' — ATTUALE: +'+bonusPct+'% DANNO':'')
+    const runeText = unlocked
+      ? count+' / '+req+' RUNE PER IL PROSSIMO POTENZIAMENTO'
       : count+' / '+req+' RUNE RACCOLTE PER LO SBLOCCO';
+    const progressText = unlocked
+      ? 'Potenziamenti raggiunti: '+bonus+' &nbsp;·&nbsp; Danno: '+effDmg+' <span style="opacity:.6">(base '+w.dmg+(bonus>0?', +'+bonusPct+'%':'')+')</span>'
+      : 'Non ancora appreso';
     row.innerHTML = `
       <div class="g-swatch" style="background:rgba(20,10,5,.5);box-shadow:0 0 10px ${w.color}, inset 0 0 6px ${w.color}">${spellIconSVG(name)}</div>
       <div class="g-info">
         <div class="g-name">${w.label}</div>
         <div class="bar-track g-bar"><div class="bar-fill" style="width:${clamp(count/req,0,1)*100}%;background:${w.color}"></div></div>
-        <div class="g-count">${statusText}</div>
+        <div class="g-count">${runeText}</div>
+        <div class="g-progress">${progressText}</div>
         <div class="g-perk">Ogni potenziamento: +danno e ${SPELL_PERK_DESC[name]}</div>
       </div>
       <button class="neon-btn g-ritual-btn" data-spell="${name}" ${ready ? '' : 'disabled'}>${unlocked?'POTENZIA':'RITUALE'}</button>
@@ -1500,6 +1587,74 @@ function performRitual(name){
 }
 
 /* ============================= ENEMY FACTORY ============================= */
+/* ============================= CORRUZIONE (fase finale / endless scaling) =============================
+   Dall'ondata 15 in poi un indicatore di Corruzione cresce visibilmente e sblocca, a tappe, mutazioni
+   qualitative sui mostri comuni (non sui mostri d'elite né sul Fantasma) — invece di limitarsi a
+   scalare hp/danno all'infinito, il tardo gioco introduce comportamenti nuovi e più insidiosi. */
+const CORRUPTION_START_WAVE = 15;
+const CORRUPTION_FULL_WAVE = 55;
+const CORRUPTION_TIERS = [
+  {name:'Quiete',               desc:'Nessuna mutazione attiva.'},
+  {name:'Contaminazione',       desc:'I mostri corrotti lasciano una pozza corrosiva al momento della morte.'},
+  {name:'Mutazione',            desc:'I mostri corrotti hanno una probabilità di scindersi in una scheggia alla morte.'},
+  {name:'Frenesia',             desc:'I mostri corrotti sono più rapidi e attaccano più spesso.'},
+  {name:'Apoteosi Corrotta',    desc:'I mostri corrotti possono esplodere in una raffica di proiettili alla morte.'}
+];
+function corruptionPct(){ return clamp((waveNumber-CORRUPTION_START_WAVE)/(CORRUPTION_FULL_WAVE-CORRUPTION_START_WAVE),0,1)*100; }
+function corruptionTier(){ 
+  if(waveNumber < CORRUPTION_START_WAVE) return 0;
+  return 1 + Math.min(3, Math.floor((waveNumber-CORRUPTION_START_WAVE)/10));
+}
+function isCorrupted(en){ return !en.isMiniBoss && corruptionTier()>0; }
+function updateCorruptionHUD(){
+  const hud = document.getElementById('corruption-hud');
+  if(waveNumber < CORRUPTION_START_WAVE){ hud.classList.add('hidden'); return; }
+  hud.classList.remove('hidden');
+  const pct = corruptionPct();
+  document.getElementById('corruption-pct').textContent = Math.round(pct)+'%';
+  document.getElementById('corruption-tier-name').textContent = CORRUPTION_TIERS[corruptionTier()].name.toUpperCase();
+  document.getElementById('corruption-bar').style.width = pct+'%';
+}
+
+// --- Insidie ambientali lasciate dalla Corruzione (pozze corrosive) ---
+let hazards = [];
+function spawnHazard(x,y){
+  hazards.push({x,y,r:36,life:3.4,tick:0});
+}
+function updateHazards(dt){
+  for(const h of hazards){
+    h.life -= dt; h.tick -= dt;
+    if(h.tick<=0 && dist(h.x,h.y,player.x,player.y) < h.r+player.radius){
+      h.tick = 0.5;
+      damagePlayer(6);
+    }
+  }
+  hazards = hazards.filter(h=>h.life>0);
+}
+function drawHazards(){
+  for(const h of hazards){
+    const a = clamp(h.life/3.4,0,1);
+    ctx.save();
+    ctx.globalAlpha = 0.5*a;
+    const g = ctx.createRadialGradient(h.x,h.y,4,h.x,h.y,h.r);
+    g.addColorStop(0,'rgba(150,40,190,.75)'); g.addColorStop(0.7,'rgba(150,40,190,.35)'); g.addColorStop(1,'rgba(150,40,190,0)');
+    ctx.fillStyle=g; ctx.beginPath(); ctx.arc(h.x,h.y,h.r,0,TAU); ctx.fill();
+    ctx.restore();
+  }
+}
+function drawCorruptionAura(en){
+  if(!isCorrupted(en)) return;
+  const tier = corruptionTier();
+  const pulse = 1+Math.sin(elapsed*4+en.t)*0.06;
+  ctx.save();
+  ctx.translate(en.x,en.y);
+  ctx.strokeStyle = `rgba(190,70,230,${0.35+tier*0.1})`;
+  ctx.lineWidth = 1.6+tier*0.3;
+  ctx.shadowColor='#c04eeb'; ctx.shadowBlur = 6+tier*2;
+  ctx.beginPath(); ctx.arc(0,0,en.radius*1.25*pulse,0,TAU); ctx.stroke();
+  ctx.restore();
+}
+
 function spawnEdgePosition(){
   const side = randi(0,3);
   if(side===0) return {x:rand(0,W), y:-40};
@@ -1508,7 +1663,7 @@ function spawnEdgePosition(){
   return {x:-40, y:rand(0,H)};
 }
 let nextEnemyId = 1;
-function makeEnemy(type){
+function makeEnemy(type, elite){
   const p = spawnEdgePosition();
   // crescita dei mostri: uguale a prima nelle prime ~30 ondate, poi rallenta —
   // altrimenti in una partita potenzialmente infinita diventerebbe ingiocabile
@@ -1520,20 +1675,38 @@ function makeEnemy(type){
     x:p.x, y:p.y, vx:0, vy:0, type, angle:0, t:rand(0,10),
     fireCooldown:rand(0.5,1.5), hitFlash:0, burnT:0, burnTick:0, burnDmg:0
   };
+  let en;
   switch(type){
     case 'chaser': // Goblin: rapido, all'arma bianca
-      return Object.assign(base,{radius:14, hp:26*scale, maxHp:26*scale, speed:rand(90,120)*Math.min(1.4,scale), value:50, color:'#5fd867', dmg:12});
+      en = Object.assign(base,{radius:14, hp:26*scale, maxHp:26*scale, speed:rand(90,120)*Math.min(1.4,scale), value:50, color:'#5fd867', dmg:12}); break;
     case 'shooter': // Orco: tozzo, lancia asce a distanza
-      return Object.assign(base,{radius:17, hp:22*scale, maxHp:22*scale, speed:70*Math.min(1.3,scale), value:75, color:'#c88a4a', dmg:8, keepDist:260});
+      en = Object.assign(base,{radius:17, hp:22*scale, maxHp:22*scale, speed:70*Math.min(1.3,scale), value:75, color:'#c88a4a', dmg:8, keepDist:260}); break;
     case 'splitter': // Gremlin: caotico, si moltiplica alla morte
-      return Object.assign(base,{radius:18, hp:36*scale, maxHp:36*scale, speed:75*Math.min(1.3,scale), value:60, color:'#a855f7', dmg:14, isSplitter:true});
+      en = Object.assign(base,{radius:18, hp:36*scale, maxHp:36*scale, speed:75*Math.min(1.3,scale), value:60, color:'#a855f7', dmg:14, isSplitter:true}); break;
     case 'splitling': // Gremlin piccolo
-      return Object.assign(base,{radius:9, hp:10, maxHp:10, speed:170, value:20, color:'#c084fc', dmg:8});
+      en = Object.assign(base,{radius:9, hp:10, maxHp:10, speed:170, value:20, color:'#c084fc', dmg:8}); break;
     case 'orbiter': // Spettro: eterico, orbita lanciando maledizioni
-      return Object.assign(base,{radius:13, hp:20*scale, maxHp:20*scale, speed:140, value:80, color:'#bfeeff', dmg:10, orbitR:rand(140,220), orbitDir:Math.random()<0.5?1:-1, fireCooldown:rand(1,2)});
+      en = Object.assign(base,{radius:13, hp:20*scale, maxHp:20*scale, speed:140, value:80, color:'#bfeeff', dmg:10, orbitR:rand(140,220), orbitDir:Math.random()<0.5?1:-1, fireCooldown:rand(1,2)}); break;
     case 'bomber': // Goblin bombarolo: kamikaze con fungo esplosivo
-      return Object.assign(base,{radius:20, hp:34*scale, maxHp:34*scale, speed:60, value:90, color:'#ff5a3d', dmg:16, fuse:false});
+      en = Object.assign(base,{radius:20, hp:34*scale, maxHp:34*scale, speed:60, value:90, color:'#ff5a3d', dmg:16, fuse:false}); break;
   }
+  if(elite){
+    // MINIBOSS: variante d'elite di un mostro comune — molto più grande, resistente
+    // e pericoloso, con un attacco a raggiera periodico che lo rende riconoscibile
+    // a colpo d'occhio anche prima di leggerne la barra vita
+    en.isMiniBoss = true;
+    en.radius *= 1.75;
+    en.hp *= 6.5; en.maxHp = en.hp;
+    en.dmg = Math.round(en.dmg*1.5);
+    en.value = Math.round(en.value*9);
+    en.minibossPulseT = 2.6;
+    en.color = darkenHex(en.color, 0.55);
+    if(en.keepDist) en.keepDist += 40;
+  } else if(corruptionTier()>=3){
+    // Frenesia: dall'ondata ~35 i mostri comuni corrotti sono più scattanti e aggressivi
+    en.speed *= 1.15;
+  }
+  return en;
 }
 
 /* ============================= ENEMY UPDATE ============================= */
@@ -1559,7 +1732,7 @@ function updateEnemy(en, dt){
       en.vx = Math.cos(a)*en.speed*dirMul; en.vy = Math.sin(a)*en.speed*dirMul;
       en.fireCooldown -= dt;
       if(en.fireCooldown <= 0 && d < 620){
-        en.fireCooldown = rand(1.3,1.9);
+        en.fireCooldown = rand(1.3,1.9) * (isCorrupted(en) && corruptionTier()>=3 ? 0.75 : 1);
         shootBullet(en.x,en.y,a,220,'enemy',en.dmg,'#ffb703',5);
       }
       break;
@@ -1571,7 +1744,7 @@ function updateEnemy(en, dt){
       en._skipMove = true;
       en.fireCooldown -= dt;
       if(en.fireCooldown <= 0){
-        en.fireCooldown = rand(1.4,2.2);
+        en.fireCooldown = rand(1.4,2.2) * (isCorrupted(en) && corruptionTier()>=3 ? 0.75 : 1);
         shootBullet(en.x,en.y,angleTo(en.x,en.y,player.x,player.y),260,'enemy',en.dmg,'#4deeea',5);
       }
       break;
@@ -1587,8 +1760,43 @@ function updateEnemy(en, dt){
   if(!en._skipMove){ en.x += en.vx*dt; en.y += en.vy*dt; }
   en._skipMove = false;
   en.x = clamp(en.x, -60, W+60); en.y = clamp(en.y, -60, H+60);
+
+  if(en.isMiniBoss){
+    en.minibossPulseT -= dt;
+    if(en.minibossPulseT <= 0){
+      en.minibossPulseT = 3.2;
+      const n = 12;
+      for(let i=0;i<n;i++){ const aa=i/n*TAU; shootBullet(en.x,en.y,aa,190,'enemy',Math.round(en.dmg*0.45),en.color,5); }
+      spawnParticles(en.x,en.y,20,en.color,{speed:180,life:0.4,radius:3});
+      shakeMag = Math.min(30, shakeMag+4);
+    }
+  }
 }
 
+function drawMiniBossExtras(en){
+  if(!en.isMiniBoss) return;
+  const pulse = 1+Math.sin(elapsed*3+en.t)*0.08;
+  ctx.save();
+  ctx.translate(en.x, en.y);
+  ctx.strokeStyle='rgba(255,210,63,.6)'; ctx.lineWidth=2.4; ctx.shadowColor='#ffd23f'; ctx.shadowBlur=10;
+  ctx.beginPath(); ctx.arc(0,0,en.radius*1.32*pulse,0,TAU); ctx.stroke();
+  ctx.globalAlpha=0.5;
+  ctx.beginPath(); ctx.arc(0,0,en.radius*1.5*pulse,0,TAU); ctx.stroke();
+  ctx.globalAlpha=1; ctx.shadowBlur=0;
+  ctx.restore();
+
+  // barra vita fluttuante sopra la creatura, per distinguerla dai mostri comuni a colpo d'occhio
+  const bw = en.radius*2.1, bh=5;
+  const bx = en.x-bw/2, by = en.y-en.radius*1.85-10;
+  ctx.save();
+  ctx.fillStyle='rgba(0,0,0,.55)'; ctx.fillRect(bx-1,by-1,bw+2,bh+2);
+  const pct = clamp(en.hp/en.maxHp,0,1);
+  const grad = ctx.createLinearGradient(bx,0,bx+bw,0);
+  grad.addColorStop(0,'#ffd23f'); grad.addColorStop(1,'#ff8a3d');
+  ctx.fillStyle = grad;
+  ctx.fillRect(bx,by,bw*pct,bh);
+  ctx.restore();
+}
 function drawEnemy(en){
   ctx.save();
   ctx.translate(en.x,en.y);
@@ -1701,6 +1909,30 @@ function drawEnemy(en){
       ctx.beginPath(); ctx.arc(-r*1.5,-r*1.7,2.6,0,TAU); ctx.fill();
       ctx.shadowBlur=0;
     }
+  }
+  if(en.isMiniBoss){
+    // corona di spuntoni scuri e venature dorate incandescenti: il tratto che rende un mostro
+    // d'elite riconoscibile a colpo d'occhio, qualunque sia la sua forma di base
+    ctx.fillStyle = '#150d1c';
+    ctx.strokeStyle = 'rgba(255,210,63,.9)'; ctx.lineWidth = 1.4;
+    ctx.shadowColor = '#ffd23f'; ctx.shadowBlur = 8;
+    const spikes = 6;
+    for(let i=0;i<spikes;i++){
+      const aa = -Math.PI*0.8 + i*(Math.PI*1.6/(spikes-1));
+      const baseR = r*0.92, tipR = r*1.5;
+      const perp = aa + Math.PI/2;
+      const bx1 = Math.cos(aa)*baseR + Math.cos(perp)*r*0.1;
+      const by1 = Math.sin(aa)*baseR + Math.sin(perp)*r*0.1;
+      const bx2 = Math.cos(aa)*baseR - Math.cos(perp)*r*0.1;
+      const by2 = Math.sin(aa)*baseR - Math.sin(perp)*r*0.1;
+      ctx.beginPath(); ctx.moveTo(bx1,by1); ctx.lineTo(Math.cos(aa)*tipR,Math.sin(aa)*tipR); ctx.lineTo(bx2,by2); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    }
+    ctx.shadowBlur=4; ctx.strokeStyle='rgba(255,210,63,.85)'; ctx.lineWidth=1.3;
+    ctx.beginPath();
+    ctx.moveTo(-r*0.45,-r*0.15); ctx.lineTo(-r*0.1,r*0.1); ctx.lineTo(r*0.15,-r*0.08); ctx.lineTo(r*0.45,r*0.2);
+    ctx.stroke();
+    ctx.shadowBlur=0;
   }
   ctx.shadowBlur=0;
   ctx.restore();
@@ -2188,11 +2420,12 @@ function handleCollisions(){
   }
 }
 function onEnemyDeath(en){
-  spawnExplosion(en.x,en.y,false);
+  spawnExplosion(en.x,en.y,!!en.isMiniBoss);
   addScore(en.value);
   gainXP(en.value*0.35);
   if(en.type==='splitter' && !en.dead){
-    for(let i=0;i<2;i++){
+    const splitCount = en.isMiniBoss ? 4 : 2;
+    for(let i=0;i<splitCount;i++){
       const s = makeEnemy('splitling');
       s.x = en.x+rand(-14,14); s.y=en.y+rand(-14,14);
       enemies.push(s);
@@ -2205,8 +2438,29 @@ function onEnemyDeath(en){
       shootBullet(en.x,en.y,a,260,'enemy',en.dmg*0.6,'#ff5a3d',5);
     }
   }
-  if(Math.random() < 0.16) spawnPickup(en.x,en.y);
-  else if(player.relics.length < RELICS.length && Math.random() < 0.012) spawnPickup(en.x,en.y,'relic');
+  if(en.isMiniBoss){
+    floatText(en.x,en.y-en.radius-18,'MOSTRO D\'ELITE SCONFITTO','#ffd23f');
+    spawnParticles(en.x,en.y,30,'#ffd23f',{speed:260,life:0.6,radius:3.5});
+    shakeMag = Math.min(30, shakeMag+8);
+    for(let i=0;i<2;i++) spawnPickup(en.x+rand(-30,30), en.y+rand(-30,30));
+    if(player.relics.length < RELICS.length && Math.random() < 0.10) spawnPickup(en.x, en.y-24, 'relic');
+  } else {
+    if(Math.random() < 0.16) spawnPickup(en.x,en.y);
+    else if(player.relics.length < RELICS.length && Math.random() < 0.012) spawnPickup(en.x,en.y,'relic');
+    if(isCorrupted(en) && en.type!=='splitling'){
+      const tier = corruptionTier();
+      if(tier>=1) spawnHazard(en.x,en.y);
+      if(tier>=2 && en.type!=='splitter' && Math.random()<0.25){
+        const s = makeEnemy('splitling');
+        s.x = en.x+rand(-14,14); s.y=en.y+rand(-14,14);
+        enemies.push(s);
+      }
+      if(tier>=4 && Math.random()<0.18){
+        for(let i=0;i<8;i++){ const a=i/8*TAU; shootBullet(en.x,en.y,a,230,'enemy',Math.round(en.dmg*0.5),'#c04eeb',5); }
+        spawnParticles(en.x,en.y,14,'#c04eeb',{speed:200,life:0.4,radius:2.5});
+      }
+    }
+  }
 }
 function onBossDeath(){
   spawnExplosion(boss.x,boss.y,true);
@@ -2374,59 +2628,103 @@ function drawBoss(){
   const pulse = 1+Math.sin(boss.t*(boss.enraged?6:3))*(boss.enraged?0.05:0.03);
   const flash = boss.hitFlash>0;
   const floatY = Math.sin(boss.t*2.1)*7;
+
+  // cerchio runico a terra, fisso (non fluttua col corpo): presenza scenica da vero boss,
+  // assente su qualunque mostro comune o d'elite
+  ctx.save();
+  ctx.rotate(-boss.t*0.22);
+  ctx.strokeStyle = boss.enraged ? 'rgba(255,120,90,.45)' : 'rgba(180,90,230,.4)';
+  ctx.lineWidth=2;
+  ctx.beginPath(); ctx.arc(0,boss.radius*0.5,boss.radius*1.2,0,TAU); ctx.stroke();
+  ctx.setLineDash([9,13]);
+  ctx.beginPath(); ctx.arc(0,boss.radius*0.5,boss.radius*0.96,0,TAU); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
   ctx.translate(0, floatY);
 
   // aura spettrale rotante, in stile cartoon: anello sottile che pulsa
   ctx.save();
   ctx.rotate(boss.t*(boss.enraged?0.4:0.15));
-  ctx.shadowColor = boss.enraged?'#c1272d':'#7b4fa0'; ctx.shadowBlur=26;
-  ctx.strokeStyle = boss.enraged ? `rgba(193,39,45,${0.4+rageFlicker*0.3})` : `rgba(123,79,160,${0.35+rageFlicker*0.2})`;
-  ctx.lineWidth=3;
-  ctx.beginPath(); ctx.arc(0,0,boss.radius*1.28*pulse,0,TAU); ctx.stroke();
+  ctx.shadowColor = boss.enraged?'#ff7a5a':'#a63fd0'; ctx.shadowBlur=28;
+  ctx.strokeStyle = boss.enraged ? `rgba(255,120,90,${0.42+rageFlicker*0.3})` : `rgba(166,63,208,${0.4+rageFlicker*0.2})`;
+  ctx.lineWidth=3.5;
+  ctx.beginPath(); ctx.arc(0,0,boss.radius*1.3*pulse,0,TAU); ctx.stroke();
   ctx.restore();
   ctx.shadowBlur=0;
 
-  // IL FANTASMA: corpo a goccia rovesciata con code ondulate, stile cartoon a contorno spesso
+  // IL FANTASMA: manto scuro e lacero, ben distinto dagli spettri comuni (pallidi e
+  // traslucidi) — qui il colore è profondo, la sagoma asimmetrica e più elaborata
   const bodyR = boss.radius*0.86;
-  ctx.fillStyle = flash ? '#ffffff' : (boss.enraged ? '#f3cfd6' : '#f3ecff');
-  ctx.globalAlpha = 0.95;
+  const robeGrad = ctx.createLinearGradient(0,-bodyR,0,bodyR);
+  if(boss.enraged){ robeGrad.addColorStop(0,'#3a0d14'); robeGrad.addColorStop(1,'#1b0509'); }
+  else { robeGrad.addColorStop(0,'#3d1a52'); robeGrad.addColorStop(1,'#1a0a26'); }
+  ctx.fillStyle = flash ? '#ffffff' : robeGrad;
   ctx.beginPath();
   ctx.moveTo(-bodyR, bodyR*0.28);
-  ctx.quadraticCurveTo(-bodyR*1.06, -bodyR*1.05, 0, -bodyR*1.08);
-  ctx.quadraticCurveTo(bodyR*1.06, -bodyR*1.05, bodyR, bodyR*0.28);
-  const tails=6;
+  ctx.quadraticCurveTo(-bodyR*1.1, -bodyR*1.15, 0, -bodyR*1.18);
+  ctx.quadraticCurveTo(bodyR*1.1, -bodyR*1.15, bodyR, bodyR*0.28);
+  const tails=7;
   for(let i=0;i<=tails;i++){
     const tt = i/tails;
     const px = bodyR - tt*bodyR*2;
-    const sway = Math.sin(boss.t*2.4 + i*1.4)*bodyR*0.16;
-    const py = bodyR*0.28 + (i%2===0 ? bodyR*0.58+sway : bodyR*0.22+sway*0.5);
+    const jag = (i%2===0) ? 1 : 0.42;
+    const sway = Math.sin(boss.t*2.2 + i*1.7)*bodyR*0.14;
+    const py = bodyR*0.28 + bodyR*0.75*jag + sway;
     ctx.lineTo(px,py);
   }
   ctx.closePath(); ctx.fill();
-  ctx.globalAlpha = 1;
-  ctx.lineWidth=5; ctx.strokeStyle='#1b1408'; ctx.stroke();
+  ctx.lineWidth=5; ctx.strokeStyle='#0d0510'; ctx.stroke();
+
+  // crepe/venature incandescenti sul manto — il tratto che più lo separa a colpo d'occhio da uno spettro comune
+  ctx.strokeStyle = boss.enraged ? 'rgba(255,120,90,.85)' : 'rgba(224,140,255,.8)';
+  ctx.lineWidth=1.6; ctx.shadowColor = boss.enraged?'#ff7a5a':'#e08cff'; ctx.shadowBlur=8;
+  ctx.beginPath();
+  ctx.moveTo(-bodyR*0.5,-bodyR*0.5); ctx.lineTo(-bodyR*0.15,-bodyR*0.05); ctx.lineTo(-bodyR*0.35,bodyR*0.35);
+  ctx.moveTo(bodyR*0.5,-bodyR*0.4); ctx.lineTo(bodyR*0.18,bodyR*0.02); ctx.lineTo(bodyR*0.4,bodyR*0.42);
+  ctx.stroke();
+  ctx.shadowBlur=0;
+
+  // corona di spuntoni scuri: il segno distintivo di un vero boss, assente su qualsiasi mostro comune o d'elite
+  ctx.fillStyle = '#0d0510'; ctx.strokeStyle = boss.enraged?'rgba(255,120,90,.9)':'rgba(224,140,255,.9)'; ctx.lineWidth=1.4;
+  ctx.shadowColor = boss.enraged?'#ff7a5a':'#e08cff'; ctx.shadowBlur=6;
+  const spikes=5;
+  for(let i=0;i<spikes;i++){
+    const sx = -bodyR*0.55 + (i/(spikes-1))*bodyR*1.1;
+    const h = bodyR*(0.3 + 0.24*(1-Math.abs(i-2)/2));
+    ctx.beginPath();
+    ctx.moveTo(sx-bodyR*0.09, -bodyR*1.05);
+    ctx.lineTo(sx, -bodyR*1.05-h);
+    ctx.lineTo(sx+bodyR*0.09, -bodyR*1.05);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  ctx.shadowBlur=0;
 
   // braccine spettrali corte, appena accennate
-  ctx.strokeStyle='#1b1408'; ctx.lineWidth=4.5; ctx.lineCap='round';
+  ctx.strokeStyle='#0d0510'; ctx.lineWidth=4.5; ctx.lineCap='round';
   const armSway = Math.sin(boss.t*3)*bodyR*0.08;
   ctx.beginPath(); ctx.moveTo(-bodyR*0.92,-bodyR*0.1); ctx.quadraticCurveTo(-bodyR*1.28,bodyR*0.05+armSway,-bodyR*1.1,bodyR*0.32); ctx.stroke();
   ctx.beginPath(); ctx.moveTo(bodyR*0.92,-bodyR*0.1); ctx.quadraticCurveTo(bodyR*1.28,bodyR*0.05-armSway,bodyR*1.1,bodyR*0.32); ctx.stroke();
 
-  // occhi grandi e tondi, rossi e feroci quando infuriato
-  const eyeGlow = (boss.enraged?0.85:0.7)+0.3*Math.sin(boss.t*(boss.enraged?9:5));
-  ctx.fillStyle = boss.enraged ? `rgba(193,39,45,${eyeGlow})` : '#1b1408';
-  if(boss.enraged){ ctx.shadowColor='#c1272d'; ctx.shadowBlur=14; }
-  ctx.beginPath(); ctx.ellipse(-bodyR*0.28,-bodyR*0.18,bodyR*0.15,bodyR*0.19,0,0,TAU); ctx.fill();
-  ctx.beginPath(); ctx.ellipse(bodyR*0.28,-bodyR*0.18,bodyR*0.15,bodyR*0.19,0,0,TAU); ctx.fill();
+  // occhi a fessura triangolare, luminosi e feroci — non tondi e "carini" come lo spettro comune
+  const eyeGlow = (boss.enraged?0.9:0.8)+0.2*Math.sin(boss.t*(boss.enraged?9:5));
+  ctx.fillStyle = boss.enraged ? `rgba(255,120,90,${eyeGlow})` : `rgba(224,140,255,${eyeGlow})`;
+  ctx.shadowColor = boss.enraged?'#ff7a5a':'#e08cff'; ctx.shadowBlur=16;
+  ctx.beginPath(); ctx.moveTo(-bodyR*0.42,-bodyR*0.22); ctx.lineTo(-bodyR*0.14,-bodyR*0.14); ctx.lineTo(-bodyR*0.4,bodyR*0.02); ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(bodyR*0.42,-bodyR*0.22); ctx.lineTo(bodyR*0.14,-bodyR*0.14); ctx.lineTo(bodyR*0.4,bodyR*0.02); ctx.closePath(); ctx.fill();
   ctx.shadowBlur=0;
-  // piccoli riflessi negli occhi, per un tocco cartoon
-  ctx.fillStyle='rgba(255,255,255,.9)';
-  ctx.beginPath(); ctx.arc(-bodyR*0.24,-bodyR*0.24,bodyR*0.045,0,TAU); ctx.fill();
-  ctx.beginPath(); ctx.arc(bodyR*0.32,-bodyR*0.24,bodyR*0.045,0,TAU); ctx.fill();
 
-  // bocca ovale spalancata, sempre un po' sorpresa
-  ctx.fillStyle='#1b1408';
-  ctx.beginPath(); ctx.ellipse(0,bodyR*0.2,bodyR*0.15,bodyR*0.2,0,0,TAU); ctx.fill();
+  // bocca spalancata e dentata
+  ctx.fillStyle='#0d0510';
+  ctx.beginPath(); ctx.ellipse(0,bodyR*0.24,bodyR*0.17,bodyR*0.22,0,0,TAU); ctx.fill();
+  ctx.fillStyle='#efe6f5';
+  for(let i=-1;i<=1;i++){
+    ctx.beginPath();
+    ctx.moveTo(i*bodyR*0.12-bodyR*0.05, bodyR*0.06);
+    ctx.lineTo(i*bodyR*0.12+bodyR*0.05, bodyR*0.06);
+    ctx.lineTo(i*bodyR*0.12, bodyR*0.16);
+    ctx.closePath(); ctx.fill();
+  }
 
   ctx.restore();
 
@@ -2460,6 +2758,9 @@ function ensureWindStreaks(){
   if(windStreaks.length) return;
   for(let i=0;i<22;i++) windStreaks.push({x:rand(0,W), y:rand(0,H), len:rand(30,70), speed:rand(160,260)});
 }
+// Miniboss: un mostro comune reso d'elite, che compare da solo su ondate intermedie
+// non legate al Fantasma — una tappa di media difficoltà tra un'orda e l'altra.
+function isMiniBossWave(w){ return w>=2 && w%3===2 && w%5!==0; }
 function pickWaveModifier(wave){
   if(wave < 3) return null;
   if(Math.random() < 0.45) return null;
@@ -2556,12 +2857,22 @@ const spawner = {
       showWaveBanner('ONDATA '+waveNumber, 'IL FANTASMA SI MANIFESTA');
       return;
     }
-    this.toSpawn = 5 + waveNumber*2;
+    this.toSpawn = isMiniBossWave(waveNumber) ? Math.round((5 + waveNumber*2)*0.5) : (5 + waveNumber*2);
     this.spawnInterval = Math.max(0.35, 1.3 - waveNumber*0.05);
     this.waveActive = true;
     waveModifier = pickWaveModifier(waveNumber);
     const modSuffix = waveModifier ? ' · '+modifierInfo[waveModifier.type].name : '';
-    showWaveBanner('ONDATA '+waveNumber, this.toSpawn+' MOSTRI IN AVVICINAMENTO'+modSuffix);
+    if(isMiniBossWave(waveNumber)){
+      const eliteRoster = ['chaser','shooter','splitter','orbiter'];
+      const mb = makeEnemy(pick(eliteRoster), true);
+      mb.x = clamp(player.x + (Math.random()<0.5?-1:1)*rand(280,380), mb.radius, W-mb.radius);
+      mb.y = clamp(player.y + (Math.random()<0.5?-1:1)*rand(200,280), mb.radius, H-mb.radius);
+      enemies.push(mb);
+      showWaveBanner('ONDATA '+waveNumber, 'UN MOSTRO D\'ELITE SI AVVICINA'+modSuffix);
+      sfx.bossRoar();
+    } else {
+      showWaveBanner('ONDATA '+waveNumber, this.toSpawn+' MOSTRI IN AVVICINAMENTO'+modSuffix);
+    }
   },
   pool(){
     const entries = [['chaser',30]];
@@ -3020,6 +3331,8 @@ function loop(now){
   spawner.update(dt);
   updateBanner(dt);
   updateWaveModifier(dt);
+  updateHazards(dt);
+  updateCorruptionHUD();
 
   render(dt);
 }
@@ -3029,8 +3342,9 @@ function render(){
     ctx.translate(rand(-shakeMag,shakeMag), rand(-shakeMag,shakeMag));
   }
   drawBackground();
+  drawHazards();
   drawPickups();
-  for(const en of enemies) drawEnemy(en);
+  for(const en of enemies){ drawEnemy(en); drawCorruptionAura(en); drawMiniBossExtras(en); }
   drawBoss();
   drawBullets();
   drawPlayer();
@@ -3094,6 +3408,24 @@ document.getElementById('resume-btn').addEventListener('click', togglePause);
 document.getElementById('pause-btn').addEventListener('click', ()=>{ if(state==='playing'||state==='paused') togglePause(); });
 document.getElementById('grimoire-btn').addEventListener('click', ()=>{ if(state==='playing'||state==='grimoire') toggleGrimoire(); });
 document.getElementById('grimoire-close-btn').addEventListener('click', toggleGrimoire);
+
+/* ---- Sfoglio del Grimoire ---- */
+let grimoirePage = 0;
+const grimoirePages = [document.getElementById('spread-1'), document.getElementById('spread-2')];
+const grimoireDots = document.querySelectorAll('.page-dot');
+function goToGrimoirePage(idx){
+  idx = clamp(idx, 0, grimoirePages.length-1);
+  if(idx===grimoirePage) return;
+  grimoirePage = idx;
+  grimoirePages.forEach((el,i)=> el.classList.toggle('active', i===grimoirePage));
+  grimoireDots.forEach((el,i)=> el.classList.toggle('active', i===grimoirePage));
+  sfx.pickup();
+}
+document.getElementById('page-prev-btn').addEventListener('click', ()=> goToGrimoirePage(grimoirePage-1));
+document.getElementById('page-next-btn').addEventListener('click', ()=> goToGrimoirePage(grimoirePage+1));
+grimoireDots.forEach(dot=>{
+  dot.addEventListener('click', ()=> goToGrimoirePage(parseInt(dot.dataset.page,10)));
+});
 
 /* ============================= INIT ============================= */
 resize();
