@@ -33,7 +33,7 @@ html,body{
   font-family:"Cinzel","Times New Roman",serif;
   color:var(--ghost);
   user-select:none;
-  cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'><g fill='none' stroke='%230a0715' stroke-width='2.6' stroke-linejoin='round'><path d='M15 2 L18 12 L28 15 L18 18 L15 28 L12 18 L2 15 L12 12 Z'/></g><g fill='%23ffd76a' stroke='%23d4af37' stroke-width='1' stroke-linejoin='round'><path d='M15 4 L17.5 12.5 L26 15 L17.5 17.5 L15 26 L12.5 17.5 L4 15 L12.5 12.5 Z'/></g><circle cx='15' cy='15' r='2' fill='%23fff6da'/></svg>") 15 15, crosshair;
+  cursor:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'><circle cx='11' cy='11' r='5' fill='none' stroke='%23ffd76a' stroke-width='1.6'/><circle cx='11' cy='11' r='1.3' fill='%23ffd76a'/><path d='M11 0 L11 4 M11 18 L11 22 M0 11 L4 11 M18 11 L22 11' stroke='%23ffd76a' stroke-width='1.6' stroke-linecap='round'/></svg>") 11 11, crosshair;
 }
 canvas#game{
   position:fixed; inset:0; display:block; background:var(--void);
@@ -225,39 +225,69 @@ canvas#game{
   text-shadow:0 0 20px rgba(139,92,246,.7), 0 0 40px rgba(255,183,3,.4);
 }
 #wave-banner small{display:block; font-family:"Cinzel",serif; font-size:14px; line-height:1.4; letter-spacing:3px; color:var(--amber); margin-top:12px; font-weight:600; text-shadow:0 0 8px rgba(255,183,3,.5);}
+#wave-banner .wb-lore{
+  display:block; font-family:"Cinzel",serif; font-style:italic; font-size:13px; letter-spacing:1px; line-height:1.6;
+  color:rgba(228,220,255,.85); margin-top:16px; max-width:560px; margin-left:auto; margin-right:auto;
+  text-shadow:0 0 10px rgba(139,92,246,.5); font-weight:500;
+}
 .book{
   display:flex; flex-direction:column; align-items:center; gap:12px; max-width:920px; width:94vw;
-  background:linear-gradient(180deg, #241634, #150c1f);
-  border:10px solid #241634;
-  outline:1px solid var(--gold);
-  outline-offset:-6px;
-  padding:18px 20px;
-  border-radius:6px 18px 6px 18px;
-  box-shadow:0 0 0 2px #0e0815, 0 20px 70px rgba(0,0,0,.8), 0 0 40px rgba(139,92,246,.15), inset 0 0 50px rgba(139,92,246,.12);
+  background:
+    radial-gradient(ellipse at 24% 14%, rgba(170,120,65,.35), transparent 55%),
+    radial-gradient(ellipse at 76% 88%, rgba(90,50,20,.4), transparent 55%),
+    repeating-linear-gradient(125deg, rgba(0,0,0,.07) 0px, rgba(0,0,0,.07) 2px, transparent 2px, transparent 6px),
+    linear-gradient(160deg, #6b4326, #48290f 45%, #2a1608 100%);
+  border:12px solid #2a1608;
+  outline:2px solid rgba(212,175,55,.55);
+  outline-offset:-9px;
+  padding:20px 22px;
+  border-radius:8px 30px 8px 30px;
+  box-shadow:
+    0 0 0 3px #170b04,
+    0 24px 70px rgba(0,0,0,.85),
+    inset 0 0 70px rgba(0,0,0,.55),
+    inset 0 2px 0 rgba(255,214,140,.14);
   color:var(--ghost);
   max-height:90vh;
+  position:relative;
 }
-.book .title{ color:var(--ghost); text-shadow:0 0 18px rgba(255,183,3,.5), 0 0 34px rgba(139,92,246,.5); }
+.book::before{
+  content:''; position:absolute; inset:9px; pointer-events:none; border-radius:5px 24px 5px 24px;
+  border:1px solid rgba(212,175,55,.35);
+  background:
+    radial-gradient(circle 6px at 15px 15px, #f0d27a 0%, #9a7620 55%, transparent 60%),
+    radial-gradient(circle 6px at calc(100% - 15px) 15px, #f0d27a 0%, #9a7620 55%, transparent 60%),
+    radial-gradient(circle 6px at 15px calc(100% - 15px), #f0d27a 0%, #9a7620 55%, transparent 60%),
+    radial-gradient(circle 6px at calc(100% - 15px) calc(100% - 15px), #f0d27a 0%, #9a7620 55%, transparent 60%);
+}
+.book .title{ color:var(--gold); text-shadow:0 0 18px rgba(255,183,3,.55), 0 0 34px rgba(139,92,246,.4); }
 .book .subtitle{ color:rgba(228,220,255,.8); }
 .book-pages{
   display:flex; width:100%; position:relative; align-items:stretch;
   background:
-    radial-gradient(ellipse at 20% 10%, rgba(139,92,246,.14), transparent 50%),
-    radial-gradient(ellipse at 80% 90%, rgba(77,238,234,.08), transparent 55%),
-    linear-gradient(180deg, #241a34, #170f24);
-  border-radius:4px 14px 4px 14px;
-  box-shadow:inset 0 0 50px rgba(0,0,0,.5), inset 0 0 2px rgba(212,175,55,.3);
+    radial-gradient(ellipse at 50% 0%, rgba(120,88,44,.28), transparent 62%),
+    repeating-linear-gradient(0deg, rgba(0,0,0,.03) 0px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,220,160,.015) 0px, transparent 1px, transparent 4px),
+    linear-gradient(180deg, #2c2015, #1a130c);
+  border-radius:4px;
+  box-shadow:
+    inset 0 0 70px rgba(0,0,0,.6),
+    inset 0 0 2px rgba(212,175,55,.3),
+    inset 0 0 46px rgba(110,74,28,.22);
   overflow:hidden;
 }
 .book-page{
   flex:1 1 50%; min-width:0; padding:20px 22px 16px; display:flex; flex-direction:column; gap:10px; align-items:center;
   max-height:78vh; overflow-y:auto;
+  background:radial-gradient(ellipse at 50% 15%, rgba(255,224,170,.05), transparent 65%);
 }
 .book-page-left{ align-items:stretch; }
 .book-spine{
-  width:14px; flex:0 0 auto;
-  background:linear-gradient(90deg, rgba(0,0,0,.5), rgba(139,92,246,.08) 30%, rgba(139,92,246,.08) 70%, rgba(0,0,0,.5));
-  box-shadow:inset 0 0 14px rgba(0,0,0,.6);
+  width:18px; flex:0 0 auto;
+  background:
+    repeating-linear-gradient(0deg, rgba(0,0,0,.55) 0px, rgba(0,0,0,.55) 2px, transparent 2px, transparent 11px),
+    linear-gradient(90deg, rgba(0,0,0,.7), rgba(120,80,30,.28) 30%, rgba(120,80,30,.28) 70%, rgba(0,0,0,.7));
+  box-shadow:inset 0 0 22px rgba(0,0,0,.8), 0 0 12px rgba(0,0,0,.5);
 }
 .page-heading{
   font-family:"Cinzel Decorative","Cinzel",serif; font-size:15px; letter-spacing:3px; text-transform:uppercase;
@@ -273,6 +303,18 @@ canvas#game{
 .page-dot.active{ background:var(--gold); box-shadow:0 0 8px rgba(212,175,55,.7); }
 .rules-list{ display:flex; flex-direction:column; gap:9px; font-size:11.5px; color:rgba(228,220,255,.8); text-align:left; width:100%; }
 .rules-list b{ color:var(--amber); }
+.story-log{ display:flex; flex-direction:column; gap:12px; font-size:11.5px; color:rgba(228,220,255,.85); text-align:left; width:100%; }
+.story-entry{
+  padding:8px 0 10px; border-bottom:1px dashed rgba(212,175,55,.25);
+}
+.story-entry:last-child{ border-bottom:none; }
+.story-entry-wave{
+  font-family:"Cinzel Decorative",serif; font-size:10.5px; letter-spacing:2px; color:var(--gold);
+  text-shadow:0 0 8px rgba(212,175,55,.4); margin-bottom:4px;
+}
+.story-entry-text{ font-style:italic; line-height:1.6; color:rgba(228,220,255,.85); }
+.story-entry.locked{ opacity:.4; }
+.story-entry.locked .story-entry-text{ font-style:normal; letter-spacing:1px; }
 .g-progress{ font-size:10px; letter-spacing:.5px; color:var(--gold); font-weight:600; margin-top:1px; }
 #mage-portrait{
   background:radial-gradient(ellipse at 50% 30%, rgba(139,92,246,.22), transparent 60%);
@@ -299,7 +341,10 @@ canvas#game{
 @media (max-width:720px){
   .book-pages{ flex-direction:column; }
   .book-spread.active{ flex-direction:column; }
-  .book-spine{ width:auto; height:10px; background:linear-gradient(180deg, rgba(0,0,0,.5), rgba(139,92,246,.08) 30%, rgba(139,92,246,.08) 70%, rgba(0,0,0,.5)); }
+  .book-spine{ width:auto; height:12px; background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,.55) 0px, rgba(0,0,0,.55) 2px, transparent 2px, transparent 11px),
+    linear-gradient(180deg, rgba(0,0,0,.7), rgba(120,80,30,.28) 30%, rgba(120,80,30,.28) 70%, rgba(0,0,0,.7));
+  }
   .book-page{ max-height:none; }
 }
 #grimoire-list{width:100%; display:flex; flex-direction:column; gap:10px; pointer-events:all;}
@@ -391,18 +436,6 @@ canvas#game{
 <div id="start-screen" class="overlay">
   <h1 class="title" data-text="L'ARCIMAGO">L'ARCIMAGO</h1>
   <p class="subtitle">Un covo senza fine di goblin, orchi e spettri ti circonda nel bosco maledetto. Sopravvivi alle ondate, raccogli incantesimi, sfuggi al Fantasma e diventa leggenda.</p>
-  <div class="controls-grid">
-    <div><b>WASD / Frecce</b> — Movimento</div>
-    <div><b>Mouse</b> — Mira</div>
-    <div><b>Click / Spazio</b> — Incantesimo</div>
-    <div><b>Shift</b> — Passo Arcano (invulnerabile)</div>
-    <div><b>1-6</b> — Cambia incantesimo appreso</div>
-    <div><b>Esc</b> — Apri il Grimoire (rituali) e pausa</div>
-    <div><b>P</b> — Pausa</div>
-    <div><b>Touch</b> — Trascina per muoverti</div>
-  </div>
-  <p class="subtitle" style="max-width:560px;font-size:12px;margin-top:2px;">Combattendo, il mago impara: accresce il suo potere, rafforza la sua Aura Arcana e raccoglie rune. Ogni incantesimo richiede un numero diverso di rune per lo sblocco iniziale; da lì in poi bastano sempre 7 rune per ogni ulteriore potenziamento, che oltre al danno porta anche un beneficio specifico per quell'incantesimo, senza limiti.</p>
-  <p class="subtitle" style="max-width:560px;font-size:11px;margin-top:-8px;opacity:.75;">I tasti di movimento, incantesimo, passo arcano e pausa sono personalizzabili dal menu "Tasti".</p>
   <div class="settings-actions">
     <button id="start-btn" class="neon-btn">Inizia</button>
     <button id="settings-btn" class="neon-btn">Tasti</button>
@@ -444,32 +477,13 @@ canvas#game{
       </div>
       <div class="book-spread" id="spread-2">
         <div class="book-page book-page-left">
-          <h3 class="page-heading">Come si Gioca</h3>
-          <div class="controls-grid">
-            <div><b>WASD / Frecce</b> — Movimento</div>
-            <div><b>Mouse</b> — Mira</div>
-            <div><b>Click / Spazio</b> — Incantesimo</div>
-            <div><b>Shift</b> — Passo Arcano (scatta verso il puntatore, invulnerabile)</div>
-            <div><b>1-6</b> — Cambia incantesimo appreso</div>
-            <div><b>Esc</b> — Apri/chiudi questo Grimoire e pausa</div>
-            <div><b>P</b> — Pausa</div>
-            <div><b>Touch</b> — Trascina per muoverti</div>
-          </div>
-          <p class="subtitle" style="max-width:none;font-size:10.5px;opacity:.75;margin-top:2px;">I tasti di movimento, incantesimo, passo arcano e pausa sono personalizzabili dal menu "Tasti", raggiungibile dalla schermata iniziale o dalla pausa.</p>
+          <h3 class="page-heading">Cronache — Parte I</h3>
+          <div id="story-log-1" class="story-log"></div>
         </div>
         <div class="book-spine"></div>
         <div class="book-page book-page-right">
-          <h3 class="page-heading">Regole Arcane</h3>
-          <div class="rules-list">
-            <div><b>Ondate e Fantasma</b> — Ogni 5 ondate Il Fantasma si manifesta: sconfiggilo per proseguire.</div>
-            <div><b>Rune e Rituali</b> — Ogni incantesimo ha una soglia di rune per lo sblocco iniziale. Una volta appreso, bastano sempre 7 rune per ogni ulteriore potenziamento: più danno, e in più un beneficio specifico per quell'incantesimo — senza limiti.</div>
-            <div><b>Sinergie Arcane</b> — Sbloccare più rituali contemporaneamente attiva bonus passivi permanenti che restano attivi qualunque incantesimo tu stia usando.</div>
-            <div><b>Reliquie</b> — Oggetti rari, unici e permanenti per la run: cadono raramente dai mostri comuni e sono garantiti alla sconfitta di ogni Fantasma.</div>
-            <div><b>Modificatori d'Ondata</b> — Talvolta un'ondata porta con sé nebbia, terreno paludoso o vento arcano che devia i proiettili.</div>
-            <div><b>Mostri d'Elite</b> — Circa ogni 3 ondate (escluse quelle del Fantasma) un mostro comune reso d'elite compare da solo, molto più forte del normale.</div>
-            <div><b>Corruzione</b> — Dall'ondata 15 un indicatore di Corruzione cresce e sblocca a tappe mutazioni sui mostri comuni: pozze corrosive alla morte, scissione in schegge, maggiore aggressività, fino a raffiche di proiettili post-mortem.</div>
-            <div><b>Vita e Aura Arcana</b> — Crescono leggermente ad ogni livello: incrementi bassi, per restare in equilibrio con la forza crescente dei mostri.</div>
-          </div>
+          <h3 class="page-heading">Cronache — Parte II</h3>
+          <div id="story-log-2" class="story-log"></div>
         </div>
       </div>
     </div>
@@ -493,6 +507,17 @@ canvas#game{
     <div><span class="label">RECORD</span><span class="value" id="final-best">0</span></div>
   </div>
   <button id="restart-btn" class="neon-btn">Riprova</button>
+</div>
+
+<div id="victory-screen" class="overlay hidden">
+  <h2 class="title" data-text="VITTORIA" style="color:var(--gold); text-shadow:0 0 20px rgba(212,175,55,.8), 0 0 46px rgba(255,183,3,.5);">VITTORIA</h2>
+  <p class="subtitle" style="max-width:560px;font-style:italic;">Il Nucleo si dissolve in un ultimo bagliore. La Corruzione si ritira dalle radici del bosco maledetto. L'Arcimago, esausto ma vittorioso, resta solo a guardare l'alba tornare oltre gli alberi.</p>
+  <div id="stats-final">
+    <div><span class="label">PUNTEGGIO</span><span class="value" id="victory-score">0</span></div>
+    <div><span class="label">ONDATA</span><span class="value">100</span></div>
+    <div><span class="label">RECORD</span><span class="value" id="victory-best">0</span></div>
+  </div>
+  <button id="victory-restart-btn" class="neon-btn">Gioca Ancora</button>
 </div>
 
 <script>
@@ -581,7 +606,7 @@ function boom(gainV=0.35, dur=0.4, freq=900){
 const sfx = {
   shoot(w){
     if(w==='laser') return;
-    tone({freq: w==='rapid'?520:420, type:'square', dur:0.06, gain:0.09, slide:-140});
+    tone({freq: 420, type:'square', dur:0.06, gain:0.09, slide:-140});
   },
   homing(){ tone({freq:340,type:'sawtooth',dur:0.08,gain:0.09,slide:-100}); },
   zap(){ tone({freq:1100,type:'sawtooth',dur:0.04,gain:0.05,slide:-500}); },
@@ -661,7 +686,7 @@ window.addEventListener('keydown', e=>{
   } else if(e.code === keyBinds.pause){
     if(state==='playing' || state==='paused') togglePause();
   }
-  const digitMatch = e.code.match(/^Digit([1-6])$/);
+  const digitMatch = e.code.match(/^Digit([1-5])$/);
   if(digitMatch && state==='playing'){ selectSpell(parseInt(digitMatch[1],10)-1); }
 });
 window.addEventListener('keyup', e=>{ keys[e.code] = false; });
@@ -884,18 +909,18 @@ const player = {
   level:1, xp:0, xpToNext:120,
   powerMult:1, shieldPower:1,
   unlockedSpells:['blaster'],
-  runes:{spread:0, rapid:0, homing:0, laser:0, chain:0},
-  spellRuneBonus:{spread:0, rapid:0, homing:0, laser:0, chain:0},
+  runes:{spread:0, homing:0, laser:0, chain:0},
+  spellRuneBonus:{spread:0, homing:0, laser:0, chain:0},
   relics:[], phoenixUsed:false
 };
 function spellDmgMult(name){
   const base = 1 + (player.spellRuneBonus[name]||0) * RUNE_BONUS_PER_RUNE;
   return hasSynergy('maestria') ? base*1.12 : base;
 }
-const SPELL_KEYS = ['blaster','spread','rapid','homing','laser','chain'];
-const RITUAL_SPELLS = ['spread','rapid','homing','laser','chain'];
-const RUNES_REQUIRED = {spread:5, rapid:10, homing:15, laser:20, chain:25}; // soglia di RUNE per lo SBLOCCO iniziale (varia per incantesimo)
-const UPGRADE_RUNES_REQUIRED = 7; // soglia FISSA di rune per ogni POTENZIAMENTO successivo, uguale per tutti gli incantesimi
+const SPELL_KEYS = ['blaster','spread','homing','laser','chain'];
+const RITUAL_SPELLS = ['spread','homing','laser','chain'];
+const RUNES_REQUIRED = {spread:5, homing:10, laser:15, chain:20}; // soglia di RUNE per lo SBLOCCO iniziale (varia per incantesimo)
+const UPGRADE_RUNES_REQUIRED = 10; // soglia FISSA di rune per ogni POTENZIAMENTO successivo, uguale per tutti gli incantesimi
 function runesNeededFor(name){ return player.unlockedSpells.includes(name) ? UPGRADE_RUNES_REQUIRED : RUNES_REQUIRED[name]; }
 // ogni potenziamento (rituale ripetuto dopo lo sblocco) aumenta permanentemente
 // una piccola percentuale di danno per quello specifico incantesimo
@@ -904,22 +929,23 @@ const RUNE_BONUS_PER_RUNE = 0.01; // +1% danno per potenziamento
 // --- Potenziamenti speciali per-incantesimo: ogni potenziamento (ogni rituale, non ogni runa
 // singola) porta con sé anche un piccolo bonus di gameplay specifico per quell'incantesimo ---
 const FLAME_RANGE_PER_UPGRADE = 7;        // il cono di fiamme si allunga progressivamente
-const RAPID_RATE_CUT_PER_UPGRADE = 0.011; // la runa di rapidità accresce la cadenza di fuoco...
-const RAPID_MIN_RATE = 0.045;             // ...ma non oltre questo limite, per restare giocabile
 const HOMING_EXTRA_PER_UPGRADE = 1;       // +1 sfera indipendente per lancio ad ogni potenziamento
 const LASER_WIDTH_PER_UPGRADE = 0.55;     // il fascio runico si allarga di poco ad ogni potenziamento
 const CHAIN_EXTRA_PER_UPGRADE = 1;        // +1 nemico colpito dalla catena ad ogni potenziamento
 const CHAIN_BASE_TARGETS = 1;             // la catena di fulmini parte colpendo un solo nemico alla volta
 
+// il Bastone Arcano (arma base, sempre disponibile) accelera leggermente e in modo naturale
+// con l'esperienza del mago, invece di richiedere una runa dedicata alla sola rapidità
+const BLASTER_LEVEL_RATE_CUT = 0.01;
+const BLASTER_MIN_RATE = 0.09;
+
 function getFlameConeRange(){ return FLAME_CONE_RANGE + (player.spellRuneBonus.spread||0)*FLAME_RANGE_PER_UPGRADE; }
 function getEffectiveRate(name){
   const w = WEAPONS[name];
   let rate = w.rate;
-  if(name==='rapid'){
-    const cut = (player.spellRuneBonus.rapid||0)*RAPID_RATE_CUT_PER_UPGRADE;
-    rate = Math.max(RAPID_MIN_RATE, w.rate - cut);
+  if(name==='blaster'){
+    rate = Math.max(BLASTER_MIN_RATE, w.rate * (1 - Math.min(0.6, player.level*BLASTER_LEVEL_RATE_CUT)));
   }
-  if(hasSynergy('sovraccarico')) rate *= 0.88;
   if(hasRelic('focus')) rate *= 0.92;
   return rate;
 }
@@ -931,12 +957,10 @@ function getChainMaxTargets(){ return CHAIN_BASE_TARGETS + (player.spellRuneBonu
 // più forte il mago nel suo complesso, non solo l'incantesimo attivo — così ogni incantesimo
 // appreso resta utile anche quando non è quello impugnato in quel momento ---
 const SYNERGIES = [
-  {key:'tempesta',  req:['spread','chain'],                              name:'Tempesta Elementale', desc:'Ogni colpo ha il 10% di probabilità di provocare una piccola esplosione a catena'},
-  {key:'marchio',   req:['spread','laser'],                              name:'Marchio Ardente',     desc:'Ogni colpo lascia un bruciore che continua a danneggiare nel tempo'},
-  {key:'riflessi',  req:['rapid','homing'],                              name:'Riflessi Arcani',     desc:'Il Passo Arcano ricarica il 25% più in fretta'},
-  {key:'sovraccarico', req:['rapid','chain'],                            name:'Sovraccarico',        desc:'Cadenza di fuoco aumentata con ogni incantesimo'},
-  {key:'occhio',    req:['homing','laser'],                              name:'Occhio Onniveggente', desc:'Raggio di richiamo delle rune aumentato'},
-  {key:'maestria',  req:['spread','rapid','homing','laser','chain'],     name:'Gran Maestria Arcana',desc:'+12% danno con qualsiasi incantesimo'}
+  {key:'tempesta',  req:['spread','chain'],                    name:'Tempesta Elementale', desc:'Ogni colpo ha il 10% di probabilità di provocare una piccola esplosione a catena'},
+  {key:'marchio',   req:['spread','laser'],                    name:'Marchio Ardente',     desc:'Ogni colpo lascia un bruciore che continua a danneggiare nel tempo'},
+  {key:'occhio',    req:['homing','laser'],                    name:'Occhio Onniveggente', desc:'Raggio di richiamo delle rune aumentato'},
+  {key:'maestria',  req:['spread','homing','laser','chain'],   name:'Gran Maestria Arcana',desc:'+12% danno con qualsiasi incantesimo'}
 ];
 function activeSynergies(){
   return SYNERGIES.filter(s => s.req.every(r => player.unlockedSpells.includes(r)));
@@ -1030,19 +1054,16 @@ let boss = null;
 const WEAPONS = {
   blaster: {label:'BASTONE ARCANO', rate:0.22, dmg:12, speed:640, color:'#4deeea'},
   spread:  {label:'CONO DI FIAMME', rate:0, dmg:8, speed:0, color:'#ff8a3d'},
-  rapid:   {label:'RUNA DI RAPIDITÀ', rate:0.10, dmg:7, speed:700, color:'#ffe14d'},
   homing:  {label:'SFERA ARCANA CERCANTE', rate:0.38, dmg:15, speed:460, color:'#ff2fb0'},
   laser:   {label:'FASCIO RUNICO', rate:0, dmg:26, speed:0, color:'#ffb703'},
   chain:   {label:'CATENA DI FULMINI', rate:0, dmg:8, speed:0, color:'#8dfcff'}
 };
-const WEAPON_DURATION = {spread:11, rapid:9, homing:11, laser:7, chain:9};
+const WEAPON_DURATION = {spread:11, homing:11, laser:7, chain:9};
 // Icone distintive per ciascun incantesimo (usate nella barra incantesimi e nel Grimoire)
 function spellIconSVG(name){
   switch(name){
     case 'spread': // cono di fiamme -> fiamma
       return '<svg viewBox="0 0 24 24" width="16" height="16"><path fill="#ff7a2e" stroke="#1b1408" stroke-width="1" d="M12.5 1.8c1.1 3.1-1.9 4.4-2.3 7.2-.3 2 .8 3.3 2.1 3.3 1.6 0 2.4-1.5 2.1-3-.1-.6-.5-1.1-.4-1.6 1.8 1.1 3.2 3.6 3.2 6a5.7 5.7 0 1 1-11.4 0c0-4.9 4.4-7.2 6.7-11.9z"/><path fill="#ffd24d" d="M12.1 10.3c.4 1.1-.7 1.7-.7 2.8a1.6 1.6 0 0 0 3.2 0c0-1.6-1.3-2.1-2.5-2.8z"/></svg>';
-    case 'rapid': // runa di rapidità -> fulmine giallo
-      return '<svg viewBox="0 0 24 24" width="16" height="16"><polygon fill="#e0a83a" stroke="#1b1408" stroke-width="1" stroke-linejoin="round" points="13,2 4,14 11,14 9,22 20,9 12,9"/></svg>';
     case 'homing': // sfera arcana cercante -> sfera viola con occhio
       return '<svg viewBox="0 0 24 24" width="16" height="16"><circle cx="12" cy="12" r="9.2" fill="#8b5cf6" stroke="#1b1408" stroke-width="1"/><ellipse cx="12" cy="12" rx="5.4" ry="3.2" fill="#f5f0ff"/><circle cx="12" cy="12" r="2" fill="#231041"/></svg>';
     case 'laser': // fascio runico -> riga diagonale coi colori del fascio
@@ -1062,8 +1083,8 @@ function resetGame(){
   player.dashCooldown = 0; player.dashing = 0; player.alive = true;
   player.level=1; player.xp=0; player.xpToNext=120; player.powerMult=1; player.shieldPower=1;
   player.unlockedSpells=['blaster'];
-  player.runes={spread:0, rapid:0, homing:0, laser:0, chain:0};
-  player.spellRuneBonus={spread:0, rapid:0, homing:0, laser:0, chain:0};
+  player.runes={spread:0, homing:0, laser:0, chain:0};
+  player.spellRuneBonus={spread:0, homing:0, laser:0, chain:0};
   player.relics=[]; player.phoenixUsed=false;
   bullets = []; enemies = []; particles = []; pickups = []; boss = null;
   score = 0; waveNumber = 1; combo = 0; comboTimer = 0; comboMultiplier = 1;
@@ -1100,9 +1121,9 @@ function spawnExplosion(x,y,big){
 }
 
 /* ============================= PICKUPS ============================= */
-const PICKUP_TYPES = ['heal','shield','spread','rapid','homing','laser','chain','nuke','multi'];
+const PICKUP_TYPES = ['heal','shield','spread','homing','laser','chain'];
 // Pesi base per gli oggetti non-rituali (invariati durante la partita)
-const PICKUP_BASE_WEIGHTS = {heal:16, shield:13, nuke:5, multi:11};
+const PICKUP_BASE_WEIGHTS = {heal:16, shield:13};
 // Le rune ancora da scoprire pesano in proporzione inversa alle rune richieste per il rituale:
 // così l'incantesimo più economico (meno rune) tende a saturarsi ed essere appreso per primo.
 const RUNE_LOCKED_SCALE = 300;
@@ -1133,24 +1154,14 @@ function applyPickup(type){
   switch(type){
     case 'heal': player.hp = Math.min(player.maxHp, player.hp+30); floatText(player.x,player.y-30,'+30 VITA','#39ff88'); break;
     case 'shield': player.shield = Math.min(player.maxShield, player.shield+30); floatText(player.x,player.y-30,'+AURA ARCANA','#4deeea'); break;
-    case 'nuke':
-      for(const en of enemies){ spawnExplosion(en.x,en.y,false); addScore(Math.round(en.value*0.5)); }
-      enemies = [];
-      spawnExplosion(player.x,player.y,true);
-      floatText(player.x,player.y-30,'PIOGGIA DI METEORE!','#ffb703');
-      break;
-    case 'multi':
-      comboMultiplier = Math.min(4, comboMultiplier+0.5);
-      floatText(player.x,player.y-30,'TALISMANO DEL POTERE!','#ffb703');
-      break;
     case 'relic':
       grantRandomRelic(player.x, player.y);
       break;
-    default: { // runa di incantesimo: spread, rapid, homing, laser, chain
+    default: { // runa di incantesimo: spread, homing, laser, chain
       const already = player.unlockedSpells.includes(type);
       const req = runesNeededFor(type);
       // prima dello sblocco le rune riempiono la barra fino alla soglia di sblocco (variabile per incantesimo);
-      // dopo lo sblocco, ogni potenziamento richiede sempre 7 rune, uguale per tutti gli incantesimi
+      // dopo lo sblocco, ogni potenziamento richiede sempre 10 rune, uguale per tutti gli incantesimi
       player.runes[type] = Math.min(req, (player.runes[type]||0) + 1);
       const n = player.runes[type];
       if(already){
@@ -1278,11 +1289,30 @@ function toggleGrimoire(){
     state='grimoire';
     renderGrimoire();
     renderMageStats();
+    renderStoryLog();
     goToGrimoirePage(0);
     el.classList.remove('hidden');
   } else if(state==='grimoire'){
     state='playing';
     el.classList.add('hidden');
+  }
+}
+function renderStoryLog(){
+  const beats = Object.keys(STORY_BEATS).map(Number).sort((a,b)=>a-b);
+  const mid = Math.ceil(beats.length/2);
+  const cols = [
+    {el: document.getElementById('story-log-1'), keys: beats.slice(0,mid)},
+    {el: document.getElementById('story-log-2'), keys: beats.slice(mid)}
+  ];
+  for(const col of cols){
+    if(!col.el) continue;
+    col.el.innerHTML = col.keys.map(w=>{
+      const discovered = waveNumber >= w;
+      if(discovered){
+        return `<div class="story-entry"><div class="story-entry-wave">Ondata ${w}</div><div class="story-entry-text">${STORY_BEATS[w]}</div></div>`;
+      }
+      return `<div class="story-entry locked"><div class="story-entry-wave">Ondata ${w}</div><div class="story-entry-text">??? — capitolo non ancora svelato</div></div>`;
+    }).join('');
   }
 }
 function renderMageStats(){
@@ -1521,7 +1551,6 @@ function renderGrimoire(){
   list.innerHTML = '';
   const SPELL_PERK_DESC = {
     spread: 'allunga anche il cono di fiamme',
-    rapid: 'accresce anche la cadenza (fino a un limite)',
     homing: 'aggiunge una sfera indipendente per lancio',
     laser: 'allarga di poco il fascio',
     chain: 'colpisce un nemico in più con la catena'
@@ -2058,7 +2087,7 @@ function updatePlayer(dt){
     const pa = angleTo(player.x,player.y,mouse.x,mouse.y);
     player.dashDir = {x:Math.cos(pa), y:Math.sin(pa)};
     player.dashing = 0.20;
-    player.dashCooldown = player.dashCooldownMax * (hasSynergy('riflessi') ? 0.75 : 1) * (hasRelic('vento') ? 0.8 : 1);
+    player.dashCooldown = player.dashCooldownMax * (hasRelic('vento') ? 0.8 : 1);
     player.invuln = Math.max(player.invuln, 0.28);
     sfx.dash();
   }
@@ -2121,7 +2150,7 @@ function fireWeapon(type){
   const w = WEAPONS[type];
   const dmg = w.dmg * player.powerMult * spellDmgMult(type);
   const a = player.angle;
-  if(type==='blaster' || type==='rapid'){
+  if(type==='blaster'){
     shootBullet(player.x+Math.cos(a)*20, player.y+Math.sin(a)*20, a, w.speed,'player',dmg,w.color,4);
   } else if(type==='homing'){
     const extra = getHomingExtraShots();
@@ -2404,7 +2433,7 @@ function handleCollisions(){
     }
   }
   if(boss && boss.phase!=='enter' && dist(boss.x,boss.y,player.x,player.y) < player.radius+boss.radius){
-    damagePlayer(boss.phase==='dash' ? 26 : 15, boss);
+    damagePlayer(boss.phase==='dash' ? boss.dmg*1.73 : boss.dmg, boss);
   }
   // dead enemies
   const survivors = [];
@@ -2463,14 +2492,16 @@ function onEnemyDeath(en){
   }
 }
 function onBossDeath(){
+  const wasFinal = !!boss.isFinal;
   spawnExplosion(boss.x,boss.y,true);
   addScore(boss.value);
   gainXP(boss.value*0.4);
   for(let i=0;i<4;i++) spawnPickup(boss.x+rand(-40,40), boss.y+rand(-40,40));
-  if(player.relics.length < RELICS.length) spawnPickup(boss.x, boss.y-30, 'relic');
+  if(!wasFinal && player.relics.length < RELICS.length) spawnPickup(boss.x, boss.y-30, 'relic');
   document.getElementById('boss-hud').classList.add('hidden');
-  floatText(boss.x,boss.y-60,'FANTASMA DISSOLTO','#e0a83a');
+  floatText(boss.x,boss.y-60, wasFinal?'IL NUCLEO SI DISSOLVE':'FANTASMA DISSOLTO', wasFinal?'#ff50dc':'#e0a83a');
   boss = null;
+  if(wasFinal){ triggerVictory(); return; }
   spawner.onBossCleared();
 }
 
@@ -2487,9 +2518,21 @@ function makeBoss(){
   const bossRampT = clamp((waveNumber-5)/25, 0, 1);
   return {
     x:W/2, y:-90, vx:0, vy:0, radius:74, hp, maxHp:hp, value:1500+waveNumber*100,
-    t:0, attackTimer:2.0+(1-bossRampT)*1.6, phase:'enter', dmg:30, hitFlash:0, color:'#7b4fa0',
+    t:0, attackTimer:2.0+(1-bossRampT)*1.6, phase:'enter', dmg:15, hitFlash:0, color:'#7b4fa0',
     telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0, enraged:false,
     huntState:'chase', huntTimer:rand(2.2,3.2), orbitDir:1, rampT:bossRampT
+  };
+}
+function makeFinalBoss(){
+  // IL NUCLEO DELLA CORRUZIONE: l'origine di ogni Fantasma incontrato finora, un'entità
+  // estranea e ostile — molto più tosta di un Fantasma qualunque, con un pattern
+  // d'attacco esclusivo (nova) e una seconda fase che si attiva prima del solito
+  return {
+    x:W/2, y:-140, vx:0, vy:0, radius:104, hp:18000, maxHp:18000, value:50000,
+    t:0, attackTimer:2.4, phase:'enter', dmg:26, hitFlash:0, color:'#e03cff',
+    telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0, enraged:false,
+    huntState:'circle', huntTimer:rand(2.0,3.0), orbitDir:1, rampT:1,
+    isFinal:true, enrageThreshold:0.5
   };
 }
 function updateBoss(dt){
@@ -2497,10 +2540,10 @@ function updateBoss(dt){
   boss.t += dt;
   if(boss.hitFlash>0) boss.hitFlash-=dt;
   tickBurn(boss, dt);
-  // furia: sotto il 40% di HP il Fantasma diventa più rapido e aggressivo
-  boss.enraged = boss.hp < boss.maxHp*0.4;
+  // furia: sotto la soglia (40% normale, 50% per il Nucleo) il boss diventa più rapido e aggressivo
+  boss.enraged = boss.hp < boss.maxHp*(boss.enrageThreshold||0.4);
   const rampT = boss.rampT!==undefined ? boss.rampT : 1;
-  const cdMul = ((boss.enraged ? 0.7 : 1)) + (1-rampT)*0.55;
+  const cdMul = ((boss.enraged ? (boss.isFinal?0.62:0.7) : 1)) + (1-rampT)*0.55;
   const moveMul = (boss.enraged ? 1.55 : 1) * (0.8+rampT*0.2);
   if(boss.phase==='enter'){
     boss.y += 60*dt;
@@ -2569,34 +2612,54 @@ function updateBoss(dt){
     if(boss._dashTraveled >= boss._dashDist){ boss.phase='idle'; boss.attackTimer=2.6*cdMul; }
     return;
   }
+  if(boss.phase==='nova'){
+    // NOVA: attacco esclusivo del Nucleo — un doppio anello d'onda d'urto, lungamente
+    // telegrafato ma devastante se non si esce dal raggio in tempo
+    boss.telegraphT -= dt;
+    if(boss.telegraphT<=0){
+      for(let ring=0; ring<2; ring++){
+        const n=18, offset=ring*(Math.PI/18), spd=230+ring*45;
+        for(let i=0;i<n;i++){ const a=i/n*TAU+offset; shootBullet(boss.x,boss.y,a,spd,'enemy',17,'#ff50dc',6); }
+      }
+      spawnParticles(boss.x,boss.y,44,'#ff50dc',{speed:300,life:0.6,radius:4});
+      shakeMag = Math.min(30, shakeMag+14);
+      boss.phase='idle'; boss.attackTimer = 3.6*cdMul;
+    }
+    return;
+  }
 
   boss.attackTimer -= dt;
   if(boss.attackTimer <= 0){
-    const atk = pick(['ring','aimed','summon','charge','barrage']);
+    const fb = !!boss.isFinal;
+    const atkPool = fb ? ['ring','aimed','summon','barrage','nova','nova'] : ['ring','aimed','summon','charge','barrage'];
+    const atk = pick(atkPool);
     boss.phase = 'attack';
     if(atk==='ring'){
-      const n = boss.enraged ? 22 : 16;
-      const spd = boss.enraged ? 270 : 240;
-      for(let i=0;i<n;i++){ const a=i/n*TAU; shootBullet(boss.x,boss.y,a,spd,'enemy',14,'#8b5cf6',6); }
+      const n = boss.enraged ? (fb?28:22) : (fb?20:16);
+      const spd = boss.enraged ? (fb?300:270) : (fb?260:240);
+      const dmg = fb ? 18 : 14;
+      for(let i=0;i<n;i++){ const a=i/n*TAU; shootBullet(boss.x,boss.y,a,spd,'enemy',dmg,'#8b5cf6',6); }
       boss.attackTimer = 2.4*cdMul;
       boss.phase='idle';
     } else if(atk==='aimed'){
       let burst=0;
-      const bursts = boss.enraged ? 4 : 3;
+      const bursts = boss.enraged ? (fb?6:4) : (fb?4:3);
+      const dmg = fb ? 16 : 12;
       const burstInt = setInterval(()=>{
         if(!boss || state!=='playing'){ clearInterval(burstInt); return; }
         const a = angleTo(boss.x,boss.y,player.x,player.y);
-        for(const off of [-0.18,0,0.18]) shootBullet(boss.x,boss.y,a+off,340,'enemy',12,'#7cff6b',5);
+        for(const off of [-0.18,0,0.18]) shootBullet(boss.x,boss.y,a+off,340,'enemy',dmg,'#7cff6b',5);
         burst++; if(burst>=bursts) clearInterval(burstInt);
       }, 160);
       boss.attackTimer = 2.8*cdMul;
       boss.phase='idle';
     } else if(atk==='summon'){
-      // il Fantasma può ora evocare qualunque tipo di mostro incontrato finora, non solo un paio fissi
-      const n = boss.enraged ? 4 : 3;
+      // il Fantasma (e il Nucleo, con più insistenza) può evocare qualunque mostro incontrato finora
+      const n = boss.enraged ? (fb?5:4) : (fb?4:3);
       const roster = ['chaser','shooter','splitter','orbiter','bomber'];
       for(let i=0;i<n;i++){
-        const e = makeEnemy(pick(roster));
+        const useElite = fb && boss.enraged && Math.random()<0.3;
+        const e = makeEnemy(pick(roster), useElite);
         e.x = boss.x+rand(-60,60); e.y = boss.y+rand(20,60);
         enemies.push(e);
       }
@@ -2605,22 +2668,26 @@ function updateBoss(dt){
     } else if(atk==='barrage'){
       // raffica di schegge spettrali in ventaglio verso il mago
       let shots=0;
-      const totalShots = boss.enraged ? 11 : 7;
+      const totalShots = boss.enraged ? (fb?15:11) : (fb?9:7);
+      const dmg = fb ? 14 : 10;
       const barrageInt = setInterval(()=>{
         if(!boss || state!=='playing'){ clearInterval(barrageInt); return; }
         const a = angleTo(boss.x,boss.y,player.x,player.y) + rand(-0.4,0.4);
-        shootBullet(boss.x,boss.y,a,310,'enemy',10,'#39ff88',5);
+        shootBullet(boss.x,boss.y,a,310,'enemy',dmg,'#39ff88',5);
         shots++; if(shots>=totalShots) clearInterval(barrageInt);
       }, 100);
       boss.attackTimer = 2.6*cdMul;
       boss.phase='idle';
     } else if(atk==='charge'){
       boss.phase='charge'; boss.telegraphT = (boss.enraged ? 0.55 : 0.7) + (1-rampT)*0.35;
+    } else if(atk==='nova'){
+      boss.phase='nova'; boss.telegraphT = 1.1;
     }
   }
 }
 function drawBoss(){
   if(!boss) return;
+  if(boss.isFinal){ drawFinalBossVisual(); return; }
   ctx.save();
   ctx.translate(boss.x,boss.y);
   drawGroundShadow(boss.radius*0.95, boss.radius*1.35, boss.radius*0.5, 0.32);
@@ -2736,9 +2803,119 @@ function drawBoss(){
     ctx.restore();
   }
 
+  updateBossHUD();
+}
+function updateBossHUD(){
   document.getElementById('boss-hud').classList.remove('hidden');
   document.getElementById('boss-bar').style.width = clamp(boss.hp/boss.maxHp,0,1)*100+'%';
-  document.getElementById('boss-name').textContent = (boss.enraged ? 'IL FANTASMA INFURIATO' : 'IL FANTASMA') + ' · ONDATA '+waveNumber;
+  const bar = document.getElementById('boss-bar');
+  const nameEl = document.getElementById('boss-name');
+  if(boss.isFinal){
+    bar.style.background = 'linear-gradient(90deg, #7a1a8f, #ff50dc)';
+    nameEl.textContent = (boss.enraged ? 'IL NUCLEO — RISVEGLIATO' : 'IL NUCLEO DELLA CORRUZIONE') + ' · ONDATA '+waveNumber;
+  } else {
+    bar.style.background = '';
+    nameEl.textContent = (boss.enraged ? 'IL FANTASMA INFURIATO' : 'IL FANTASMA') + ' · ONDATA '+waveNumber;
+  }
+}
+function drawFinalBossVisual(){
+  ctx.save();
+  ctx.translate(boss.x,boss.y);
+  drawGroundShadow(boss.radius*1.1, boss.radius*1.5, boss.radius*0.55, 0.4);
+  const pulse = 1+Math.sin(boss.t*2.4)*0.05;
+  const flash = boss.hitFlash>0;
+  const floatY = Math.sin(boss.t*1.6)*10;
+
+  // doppio cerchio runico a terra, più ampio e minaccioso di quello del Fantasma comune
+  ctx.save();
+  ctx.rotate(boss.t*0.18);
+  ctx.strokeStyle = 'rgba(224,60,255,.5)'; ctx.lineWidth=2.4;
+  ctx.beginPath(); ctx.arc(0,boss.radius*0.35,boss.radius*1.5,0,TAU); ctx.stroke();
+  ctx.restore();
+  ctx.save();
+  ctx.rotate(-boss.t*0.3);
+  ctx.setLineDash([14,10]);
+  ctx.strokeStyle='rgba(140,30,190,.55)';
+  ctx.beginPath(); ctx.arc(0,boss.radius*0.35,boss.radius*1.85,0,TAU); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  // frammenti spettrali orbitanti — eco di ogni Fantasma affrontato finora, ridotto a scheggia
+  const shardCount = 4;
+  for(let i=0;i<shardCount;i++){
+    const aa = boss.t*0.7 + i*(TAU/shardCount);
+    const orbR = boss.radius*1.7;
+    const sx = Math.cos(aa)*orbR, sy = Math.sin(aa)*orbR*0.6;
+    ctx.save();
+    ctx.translate(sx,sy);
+    ctx.globalAlpha=0.75;
+    ctx.fillStyle='#cba3e8'; ctx.shadowColor='#cba3e8'; ctx.shadowBlur=10;
+    ctx.beginPath(); ctx.arc(0,0,boss.radius*0.15,0,TAU); ctx.fill();
+    ctx.globalAlpha=1;
+    ctx.restore();
+  }
+
+  ctx.translate(0, floatY);
+
+  // NUCLEO DELLA CORRUZIONE: cristallo scuro e spigoloso — una forma del tutto estranea
+  // a un fantasma, per non essere mai confuso con nulla incontrato prima
+  const coreR = boss.radius*0.82;
+  ctx.save();
+  ctx.rotate(Math.sin(boss.t*0.5)*0.1);
+  ctx.shadowColor='#e03cff'; ctx.shadowBlur = 28+10*Math.sin(boss.t*3);
+  const grad = ctx.createRadialGradient(0,0,coreR*0.1,0,0,coreR*1.1);
+  grad.addColorStop(0, flash?'#ffffff':'#3a0a4a');
+  grad.addColorStop(0.6,'#1c0524');
+  grad.addColorStop(1,'#0a0210');
+  ctx.fillStyle = grad;
+  const spikes = 9;
+  ctx.beginPath();
+  for(let i=0;i<spikes;i++){
+    const aa = i/spikes*TAU;
+    const rr = coreR*(i%2===0 ? pulse : 0.62*pulse);
+    const px = Math.cos(aa)*rr, py = Math.sin(aa)*rr;
+    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  }
+  ctx.closePath(); ctx.fill();
+  ctx.lineWidth=3; ctx.strokeStyle='#e03cff'; ctx.stroke();
+  ctx.shadowBlur=0;
+
+  // crepe incandescenti diramate sulla superficie
+  ctx.strokeStyle='rgba(255,180,255,.85)'; ctx.lineWidth=1.4; ctx.shadowColor='#ff9cff'; ctx.shadowBlur=8;
+  ctx.beginPath();
+  ctx.moveTo(-coreR*0.5,-coreR*0.3); ctx.lineTo(-coreR*0.1,coreR*0.05); ctx.lineTo(coreR*0.2,-coreR*0.2); ctx.lineTo(coreR*0.55,coreR*0.35);
+  ctx.moveTo(coreR*0.1,-coreR*0.5); ctx.lineTo(-coreR*0.05,-coreR*0.05); ctx.lineTo(coreR*0.15,coreR*0.4);
+  ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.restore();
+
+  // grande occhio centrale, sempre puntato sul mago
+  const eyeA = angleTo(boss.x,boss.y+floatY,player.x,player.y);
+  ctx.save();
+  ctx.rotate(eyeA);
+  ctx.fillStyle='#0a0210';
+  ctx.beginPath(); ctx.ellipse(0,0,coreR*0.5,coreR*0.32,0,0,TAU); ctx.fill();
+  const irisGlow = 0.8+0.2*Math.sin(boss.t*4);
+  ctx.fillStyle=`rgba(255,80,220,${irisGlow})`; ctx.shadowColor='#ff50dc'; ctx.shadowBlur=18;
+  ctx.beginPath(); ctx.arc(coreR*0.14,0,coreR*0.17,0,TAU); ctx.fill();
+  ctx.fillStyle='#0a0210'; ctx.shadowBlur=0;
+  ctx.beginPath(); ctx.arc(coreR*0.14,0,coreR*0.07,0,TAU); ctx.fill();
+  ctx.restore();
+
+  ctx.restore();
+
+  // telegraph della Nova: un anello d'onda che cresce fino all'esplosione
+  if(boss.phase==='nova'){
+    const t = clamp(1-(boss.telegraphT/1.1),0,1);
+    ctx.save();
+    ctx.globalAlpha = 0.55;
+    ctx.strokeStyle = 'rgba(255,80,220,.85)'; ctx.lineWidth=3;
+    ctx.shadowColor='#ff50dc'; ctx.shadowBlur=14;
+    ctx.beginPath(); ctx.arc(boss.x,boss.y,60+t*260,0,TAU); ctx.stroke();
+    ctx.restore();
+  }
+
+  updateBossHUD();
 }
 
 /* ============================= SPAWNER / WAVES ============================= */
@@ -2846,15 +3023,40 @@ function drawWaveModifierFX(){
   }
 }
 
+// --- Mini storia intrecciata alle ondate: frammenti narrativi che compaiono nel banner
+// di alcune ondate chiave, dalla prima scaramuccia fino al risveglio del Nucleo ---
+const STORY_BEATS = {
+  1:  'Le prime ombre si muovono ai margini della radura: l\'Arcimago inizia il suo rituale di difesa.',
+  5:  'Uno spettro errante emerge dal velo — un frammento di qualcosa di più grande, in cerca di una via.',
+  10: 'Il Fantasma torna, più lucido: come se ogni sconfitta gli insegnasse a temere meno la luce.',
+  15: 'Una vena oscura si insinua tra le radici del bosco. La Corruzione, dormiente da secoli, si è appena svegliata.',
+  20: 'Il Fantasma non è una semplice ombra vagante: è un\'eco, un frammento inviato da qualcosa che osserva da lontano.',
+  30: 'L\'Arcimago intuisce la verità: ogni Fantasma sconfitto rende chi lo ha creato un poco più forte.',
+  40: 'La Corruzione scorre più densa. I mostri non muoiono più del tutto — si trasformano.',
+  50: 'Metà del cammino. Il bosco trema: qualcosa di antico si sta radunando nelle profondità.',
+  60: 'I frammenti spettrali smettono di apparire come entità separate: cominciano a fondersi, a ricordare chi erano.',
+  75: 'L\'aria stessa è corrotta. Per la prima volta, l\'Arcimago sente un nome sussurrato dal nulla: il Nucleo.',
+  90: 'Ogni radice del bosco pulsa al ritmo di un cuore che non è il suo. La fine è vicina.',
+  95: 'Il velo si lacera. Ciò che ha inviato ogni Fantasma come esploratore si prepara infine a varcare la soglia.',
+  100:'Il Nucleo della Corruzione si manifesta. Ogni Fantasma affrontato finora era soltanto un suo frammento — un esploratore mandato ad assaggiare la tua magia. Ora l\'origine stessa varca la soglia: sconfiggerla è l\'unico modo per spezzare la Corruzione alla radice.'
+};
 const spawner = {
   toSpawn:0, spawnTimer:0, spawnInterval:1.2, waveActive:false, breakTimer:0, breaking:false,
   reset(){ this.toSpawn=0; this.spawnTimer=0; this.waveActive=false; this.breaking=false; this.startWave(); },
   startWave(){
+    if(waveNumber === 100){
+      boss = makeFinalBoss();
+      this.waveActive = false;
+      waveModifier = null;
+      showWaveBanner('ONDATA 100', 'IL NUCLEO DELLA CORRUZIONE SI MANIFESTA', STORY_BEATS[100]);
+      sfx.bossRoar();
+      return;
+    }
     if(waveNumber % 5 === 0){
       boss = makeBoss();
       this.waveActive = false;
       waveModifier = null;
-      showWaveBanner('ONDATA '+waveNumber, 'IL FANTASMA SI MANIFESTA');
+      showWaveBanner('ONDATA '+waveNumber, 'IL FANTASMA SI MANIFESTA', STORY_BEATS[waveNumber]);
       return;
     }
     this.toSpawn = isMiniBossWave(waveNumber) ? Math.round((5 + waveNumber*2)*0.5) : (5 + waveNumber*2);
@@ -2862,16 +3064,17 @@ const spawner = {
     this.waveActive = true;
     waveModifier = pickWaveModifier(waveNumber);
     const modSuffix = waveModifier ? ' · '+modifierInfo[waveModifier.type].name : '';
+    const lore = STORY_BEATS[waveNumber];
     if(isMiniBossWave(waveNumber)){
       const eliteRoster = ['chaser','shooter','splitter','orbiter'];
       const mb = makeEnemy(pick(eliteRoster), true);
       mb.x = clamp(player.x + (Math.random()<0.5?-1:1)*rand(280,380), mb.radius, W-mb.radius);
       mb.y = clamp(player.y + (Math.random()<0.5?-1:1)*rand(200,280), mb.radius, H-mb.radius);
       enemies.push(mb);
-      showWaveBanner('ONDATA '+waveNumber, 'UN MOSTRO D\'ELITE SI AVVICINA'+modSuffix);
+      showWaveBanner('ONDATA '+waveNumber, 'UN MOSTRO D\'ELITE SI AVVICINA'+modSuffix, lore);
       sfx.bossRoar();
     } else {
-      showWaveBanner('ONDATA '+waveNumber, this.toSpawn+' MOSTRI IN AVVICINAMENTO'+modSuffix);
+      showWaveBanner('ONDATA '+waveNumber, this.toSpawn+' MOSTRI IN AVVICINAMENTO'+modSuffix, lore);
     }
   },
   pool(){
@@ -2910,11 +3113,11 @@ const spawner = {
   }
 };
 let bannerTimer=0;
-function showWaveBanner(title,sub){
+function showWaveBanner(title,sub,lore){
   const el = document.getElementById('wave-banner');
-  el.innerHTML = '<span class="wb-title">'+title+'</span><small>'+sub+'</small>';
+  el.innerHTML = '<span class="wb-title">'+title+'</span><small>'+sub+'</small>' + (lore ? '<span class="wb-lore">'+lore+'</span>' : '');
   el.style.transition='none'; el.style.opacity='1'; el.style.transform='translate(-50%,-50%) scale(1.05)';
-  bannerTimer = 2.2;
+  bannerTimer = lore ? 5.5 : 2.2;
   sfx.wave();
 }
 function updateBanner(dt){
@@ -2948,7 +3151,7 @@ function drawParticles(){
   ctx.globalAlpha=1; ctx.textAlign='left';
 }
 function drawPickups(){
-  const colors = {heal:'#2e9e4f',shield:'#2f6f8f',spread:'#e0672c',rapid:'#e8b923',homing:'#c1276b',laser:'#e07a2c',chain:'#2f8f9f',nuke:'#c1272d',multi:'#7b4fa0',relic:'#ffd23f'};
+  const colors = {heal:'#2e9e4f',shield:'#2f6f8f',spread:'#e0672c',homing:'#c1276b',laser:'#e07a2c',chain:'#2f8f9f',relic:'#ffd23f'};
   for(const pu of pickups){
     const isRelic = pu.type==='relic';
     const bob = Math.sin(elapsed*3+pu.phase)*5;
@@ -3033,12 +3236,6 @@ function drawPickups(){
           ctx.strokeStyle='#1b1408'; ctx.lineWidth=1; ctx.stroke();
         }
         break; }
-      case 'rapid': { // lightning bolt
-        ctx.beginPath();
-        ctx.moveTo(2,-r); ctx.lineTo(-4,1); ctx.lineTo(1,1); ctx.lineTo(-2,r); ctx.lineTo(5,-1); ctx.lineTo(0,-1); ctx.closePath();
-        ctx.fillStyle=c; ctx.fill();
-        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.2; ctx.stroke();
-        break; }
       case 'homing': { // seeking eye
         ctx.beginPath(); ctx.ellipse(0,0,r,r*0.6,0,0,TAU); ctx.fillStyle='#fff'; ctx.fill();
         ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.4; ctx.stroke();
@@ -3064,17 +3261,6 @@ function drawPickups(){
           ctx.stroke();
         }
         ctx.beginPath(); ctx.arc(0,0,2,0,TAU); ctx.fillStyle='#1b1408'; ctx.fill();
-        break; }
-      case 'nuke': { // meteor with trail
-        ctx.beginPath(); ctx.moveTo(-r,-r); ctx.lineTo(-r*0.2,-r*0.2); ctx.strokeStyle=c; ctx.lineWidth=3; ctx.globalAlpha=0.6; ctx.stroke(); ctx.globalAlpha=1;
-        ctx.beginPath(); ctx.arc(r*0.25,r*0.25,r*0.55,0,TAU); ctx.fillStyle=c; ctx.fill();
-        ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.4; ctx.stroke();
-        break; }
-      case 'multi': { // gem
-        ctx.beginPath(); ctx.moveTo(0,-r); ctx.lineTo(r*0.7,0); ctx.lineTo(0,r); ctx.lineTo(-r*0.7,0); ctx.closePath();
-        ctx.fillStyle=c; ctx.fill(); ctx.strokeStyle='#1b1408'; ctx.lineWidth=1.6; ctx.globalAlpha=1; ctx.stroke();
-        ctx.fillStyle='rgba(255,255,255,.5)';
-        ctx.beginPath(); ctx.moveTo(0,-r*0.8); ctx.lineTo(r*0.2,-r*0.1); ctx.lineTo(0,0); ctx.lineTo(-r*0.2,-r*0.1); ctx.closePath(); ctx.fill();
         break; }
       case 'relic': { // reliquia: stella arcana a otto punte, più luminosa delle rune comuni
         ctx.shadowBlur = 12;
@@ -3365,6 +3551,7 @@ function startGame(){
   state='playing';
   document.getElementById('start-screen').classList.add('hidden');
   document.getElementById('gameover-screen').classList.add('hidden');
+  document.getElementById('victory-screen').classList.add('hidden');
   document.getElementById('pause-screen').classList.add('hidden');
 }
 function triggerGameOver(){
@@ -3375,6 +3562,14 @@ function triggerGameOver(){
   document.getElementById('final-best').textContent = bestScore;
   document.getElementById('gameover-screen').classList.remove('hidden');
   sfx.gameover();
+}
+function triggerVictory(){
+  state='victory';
+  bestScore = Math.max(bestScore, Math.round(score));
+  document.getElementById('victory-score').textContent = Math.round(score);
+  document.getElementById('victory-best').textContent = bestScore;
+  document.getElementById('victory-screen').classList.remove('hidden');
+  sfx.wave();
 }
 let settingsReturnState = 'start';
 function openSettings(fromState){
@@ -3404,6 +3599,7 @@ document.getElementById('keybind-reset-btn').addEventListener('click', ()=>{
 });
 document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', startGame);
+document.getElementById('victory-restart-btn').addEventListener('click', startGame);
 document.getElementById('resume-btn').addEventListener('click', togglePause);
 document.getElementById('pause-btn').addEventListener('click', ()=>{ if(state==='playing'||state==='paused') togglePause(); });
 document.getElementById('grimoire-btn').addEventListener('click', ()=>{ if(state==='playing'||state==='grimoire') toggleGrimoire(); });
