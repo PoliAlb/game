@@ -511,10 +511,10 @@ canvas#game{
 
 <div id="victory-screen" class="overlay hidden">
   <h2 class="title" data-text="VITTORIA" style="color:var(--gold); text-shadow:0 0 20px rgba(212,175,55,.8), 0 0 46px rgba(255,183,3,.5);">VITTORIA</h2>
-  <p class="subtitle" style="max-width:560px;font-style:italic;">Il Nucleo si dissolve in un ultimo bagliore. La Corruzione si ritira dalle radici del bosco maledetto. L'Arcimago, esausto ma vittorioso, resta solo a guardare l'alba tornare oltre gli alberi.</p>
+  <p class="subtitle" style="max-width:560px;font-style:italic;">Il Doppio Corrotto si dissolve in un ultimo bagliore, e per un istante l'Arcimago vede il proprio volto — non più corrotto — dissolversi con lui. La Corruzione si ritira dalle radici del bosco maledetto. Esausto ma vittorioso, resta solo a guardare l'alba tornare oltre gli alberi.</p>
   <div id="stats-final">
     <div><span class="label">PUNTEGGIO</span><span class="value" id="victory-score">0</span></div>
-    <div><span class="label">ONDATA</span><span class="value">100</span></div>
+    <div><span class="label">ONDATA</span><span class="value">60</span></div>
     <div><span class="label">RECORD</span><span class="value" id="victory-best">0</span></div>
   </div>
   <button id="victory-restart-btn" class="neon-btn">Gioca Ancora</button>
@@ -1091,6 +1091,7 @@ function resetGame(){
   shakeMag = 0; elapsed = 0;
   waveModifier = null; modifierFade = 0; modifierFadeType = null;
   hazards = [];
+  arenaR = 0; arenaTargetR = 0; arenaAlpha = 0;
   spawner.reset();
   updateHUDText();
   updateSpellHUD();
@@ -2019,6 +2020,14 @@ function updateBullets(dt){
         const sp = Math.hypot(b.vx,b.vy);
         b.vx = Math.cos(b.angle)*sp; b.vy = Math.sin(b.angle)*sp;
       }
+    } else if(b.homing && b.owner==='enemy' && player.alive){
+      // sfera del Doppio Corrotto: insegue sempre il mago
+      const desired = angleTo(b.x,b.y,player.x,player.y);
+      let diff = desired - b.angle;
+      while(diff>Math.PI) diff-=TAU; while(diff<-Math.PI) diff+=TAU;
+      b.angle += clamp(diff, -4*dt, 4*dt);
+      const sp = Math.hypot(b.vx,b.vy);
+      b.vx = Math.cos(b.angle)*sp; b.vy = Math.sin(b.angle)*sp;
     }
     b.x += b.vx*dt; b.y += b.vy*dt; b.life -= dt;
     if(windIntensity>0.01 && !b.homing){ b.vx += windAX*dt; b.vy += windAY*dt; }
@@ -2492,16 +2501,18 @@ function onEnemyDeath(en){
   }
 }
 function onBossDeath(){
-  const wasFinal = !!boss.isFinal;
+  const wasDouble = !!boss.isDouble;
+  const wasEmpowered = !!boss.empowered;
   spawnExplosion(boss.x,boss.y,true);
   addScore(boss.value);
   gainXP(boss.value*0.4);
   for(let i=0;i<4;i++) spawnPickup(boss.x+rand(-40,40), boss.y+rand(-40,40));
-  if(!wasFinal && player.relics.length < RELICS.length) spawnPickup(boss.x, boss.y-30, 'relic');
+  if(!wasEmpowered && player.relics.length < RELICS.length) spawnPickup(boss.x, boss.y-30, 'relic');
   document.getElementById('boss-hud').classList.add('hidden');
-  floatText(boss.x,boss.y-60, wasFinal?'IL NUCLEO SI DISSOLVE':'FANTASMA DISSOLTO', wasFinal?'#ff50dc':'#e0a83a');
+  floatText(boss.x,boss.y-60, wasDouble?'IL DOPPIO SI DISSOLVE':'FANTASMA DISSOLTO', wasDouble?'#ff50dc':'#e0a83a');
   boss = null;
-  if(wasFinal){ triggerVictory(); return; }
+  arenaTargetR = 0; // l'arena, se presente, si dissolve gradualmente dopo lo scontro
+  if(wasEmpowered){ triggerVictory(); return; }
   spawner.onBossCleared();
 }
 
@@ -2523,27 +2534,76 @@ function makeBoss(){
     huntState:'chase', huntTimer:rand(2.2,3.2), orbitDir:1, rampT:bossRampT
   };
 }
-function makeFinalBoss(){
-  // IL NUCLEO DELLA CORRUZIONE: l'origine di ogni Fantasma incontrato finora, un'entità
-  // estranea e ostile — molto più tosta di un Fantasma qualunque, con un pattern
-  // d'attacco esclusivo (nova) e una seconda fase che si attiva prima del solito
+function makeDouble(empowered){
+  // IL DOPPIO CORROTTO: un riflesso dell'Arcimago plasmato dalla Corruzione, che
+  // impugna gli stessi incantesimi del mago. Prima apparizione all'ondata 30 (respinto,
+  // non distrutto), ritorna potenziato all'ondata 60 come scontro finale.
+  const hp = empowered ? 9200 : 2600;
   return {
-    x:W/2, y:-140, vx:0, vy:0, radius:104, hp:18000, maxHp:18000, value:50000,
-    t:0, attackTimer:2.4, phase:'enter', dmg:26, hitFlash:0, color:'#e03cff',
+    x:W/2, y:-120, vx:0, vy:0, radius:46, hp, maxHp:hp, value: empowered?50000:6000,
+    t:0, attackTimer:2.0, phase:'enter', dmg: empowered?24:16, hitFlash:0, color:'#7c2d92',
     telegraphT:0, dashTarget:null, burnT:0, burnTick:0, burnDmg:0, enraged:false,
     huntState:'circle', huntTimer:rand(2.0,3.0), orbitDir:1, rampT:1,
-    isFinal:true, enrageThreshold:0.5
+    isDouble:true, empowered:!!empowered, enrageThreshold:0.5
   };
 }
+
+// --- Arena circolare che confina lo scontro col Doppio Corrotto: appare gradualmente
+// al centro della mappa (anelli di mattoni antichi) e ne contiene i movimenti ---
+let arenaR = 0, arenaTargetR = 0, arenaAlpha = 0;
+const ARENA_CENTER = () => ({x:W/2, y:H/2});
+function updateArena(dt){
+  arenaR += (arenaTargetR-arenaR)*Math.min(1, dt*1.1);
+  const targetAlpha = arenaTargetR>0 ? 1 : 0;
+  arenaAlpha += (targetAlpha-arenaAlpha)*Math.min(1, dt*1.4);
+  if(arenaR<1 && arenaTargetR===0) arenaR=0;
+}
+function clampToArena(entity){
+  if(arenaR<40) return;
+  const c = ARENA_CENTER();
+  const dx = entity.x-c.x, dy = entity.y-c.y;
+  const d = Math.hypot(dx,dy);
+  const maxD = arenaR - (entity.radius||14) - 6;
+  if(d > maxD && maxD>0){
+    const k = maxD/d;
+    entity.x = c.x + dx*k; entity.y = c.y + dy*k;
+  }
+}
+function drawArena(){
+  if(arenaAlpha<0.02) return;
+  const c = ARENA_CENTER();
+  ctx.save();
+  ctx.translate(c.x,c.y);
+  ctx.globalAlpha = arenaAlpha;
+  // anello esterno di mattoni antichi, leggermente irregolare
+  const bricks = 28;
+  for(let i=0;i<bricks;i++){
+    const a = i/bricks*TAU;
+    const bx = Math.cos(a)*arenaR, by = Math.sin(a)*arenaR*0.62;
+    ctx.save();
+    ctx.translate(bx,by);
+    ctx.rotate(a+Math.PI/2);
+    ctx.fillStyle = i%2===0 ? '#4a3a2a' : '#3d2f22';
+    ctx.fillRect(-13,-7,26,14);
+    ctx.strokeStyle='rgba(20,14,8,.6)'; ctx.lineWidth=1.4; ctx.strokeRect(-13,-7,26,14);
+    ctx.restore();
+  }
+  // muschio/corruzione che si insinua tra i mattoni
+  ctx.strokeStyle='rgba(140,60,190,.5)'; ctx.lineWidth=2; ctx.shadowColor='#8b3fbe'; ctx.shadowBlur=8;
+  ctx.beginPath(); ctx.ellipse(0,0,arenaR*0.98,arenaR*0.98*0.62,0,0,TAU); ctx.stroke();
+  ctx.shadowBlur=0;
+  ctx.restore();
+}
+
 function updateBoss(dt){
   if(!boss) return;
   boss.t += dt;
   if(boss.hitFlash>0) boss.hitFlash-=dt;
   tickBurn(boss, dt);
-  // furia: sotto la soglia (40% normale, 50% per il Nucleo) il boss diventa più rapido e aggressivo
+  // furia: sotto la soglia (40% normale, 50% per il Doppio) il boss diventa più rapido e aggressivo
   boss.enraged = boss.hp < boss.maxHp*(boss.enrageThreshold||0.4);
   const rampT = boss.rampT!==undefined ? boss.rampT : 1;
-  const cdMul = ((boss.enraged ? (boss.isFinal?0.62:0.7) : 1)) + (1-rampT)*0.55;
+  const cdMul = ((boss.enraged ? (boss.isDouble?0.62:0.7) : 1)) + (1-rampT)*0.55;
   const moveMul = (boss.enraged ? 1.55 : 1) * (0.8+rampT*0.2);
   if(boss.phase==='enter'){
     boss.y += 60*dt;
@@ -2612,54 +2672,96 @@ function updateBoss(dt){
     if(boss._dashTraveled >= boss._dashDist){ boss.phase='idle'; boss.attackTimer=2.6*cdMul; }
     return;
   }
-  if(boss.phase==='nova'){
-    // NOVA: attacco esclusivo del Nucleo — un doppio anello d'onda d'urto, lungamente
-    // telegrafato ma devastante se non si esce dal raggio in tempo
+  if(boss.phase==='fascio'){
+    // mimica il Fascio Runico del mago: raggio telegrafato poi un colpo lineare istantaneo
     boss.telegraphT -= dt;
     if(boss.telegraphT<=0){
-      for(let ring=0; ring<2; ring++){
-        const n=18, offset=ring*(Math.PI/18), spd=230+ring*45;
-        for(let i=0;i<n;i++){ const a=i/n*TAU+offset; shootBullet(boss.x,boss.y,a,spd,'enemy',17,'#ff50dc',6); }
-      }
-      spawnParticles(boss.x,boss.y,44,'#ff50dc',{speed:300,life:0.6,radius:4});
-      shakeMag = Math.min(30, shakeMag+14);
-      boss.phase='idle'; boss.attackTimer = 3.6*cdMul;
+      const dmg = boss.empowered ? 24 : 16;
+      const a = boss._beamAngle;
+      const ex = boss.x-player.x, ey = boss.y-player.y;
+      const projLen = -(ex*Math.cos(a) + ey*Math.sin(a));
+      const perpX = ex + Math.cos(a)*projLen, perpY = ey + Math.sin(a)*projLen;
+      const perpDist = Math.hypot(perpX,perpY);
+      if(projLen>0 && perpDist < 24) damagePlayer(dmg, boss);
+      boss._beamFlashT = 0.18;
+      spawnParticles(boss.x,boss.y,20,'#ffb703',{speed:200,life:0.3,radius:3});
+      shakeMag = Math.min(30, shakeMag+8);
+      boss.phase='idle'; boss.attackTimer = 2.6*cdMul;
+    }
+    return;
+  }
+  if(boss.phase==='passo'){
+    // mimica il Passo Arcano del mago: sparisce e riappare accanto al bersaglio
+    boss.telegraphT -= dt;
+    if(boss.telegraphT<=0){
+      spawnParticles(boss.x,boss.y,16,'#c084fc',{speed:160,life:0.4,radius:3});
+      const a = rand(0,TAU), d = rand(90,150);
+      boss.x = clamp(player.x+Math.cos(a)*d, boss.radius, W-boss.radius);
+      boss.y = clamp(player.y+Math.sin(a)*d, boss.radius, H-boss.radius);
+      clampToArena(boss);
+      spawnParticles(boss.x,boss.y,16,'#c084fc',{speed:160,life:0.4,radius:3});
+      if(dist(boss.x,boss.y,player.x,player.y) < player.radius+boss.radius+20) damagePlayer(boss.empowered?18:12, boss);
+      boss.phase='idle'; boss.attackTimer = (boss.empowered?2.0:2.4)*cdMul;
     }
     return;
   }
 
   boss.attackTimer -= dt;
   if(boss.attackTimer <= 0){
-    const fb = !!boss.isFinal;
-    const atkPool = fb ? ['ring','aimed','summon','barrage','nova','nova'] : ['ring','aimed','summon','charge','barrage'];
-    const atk = pick(atkPool);
     boss.phase = 'attack';
+    if(boss.isDouble){
+      const emp = !!boss.empowered;
+      const atk = pick(['cono','sfere','fascio','catena','passo']);
+      if(atk==='cono'){
+        // mimica il Cono di Fiamme: ventaglio ravvicinato verso il mago
+        const n = emp?9:6, spreadAng = emp?0.95:0.65, dmg = emp?16:11;
+        const baseA = angleTo(boss.x,boss.y,player.x,player.y);
+        for(let i=0;i<n;i++){ const a = baseA - spreadAng/2 + spreadAng*i/(n-1); shootBullet(boss.x,boss.y,a,260,'enemy',dmg,'#ff8a3d',5); }
+        boss.attackTimer = 2.2*cdMul; boss.phase='idle';
+      } else if(atk==='sfere'){
+        // mimica la Sfera Arcana Cercante: proiettili che inseguono il mago
+        const n = emp?4:2, dmg = emp?15:10;
+        for(let i=0;i<n;i++) shootBullet(boss.x,boss.y,rand(0,TAU),220,'enemy',dmg,'#ff2fb0',6,true);
+        boss.attackTimer = 2.6*cdMul; boss.phase='idle';
+      } else if(atk==='fascio'){
+        boss.phase='fascio'; boss.telegraphT = emp?0.7:0.9;
+        boss._beamAngle = angleTo(boss.x,boss.y,player.x,player.y);
+      } else if(atk==='catena'){
+        // mimica la Catena di Fulmini: colpo principale + due schegge laterali
+        const a = angleTo(boss.x,boss.y,player.x,player.y), dmg = emp?14:9;
+        shootBullet(boss.x,boss.y,a,300,'enemy',dmg,'#8dfcff',5);
+        shootBullet(boss.x,boss.y,a+0.5,300,'enemy',dmg*0.7,'#8dfcff',4);
+        shootBullet(boss.x,boss.y,a-0.5,300,'enemy',dmg*0.7,'#8dfcff',4);
+        boss.attackTimer = 2.3*cdMul; boss.phase='idle';
+      } else if(atk==='passo'){
+        boss.phase='passo'; boss.telegraphT = 0.4;
+      }
+      return;
+    }
+    const atk = pick(['ring','aimed','summon','charge','barrage']);
     if(atk==='ring'){
-      const n = boss.enraged ? (fb?28:22) : (fb?20:16);
-      const spd = boss.enraged ? (fb?300:270) : (fb?260:240);
-      const dmg = fb ? 18 : 14;
-      for(let i=0;i<n;i++){ const a=i/n*TAU; shootBullet(boss.x,boss.y,a,spd,'enemy',dmg,'#8b5cf6',6); }
+      const n = boss.enraged ? 22 : 16;
+      const spd = boss.enraged ? 270 : 240;
+      for(let i=0;i<n;i++){ const a=i/n*TAU; shootBullet(boss.x,boss.y,a,spd,'enemy',14,'#8b5cf6',6); }
       boss.attackTimer = 2.4*cdMul;
       boss.phase='idle';
     } else if(atk==='aimed'){
       let burst=0;
-      const bursts = boss.enraged ? (fb?6:4) : (fb?4:3);
-      const dmg = fb ? 16 : 12;
+      const bursts = boss.enraged ? 4 : 3;
       const burstInt = setInterval(()=>{
         if(!boss || state!=='playing'){ clearInterval(burstInt); return; }
         const a = angleTo(boss.x,boss.y,player.x,player.y);
-        for(const off of [-0.18,0,0.18]) shootBullet(boss.x,boss.y,a+off,340,'enemy',dmg,'#7cff6b',5);
+        for(const off of [-0.18,0,0.18]) shootBullet(boss.x,boss.y,a+off,340,'enemy',12,'#7cff6b',5);
         burst++; if(burst>=bursts) clearInterval(burstInt);
       }, 160);
       boss.attackTimer = 2.8*cdMul;
       boss.phase='idle';
     } else if(atk==='summon'){
-      // il Fantasma (e il Nucleo, con più insistenza) può evocare qualunque mostro incontrato finora
-      const n = boss.enraged ? (fb?5:4) : (fb?4:3);
+      // il Fantasma può evocare qualunque tipo di mostro incontrato finora
+      const n = boss.enraged ? 4 : 3;
       const roster = ['chaser','shooter','splitter','orbiter','bomber'];
       for(let i=0;i<n;i++){
-        const useElite = fb && boss.enraged && Math.random()<0.3;
-        const e = makeEnemy(pick(roster), useElite);
+        const e = makeEnemy(pick(roster));
         e.x = boss.x+rand(-60,60); e.y = boss.y+rand(20,60);
         enemies.push(e);
       }
@@ -2668,26 +2770,23 @@ function updateBoss(dt){
     } else if(atk==='barrage'){
       // raffica di schegge spettrali in ventaglio verso il mago
       let shots=0;
-      const totalShots = boss.enraged ? (fb?15:11) : (fb?9:7);
-      const dmg = fb ? 14 : 10;
+      const totalShots = boss.enraged ? 11 : 7;
       const barrageInt = setInterval(()=>{
         if(!boss || state!=='playing'){ clearInterval(barrageInt); return; }
         const a = angleTo(boss.x,boss.y,player.x,player.y) + rand(-0.4,0.4);
-        shootBullet(boss.x,boss.y,a,310,'enemy',dmg,'#39ff88',5);
+        shootBullet(boss.x,boss.y,a,310,'enemy',10,'#39ff88',5);
         shots++; if(shots>=totalShots) clearInterval(barrageInt);
       }, 100);
       boss.attackTimer = 2.6*cdMul;
       boss.phase='idle';
     } else if(atk==='charge'){
       boss.phase='charge'; boss.telegraphT = (boss.enraged ? 0.55 : 0.7) + (1-rampT)*0.35;
-    } else if(atk==='nova'){
-      boss.phase='nova'; boss.telegraphT = 1.1;
     }
   }
 }
 function drawBoss(){
   if(!boss) return;
-  if(boss.isFinal){ drawFinalBossVisual(); return; }
+  if(boss.isDouble){ drawDoubleVisual(); return; }
   ctx.save();
   ctx.translate(boss.x,boss.y);
   drawGroundShadow(boss.radius*0.95, boss.radius*1.35, boss.radius*0.5, 0.32);
@@ -2810,108 +2909,129 @@ function updateBossHUD(){
   document.getElementById('boss-bar').style.width = clamp(boss.hp/boss.maxHp,0,1)*100+'%';
   const bar = document.getElementById('boss-bar');
   const nameEl = document.getElementById('boss-name');
-  if(boss.isFinal){
+  if(boss.isDouble){
     bar.style.background = 'linear-gradient(90deg, #7a1a8f, #ff50dc)';
-    nameEl.textContent = (boss.enraged ? 'IL NUCLEO — RISVEGLIATO' : 'IL NUCLEO DELLA CORRUZIONE') + ' · ONDATA '+waveNumber;
+    const label = boss.empowered ? 'IL DOPPIO CORROTTO — POTENZIATO' : 'IL DOPPIO CORROTTO';
+    nameEl.textContent = (boss.enraged ? label+' (INFURIATO)' : label) + ' · ONDATA '+waveNumber;
   } else {
     bar.style.background = '';
     nameEl.textContent = (boss.enraged ? 'IL FANTASMA INFURIATO' : 'IL FANTASMA') + ' · ONDATA '+waveNumber;
   }
 }
-function drawFinalBossVisual(){
+function drawDoubleVisual(){
   ctx.save();
   ctx.translate(boss.x,boss.y);
-  drawGroundShadow(boss.radius*1.1, boss.radius*1.5, boss.radius*0.55, 0.4);
-  const pulse = 1+Math.sin(boss.t*2.4)*0.05;
+  drawGroundShadow(boss.radius*0.9, boss.radius*1.2, boss.radius*0.5, 0.4);
+  const emp = !!boss.empowered;
+  const pulse = 1+Math.sin(boss.t*2.4)*0.04;
   const flash = boss.hitFlash>0;
-  const floatY = Math.sin(boss.t*1.6)*10;
+  const floatY = Math.sin(boss.t*1.8)*5;
+  const R = boss.radius;
 
-  // doppio cerchio runico a terra, più ampio e minaccioso di quello del Fantasma comune
-  ctx.save();
-  ctx.rotate(boss.t*0.18);
-  ctx.strokeStyle = 'rgba(224,60,255,.5)'; ctx.lineWidth=2.4;
-  ctx.beginPath(); ctx.arc(0,boss.radius*0.35,boss.radius*1.5,0,TAU); ctx.stroke();
-  ctx.restore();
-  ctx.save();
-  ctx.rotate(-boss.t*0.3);
-  ctx.setLineDash([14,10]);
-  ctx.strokeStyle='rgba(140,30,190,.55)';
-  ctx.beginPath(); ctx.arc(0,boss.radius*0.35,boss.radius*1.85,0,TAU); ctx.stroke();
-  ctx.setLineDash([]);
-  ctx.restore();
-
-  // frammenti spettrali orbitanti — eco di ogni Fantasma affrontato finora, ridotto a scheggia
-  const shardCount = 4;
-  for(let i=0;i<shardCount;i++){
-    const aa = boss.t*0.7 + i*(TAU/shardCount);
-    const orbR = boss.radius*1.7;
-    const sx = Math.cos(aa)*orbR, sy = Math.sin(aa)*orbR*0.6;
+  // aura distorta e afterimage sfalsate: rinforzano il tema "riflesso/doppio"
+  for(let i=2;i>=1;i--){
+    const trailT = boss.t - i*0.09;
     ctx.save();
-    ctx.translate(sx,sy);
-    ctx.globalAlpha=0.75;
-    ctx.fillStyle='#cba3e8'; ctx.shadowColor='#cba3e8'; ctx.shadowBlur=10;
-    ctx.beginPath(); ctx.arc(0,0,boss.radius*0.15,0,TAU); ctx.fill();
-    ctx.globalAlpha=1;
+    ctx.globalAlpha = 0.14*i;
+    ctx.translate(Math.sin(trailT*1.3)*6, Math.cos(trailT*1.1)*4);
+    ctx.fillStyle = emp ? '#5a0e2e' : '#2a1533';
+    ctx.beginPath(); ctx.ellipse(0,R*0.15,R*0.62,R*0.95,0,0,TAU); ctx.fill();
     ctx.restore();
   }
 
   ctx.translate(0, floatY);
 
-  // NUCLEO DELLA CORRUZIONE: cristallo scuro e spigoloso — una forma del tutto estranea
-  // a un fantasma, per non essere mai confuso con nulla incontrato prima
-  const coreR = boss.radius*0.82;
+  // corpo: sagoma incappucciata simile al mago ma corrotta — un vero "riflesso oscuro"
   ctx.save();
-  ctx.rotate(Math.sin(boss.t*0.5)*0.1);
-  ctx.shadowColor='#e03cff'; ctx.shadowBlur = 28+10*Math.sin(boss.t*3);
-  const grad = ctx.createRadialGradient(0,0,coreR*0.1,0,0,coreR*1.1);
-  grad.addColorStop(0, flash?'#ffffff':'#3a0a4a');
-  grad.addColorStop(0.6,'#1c0524');
-  grad.addColorStop(1,'#0a0210');
-  ctx.fillStyle = grad;
-  const spikes = 9;
+  ctx.shadowColor = emp?'#ff2f6b':'#c04eeb'; ctx.shadowBlur = 22+8*Math.sin(boss.t*3);
+  const robeGrad = ctx.createLinearGradient(0,-R*1.1,0,R*1.1);
+  if(emp){ robeGrad.addColorStop(0,'#3a0a18'); robeGrad.addColorStop(1,'#10030a'); }
+  else { robeGrad.addColorStop(0,'#2c1338'); robeGrad.addColorStop(1,'#0c0512'); }
+  ctx.fillStyle = flash ? '#ffffff' : robeGrad;
+  // mantello ampio, orlo irregolare
   ctx.beginPath();
-  for(let i=0;i<spikes;i++){
-    const aa = i/spikes*TAU;
-    const rr = coreR*(i%2===0 ? pulse : 0.62*pulse);
-    const px = Math.cos(aa)*rr, py = Math.sin(aa)*rr;
-    if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+  ctx.moveTo(-R*0.55, R*0.3);
+  ctx.quadraticCurveTo(-R*0.75,-R*0.5, -R*0.32,-R*0.85);
+  ctx.quadraticCurveTo(0,-R*1.05, R*0.32,-R*0.85);
+  ctx.quadraticCurveTo(R*0.75,-R*0.5, R*0.55, R*0.3);
+  const hem=6;
+  for(let i=0;i<=hem;i++){
+    const tt=i/hem;
+    const px = R*0.55 - tt*R*1.1;
+    const jag = (i%2===0)?1:0.5;
+    const sway = Math.sin(boss.t*2+i*1.6)*R*0.08;
+    ctx.lineTo(px, R*0.3+R*0.55*jag*pulse+sway);
   }
   ctx.closePath(); ctx.fill();
-  ctx.lineWidth=3; ctx.strokeStyle='#e03cff'; ctx.stroke();
+  ctx.lineWidth=2.4; ctx.strokeStyle= emp?'#ff2f6b':'#c04eeb'; ctx.stroke();
   ctx.shadowBlur=0;
 
-  // crepe incandescenti diramate sulla superficie
-  ctx.strokeStyle='rgba(255,180,255,.85)'; ctx.lineWidth=1.4; ctx.shadowColor='#ff9cff'; ctx.shadowBlur=8;
+  // cappuccio, ombra sul volto
+  ctx.fillStyle='#0a0510';
+  ctx.beginPath(); ctx.ellipse(0,-R*0.55,R*0.32,R*0.4,0,0,TAU); ctx.fill();
+
+  // occhi luminosi sotto il cappuccio — unico tratto visibile del volto
+  const eyeGlow = 0.8+0.2*Math.sin(boss.t*5);
+  ctx.fillStyle = emp?`rgba(255,60,90,${eyeGlow})`:`rgba(200,90,240,${eyeGlow})`;
+  ctx.shadowColor = emp?'#ff3c5a':'#c85af0'; ctx.shadowBlur=14;
+  ctx.beginPath(); ctx.ellipse(-R*0.12,-R*0.56,R*0.07,R*0.045,0,0,TAU); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(R*0.12,-R*0.56,R*0.07,R*0.045,0,0,TAU); ctx.fill();
+  ctx.shadowBlur=0;
+
+  // crepe incandescenti sul mantello
+  ctx.strokeStyle = emp?'rgba(255,140,160,.8)':'rgba(220,160,255,.75)'; ctx.lineWidth=1.3;
+  ctx.shadowColor = emp?'#ff8ca0':'#dca0ff'; ctx.shadowBlur=6;
   ctx.beginPath();
-  ctx.moveTo(-coreR*0.5,-coreR*0.3); ctx.lineTo(-coreR*0.1,coreR*0.05); ctx.lineTo(coreR*0.2,-coreR*0.2); ctx.lineTo(coreR*0.55,coreR*0.35);
-  ctx.moveTo(coreR*0.1,-coreR*0.5); ctx.lineTo(-coreR*0.05,-coreR*0.05); ctx.lineTo(coreR*0.15,coreR*0.4);
+  ctx.moveTo(-R*0.3,-R*0.1); ctx.lineTo(-R*0.06,R*0.15); ctx.lineTo(-R*0.2,R*0.5);
+  ctx.moveTo(R*0.28,-R*0.15); ctx.lineTo(R*0.08,R*0.1); ctx.lineTo(R*0.22,R*0.48);
   ctx.stroke();
   ctx.shadowBlur=0;
   ctx.restore();
 
-  // grande occhio centrale, sempre puntato sul mago
-  const eyeA = angleTo(boss.x,boss.y+floatY,player.x,player.y);
+  // bastone/staff impugnato, a ribadire "è un mago" — stesso ruolo del bastone del giocatore
+  const staffA = Math.sin(boss.t*0.6)*0.15;
   ctx.save();
-  ctx.rotate(eyeA);
-  ctx.fillStyle='#0a0210';
-  ctx.beginPath(); ctx.ellipse(0,0,coreR*0.5,coreR*0.32,0,0,TAU); ctx.fill();
-  const irisGlow = 0.8+0.2*Math.sin(boss.t*4);
-  ctx.fillStyle=`rgba(255,80,220,${irisGlow})`; ctx.shadowColor='#ff50dc'; ctx.shadowBlur=18;
-  ctx.beginPath(); ctx.arc(coreR*0.14,0,coreR*0.17,0,TAU); ctx.fill();
-  ctx.fillStyle='#0a0210'; ctx.shadowBlur=0;
-  ctx.beginPath(); ctx.arc(coreR*0.14,0,coreR*0.07,0,TAU); ctx.fill();
+  ctx.rotate(staffA);
+  ctx.strokeStyle='#241608'; ctx.lineWidth=4; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(R*0.5,R*0.2); ctx.lineTo(R*0.78,-R*0.85); ctx.stroke();
+  ctx.fillStyle = emp?'#ff3c5a':'#c85af0'; ctx.shadowColor= emp?'#ff3c5a':'#c85af0'; ctx.shadowBlur=14;
+  ctx.beginPath(); ctx.arc(R*0.78,-R*0.85,R*0.13*pulse,0,TAU); ctx.fill();
+  ctx.shadowBlur=0;
   ctx.restore();
+
+  // corona di spuntoni scuri: solo nella forma potenziata, a segnalarne la crescita di potere
+  if(emp){
+    ctx.fillStyle='#10030a'; ctx.strokeStyle='rgba(255,60,90,.9)'; ctx.lineWidth=1.3;
+    ctx.shadowColor='#ff3c5a'; ctx.shadowBlur=6;
+    const spikes=5;
+    for(let i=0;i<spikes;i++){
+      const sx=-R*0.45+(i/(spikes-1))*R*0.9;
+      const h=R*(0.28+0.2*(1-Math.abs(i-2)/2));
+      ctx.beginPath(); ctx.moveTo(sx-R*0.07,-R*0.85); ctx.lineTo(sx,-R*0.85-h); ctx.lineTo(sx+R*0.07,-R*0.85); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+    }
+    ctx.shadowBlur=0;
+  }
 
   ctx.restore();
 
-  // telegraph della Nova: un anello d'onda che cresce fino all'esplosione
-  if(boss.phase==='nova'){
-    const t = clamp(1-(boss.telegraphT/1.1),0,1);
+  // telegraph del Fascio Runico mimato: linea che si carica prima del colpo
+  if(boss.phase==='fascio'){
+    const t = clamp(1-(boss.telegraphT/(emp?0.7:0.9)),0,1);
     ctx.save();
-    ctx.globalAlpha = 0.55;
-    ctx.strokeStyle = 'rgba(255,80,220,.85)'; ctx.lineWidth=3;
-    ctx.shadowColor='#ff50dc'; ctx.shadowBlur=14;
-    ctx.beginPath(); ctx.arc(boss.x,boss.y,60+t*260,0,TAU); ctx.stroke();
+    ctx.globalAlpha = 0.25+0.5*t;
+    ctx.strokeStyle='rgba(255,183,3,.9)'; ctx.lineWidth=2+2*t;
+    ctx.shadowColor='#ffb703'; ctx.shadowBlur=10;
+    const ex = boss.x+Math.cos(boss._beamAngle)*1200, ey = boss.y+Math.sin(boss._beamAngle)*1200;
+    ctx.beginPath(); ctx.moveTo(boss.x,boss.y); ctx.lineTo(ex,ey); ctx.stroke();
+    ctx.restore();
+  }
+  // telegraph del Passo Arcano mimato: un lampo che indica l'imminente sparizione
+  if(boss.phase==='passo'){
+    ctx.save();
+    ctx.globalAlpha = 0.5;
+    ctx.strokeStyle='rgba(192,78,235,.8)'; ctx.lineWidth=3; ctx.shadowColor='#c04eeb'; ctx.shadowBlur=16;
+    ctx.beginPath(); ctx.arc(boss.x,boss.y,R*1.3,0,TAU); ctx.stroke();
     ctx.restore();
   }
 
@@ -3024,31 +3144,34 @@ function drawWaveModifierFX(){
 }
 
 // --- Mini storia intrecciata alle ondate: frammenti narrativi che compaiono nel banner
-// di alcune ondate chiave, dalla prima scaramuccia fino al risveglio del Nucleo ---
+// di alcune ondate chiave, dalla prima scaramuccia fino al ritorno del Doppio Corrotto ---
 const STORY_BEATS = {
   1:  'Le prime ombre si muovono ai margini della radura: l\'Arcimago inizia il suo rituale di difesa.',
-  5:  'Uno spettro errante emerge dal velo — un frammento di qualcosa di più grande, in cerca di una via.',
-  10: 'Il Fantasma torna, più lucido: come se ogni sconfitta gli insegnasse a temere meno la luce.',
-  15: 'Una vena oscura si insinua tra le radici del bosco. La Corruzione, dormiente da secoli, si è appena svegliata.',
-  20: 'Il Fantasma non è una semplice ombra vagante: è un\'eco, un frammento inviato da qualcosa che osserva da lontano.',
-  30: 'L\'Arcimago intuisce la verità: ogni Fantasma sconfitto rende chi lo ha creato un poco più forte.',
-  40: 'La Corruzione scorre più densa. I mostri non muoiono più del tutto — si trasformano.',
-  50: 'Metà del cammino. Il bosco trema: qualcosa di antico si sta radunando nelle profondità.',
-  60: 'I frammenti spettrali smettono di apparire come entità separate: cominciano a fondersi, a ricordare chi erano.',
-  75: 'L\'aria stessa è corrotta. Per la prima volta, l\'Arcimago sente un nome sussurrato dal nulla: il Nucleo.',
-  90: 'Ogni radice del bosco pulsa al ritmo di un cuore che non è il suo. La fine è vicina.',
-  95: 'Il velo si lacera. Ciò che ha inviato ogni Fantasma come esploratore si prepara infine a varcare la soglia.',
-  100:'Il Nucleo della Corruzione si manifesta. Ogni Fantasma affrontato finora era soltanto un suo frammento — un esploratore mandato ad assaggiare la tua magia. Ora l\'origine stessa varca la soglia: sconfiggerla è l\'unico modo per spezzare la Corruzione alla radice.'
+  5:  'Uno spettro errante emerge dal velo — ma per un istante, nei suoi occhi vuoti, l\'Arcimago crede di scorgere un riflesso familiare.',
+  10: 'Il Fantasma torna, più lucido: come se qualcuno, da qualche parte nel bosco, stesse imparando a temere sempre meno la luce.',
+  15: 'Una vena oscura si insinua tra le radici del bosco. Da quella notte, ogni incantesimo dell\'Arcimago sembra lasciare un\'eco — un istante dopo, un po\' più debole, un po\' più scura.',
+  20: 'L\'Arcimago sogna se stesso: cammina tra gli alberi della radura con gli occhi spenti, incantesimi alle dita, e non riconosce il proprio volto.',
+  25: 'Il bosco trattiene il fiato. Qualcosa che gli somiglia sta per mostrarsi.',
+  30: 'Il Doppio Corrotto si mostra: un riflesso dell\'Arcimago plasmato dalla Corruzione, che impugna gli stessi incantesimi e si muove con gli stessi passi. Respingerlo non basterà a liberarsene per sempre.',
+  35: 'Il Doppio è stato respinto, non distrutto. Da qualche parte nel bosco assorbe in silenzio ogni runa perduta, ogni incantesimo lanciato a vuoto.',
+  40: 'La Corruzione scorre più densa. I mostri non muoiono più del tutto — si trasformano. E il Doppio, silenzioso, cresce insieme a loro.',
+  45: 'L\'Arcimago sente che qualcosa nel bosco conta ogni suo passo, ogni suo colpo, ogni sua vittoria — e le fa proprie.',
+  50: 'Metà del cammino, ancora. Il bosco trema: qualcosa di antico si sta radunando nelle profondità, e porta il suo stesso volto.',
+  55: 'Il velo si lacera. Il Doppio Corrotto è pronto a tornare — questa volta forte quanto l\'Arcimago stesso. Forse di più.',
+  60: 'Il Doppio Corrotto ritorna, potenziato da ogni rune raccolta e ogni incantesimo lanciato finora. Uno dei due, questa notte, smetterà di esistere.'
 };
 const spawner = {
   toSpawn:0, spawnTimer:0, spawnInterval:1.2, waveActive:false, breakTimer:0, breaking:false,
   reset(){ this.toSpawn=0; this.spawnTimer=0; this.waveActive=false; this.breaking=false; this.startWave(); },
   startWave(){
-    if(waveNumber === 100){
-      boss = makeFinalBoss();
+    if(waveNumber === 30 || waveNumber === 60){
+      const empowered = waveNumber === 60;
+      boss = makeDouble(empowered);
       this.waveActive = false;
       waveModifier = null;
-      showWaveBanner('ONDATA 100', 'IL NUCLEO DELLA CORRUZIONE SI MANIFESTA', STORY_BEATS[100]);
+      arenaTargetR = empowered ? 370 : 320; // l'arena di mattoni antichi cresce gradualmente attorno allo scontro
+      const title = empowered ? 'IL DOPPIO CORROTTO RITORNA' : 'IL DOPPIO CORROTTO SI MANIFESTA';
+      showWaveBanner('ONDATA '+waveNumber, title, STORY_BEATS[waveNumber]);
       sfx.bossRoar();
       return;
     }
@@ -3511,6 +3634,8 @@ function loop(now){
   updatePlayer(dt);
   for(const en of enemies) updateEnemy(en,dt);
   updateBoss(dt);
+  clampToArena(player);
+  if(boss) clampToArena(boss);
   updateBullets(dt);
   handleCollisions();
   updateParticles(dt);
@@ -3518,6 +3643,7 @@ function loop(now){
   updateBanner(dt);
   updateWaveModifier(dt);
   updateHazards(dt);
+  updateArena(dt);
   updateCorruptionHUD();
 
   render(dt);
@@ -3528,6 +3654,7 @@ function render(){
     ctx.translate(rand(-shakeMag,shakeMag), rand(-shakeMag,shakeMag));
   }
   drawBackground();
+  drawArena();
   drawHazards();
   drawPickups();
   for(const en of enemies){ drawEnemy(en); drawCorruptionAura(en); drawMiniBossExtras(en); }
