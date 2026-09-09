@@ -26,7 +26,7 @@ I tasti di movimento, incantesimo, passo arcano e pausa sono personalizzabili da
 - **Modificatori d'Ondata** — Talvolta un'ondata porta con sé nebbia, terreno paludoso o vento arcano che devia i proiettili.
 - **Mostri d'Elite** — Circa ogni 3 ondate (escluse quelle del Fantasma) un mostro comune reso d'elite compare da solo, molto più forte del normale.
 - **Corruzione** — Dall'ondata 15 un indicatore di Corruzione cresce e sblocca a tappe mutazioni sui mostri comuni: pozze corrosive alla morte, scissione in schegge, maggiore aggressività, fino a raffiche di proiettili post-mortem.
-- **Il Nucleo della Corruzione** — All'ondata 100 l'origine di ogni Fantasma si manifesta: un boss unico, esteticamente estraneo a tutto il resto, molto più duro da abbattere. Sconfiggerlo conclude la partita con la vittoria.
+- **Il Doppio Corrotto** — Un riflesso dell'Arcimago plasmato dalla Corruzione, che impugna gli stessi incantesimi del mago. Appare per la prima volta all'ondata 30 (respinto, non distrutto) e torna potenziato all'ondata 60 come scontro finale: sconfiggerlo in quella forma conclude la partita con la vittoria. Ogni volta che si manifesta, un'arena circolare di mattoni antichi cresce gradualmente al centro della mappa e confina lo scontro.
 - **Vita e Aura Arcana** — Crescono leggermente ad ogni livello: incrementi bassi, per restare in equilibrio con la forza crescente dei mostri.
 
 ## Incantesimi
